@@ -154,6 +154,8 @@ buildWebNotebook[
 	}];
 
 	RaiseConfirm @ WriteString[htmlFile, htmlString];
+	(* Close the file we just opened, to work around bug #348068. *)
+	RaiseConfirm @ Close[File[htmlFile]];
 
 
 
