@@ -246,6 +246,13 @@ convertToHtml[expr_] := Replace[expr, {
 	(* Boxes                          *)
 	(*--------------------------------*)
 
+	(* Handle hyperlinks. *)
+	ButtonBox[
+		content_,
+		BaseStyle -> "Hyperlink",
+		ButtonData -> {URL[url_?StringQ], None},
+		ButtonNote -> _?StringQ
+	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
 
 
 	other_ :> RaiseError["unhandled: ``", InputForm[other]]
