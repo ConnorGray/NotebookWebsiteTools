@@ -198,6 +198,8 @@ convertToHtml[expr_] := Replace[expr, {
 	Cell[content_, "Text", ___?OptionQ] :> XMLElement["p", {}, {convertToHtml[content]}],
 	Cell[content_, "Item", ___?OptionQ] :>
 		XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
+	Cell[content_, "ItemNumbered", ___?OptionQ] :>
+		XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
 	Cell[content_, "Subitem", ___?OptionQ] :>
 		XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
 
@@ -232,6 +234,14 @@ convertToHtml[expr_] := Replace[expr, {
 				(FontSlant -> slant_) :> Replace[slant, {
 					"Italic" :> XMLElement["i", {}, {elem}],
 					other_ :> RaiseError["unhandled FontSlant option value: ``", InputForm[slant]]
+				}],
+				(FontColor -> color_) :> Replace[color, {
+					RGBColor[r_, g_, b_] :> XMLElement[
+						"span",
+						{"style" -> TemplateApply["color: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
+						{elem}
+					],
+					other_ :> RaiseError["unhandled FontColor option value: ``", InputForm[other]]
 				}],
 				other_ :> RaiseError["unhandled StyleBox option value: ``", InputForm[other]]
 			}],
