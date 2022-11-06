@@ -209,10 +209,38 @@ convertToHtml[expr_] := Replace[expr, {
 	TextData[inline_?ListQ] :> Map[convertToHtml, inline],
 	TextData[content_] :> convertToHtml[content],
 
-	StyleBox[content_, style_?StringQ] :> Replace[style, {
-		"Code" :> XMLElement["code", {}, {convertToHtml[content]}],
-		other_ :> RaiseError["unhandled StyleBox style: ``", InputForm[other]]
-	}],
+	StyleBox[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
+		styles = {styles0},
+		options = {options0},
+		element
+	},
+		element = Fold[
+			{elem, style} |-> Replace[style, {
+				"Code" :> XMLElement["code", {}, {elem}],
+				other_ :> RaiseError["unhandled StyleBox style: ``", InputForm[other]]
+			}],
+			convertToHtml[content],
+			styles
+		];
+
+		element = Fold[
+			{elem, option} |-> Replace[option, {
+				(FontWeight -> weight_) :> Replace[weight, {
+					"Bold" :> XMLElement["b", {}, {elem}],
+					other_ :> RaiseError["unhandled FontWeight option value: ``", InputForm[weight]]
+				}],
+				(FontSlant -> slant_) :> Replace[slant, {
+					"Italic" :> XMLElement["i", {}, {elem}],
+					other_ :> RaiseError["unhandled FontSlant option value: ``", InputForm[slant]]
+				}],
+				other_ :> RaiseError["unhandled StyleBox option value: ``", InputForm[other]]
+			}],
+			element,
+			options
+		];
+
+		element
+	],
 
 	(*--------------------------------*)
 	(* Boxes                          *)
