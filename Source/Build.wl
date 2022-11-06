@@ -125,6 +125,21 @@ buildWebNotebook[
 				h1, h2, h3, strong {
 					color: #333;
 				}
+
+				a.anchor {
+					color: inherit;
+					text-decoration: none;
+				}
+
+				a.anchor:hover {
+					text-decoration: underline;
+				}
+
+				/* Display a yellow background on `#<id>` anchor link sections. */
+				a.anchor:target {
+					background: #ff0b;
+					text-decoration: underline;
+				}
 				", StartOfLine ~~ "\t\t\t\t" -> ""]
 			}]
 		}],
@@ -165,25 +180,103 @@ buildWebNotebook[
 *)
 
 convertToHtml[expr_] := Replace[expr, {
+	(*--------------------------------*)
+	(* Cells                          *)
+	(*--------------------------------*)
+
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[cells_?ListQ, Open]] :> Map[convertToHtml, cells],
-	Cell[text_?StringQ, "Title", ___?OptionQ] :> XMLElement["h1", {}, {text}],
-	Cell[text_?StringQ, "Subtitle", ___?OptionQ] :> XMLElement["p", {}, {text}],
-	Cell[text_?StringQ, "Chapter", ___?OptionQ] :> XMLElement["h2", {}, {text}],
-	Cell[text_?StringQ, "Section", ___?OptionQ] :> XMLElement["h3", {}, {text}],
-	Cell[text_?StringQ, "Subsection", ___?OptionQ] :> XMLElement["h4", {}, {text}],
-	Cell[text_?StringQ, "Subsubsection", ___?OptionQ] :> XMLElement["h5", {}, {text}],
-	Cell[text_?StringQ, "Item", ___?OptionQ] :>
-		XMLElement["ul", {}, {XMLElement["li", {}, {text}]}],
-	Cell[text_?StringQ, "Subitem", ___?OptionQ] :>
-		XMLElement["ul", {}, {"\t", XMLElement["li", {}, {text}]}],
-	other_ :> RaiseError["unhandled: ``", InputForm[other]]
+	Cell[content_, "Title", ___?OptionQ] :> XMLElement["h1", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Subtitle", ___?OptionQ] :> XMLElement["p", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Chapter", ___?OptionQ] :> XMLElement["h2", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Section", ___?OptionQ] :> XMLElement["h3", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Subsection", ___?OptionQ] :> XMLElement["h4", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Subsubsection", ___?OptionQ] :> XMLElement["h5", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Subsubsubsection", ___?OptionQ] :> XMLElement["h6", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Text", ___?OptionQ] :> XMLElement["p", {}, {convertToHtml[content]}],
+	Cell[content_, "Item", ___?OptionQ] :>
+		XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
+	Cell[content_, "Subitem", ___?OptionQ] :>
+		XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
 
+	(*--------------------------------*)
+	(* Text                           *)
+	(*--------------------------------*)
+
+	plainText_?StringQ :> plainText,
+	TextData[inline_?ListQ] :> Map[convertToHtml, inline],
+	TextData[content_] :> convertToHtml[content],
+
+	StyleBox[content_, style_?StringQ] :> Replace[style, {
+		"Code" :> XMLElement["code", {}, {convertToHtml[content]}],
+		other_ :> RaiseError["unhandled StyleBox style: ``", InputForm[other]]
+	}],
+
+	(*--------------------------------*)
+	(* Boxes                          *)
+	(*--------------------------------*)
+
+
+
+	other_ :> RaiseError["unhandled: ``", InputForm[other]]
 }]
 
 AddUnmatchedArgumentsHandler[convertToHtml]
+
+(*======================================*)
+
+convertToAnchorLinkHtml[content_] := Module[{
+	contentString = convertToString[content],
+	contentSlug
+},
+	contentSlug = StringReplace[contentString, {
+		" " -> "-",
+		Whitespace.. -> "-"
+	}];
+
+	RaiseAssert[StringQ[contentSlug]];
+
+	XMLElement[
+		"a",
+		{
+			(* TODO:
+				Is there a way to make this work? GitHub prepends
+				"user-content-" and anchor links work. How are they doing that?
+				JavaScript?
+			*)
+			(* Note:
+				Use a name that can't easily collide with other possible sources
+				for element id's on this page.
+			*)
+			(* "id" -> "auto-anchor--" <> contentSlug, *)
+			"id" -> contentSlug,
+			"class" -> "anchor",
+			"href" -> "#" <> contentSlug
+		},
+		{
+			convertToHtml[content]
+		}
+	]
+]
+
+AddUnmatchedArgumentsHandler[convertToAnchorLinkHtml]
+
+(*======================================*)
+
+convertToString[expr_] := Replace[expr, {
+	string_?StringQ :> string,
+	items_?ListQ :> StringJoin[convertToString /@ items],
+	TextData[content_] :> convertToString[content],
+	StyleBox[content_, ___] :> convertToString[content],
+	other_ :> RaiseError["no rule to convert form to string: ``", InputForm[other]]
+}]
+
+AddUnmatchedArgumentsHandler[convertToString]
+
+(*======================================*)
+
 
 End[]
 
