@@ -140,6 +140,24 @@ buildWebNotebook[
 					background: #ff0b;
 					text-decoration: underline;
 				}
+
+				p.nb-Subtitle {
+					font-style: oblique;
+				}
+
+				code {
+					padding: 0.25em;
+					background: #ddd;
+				}
+
+				pre.nb-Program {
+					display: block;
+
+					padding: 1em;
+					margin: 1em auto;
+
+					background: #e5e5e5;
+				}
 				", StartOfLine ~~ "\t\t\t\t" -> ""]
 			}]
 		}],
@@ -191,7 +209,7 @@ convertToHtml[expr_] := Replace[expr, {
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[cells_?ListQ, Open]] :> Map[convertToHtml, cells],
 	Cell[content_, "Title", ___?OptionQ] :> XMLElement["h1", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Subtitle", ___?OptionQ] :> XMLElement["p", {}, {convertToAnchorLinkHtml[content]}],
+	Cell[content_, "Subtitle", ___?OptionQ] :> XMLElement["p", {"class" -> "nb-Subtitle"}, {convertToAnchorLinkHtml[content]}],
 	Cell[content_, "Chapter", ___?OptionQ] :> XMLElement["h2", {}, {convertToAnchorLinkHtml[content]}],
 	Cell[content_, "Section", ___?OptionQ] :> XMLElement["h3", {}, {convertToAnchorLinkHtml[content]}],
 	Cell[content_, "Subsection", ___?OptionQ] :> XMLElement["h4", {}, {convertToAnchorLinkHtml[content]}],
@@ -204,6 +222,13 @@ convertToHtml[expr_] := Replace[expr, {
 		XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
 	Cell[content_, "Subitem", ___?OptionQ] :>
 		XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
+
+	(*-------------*)
+	(* Cells: Code *)
+	(*-------------*)
+
+	Cell[content_, "Program", ___?OptionQ] :>
+		XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[content]}],
 
 	(*--------------------------------*)
 	(* Text                           *)
