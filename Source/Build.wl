@@ -214,6 +214,11 @@ convertToHtml[expr_] := Replace[expr, {
 		options = {options0},
 		element
 	},
+		If[MemberQ[styles, "Excluded"],
+			(* TODO: Better sentinel value for 'nothing' HTML? *)
+			Return[{}, Module];
+		];
+
 		element = Fold[
 			{html, style} |-> Replace[style, {
 				(*===================================*)

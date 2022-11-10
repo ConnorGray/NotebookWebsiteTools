@@ -1,10 +1,55 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`Notebook`"]
 
+
 MakeNotebookTaggingRules
+MakeNotebookStyleDefinitions
+MakeNotebookDockedCells
+
+UpdateNotebook::usage = "UpdateNotebook[obj] updates the website notebook specified by the notebook object obj."
 
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
+
+Needs["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]
+
+(*====================================*)
+
+UpdateNotebook[nb_NotebookObject] := Module[{
+	metadata,
+	documentType,
+	createdByPacletVersion
+},
+	metadata = Replace[Options[nb, TaggingRules], {
+		{TaggingRules -> KeyValuePattern["ConnorGray/NotebookWebsiteTools" -> metadata_]} :> metadata,
+		other_ :> RaiseError[
+			"Notebook does not have expected \"ConnorGray/NotebookWebsiteTools\" TaggingRules value"
+		]
+	}];
+
+	{documentType, createdByPacletVersion} = Replace[metadata, {
+		KeyValuePattern[{
+			"DocumentType" -> type_?StringQ,
+			"CreatedByPacletVersion" -> createdBy_?StringQ
+		}] :> {type, createdBy},
+		other_ :> RaiseError[
+			"Notebook metadata does not have expected fields: ``",
+			InputForm[other]
+		]
+	}];
+
+	(* NOTE: documentType and createdByPacletVersion should be used to customize
+		the update code below if and when backwards-incompatible changes are
+		made to the website notebook format. *)
+
+	SetOptions[nb, {
+		DockedCells -> MakeNotebookDockedCells[documentType],
+		StyleDefinitions -> MakeNotebookStyleDefinitions[]
+	}]
+]
+
+AddUnmatchedArgumentsHandler[UpdateNotebook]
 
 (*====================================*)
 
@@ -29,6 +74,118 @@ MakeNotebookTaggingRules[documentType: _?StringQ] := Module[{
 ]
 
 AddUnmatchedArgumentsHandler[MakeNotebookTaggingRules]
+
+(*====================================*)
+
+MakeNotebookStyleDefinitions[] := Module[{},
+	Notebook[{
+		Cell[StyleData[StyleDefinitions -> "Default.nb"] ],
+
+		(*====================*)
+		(* Content Processing *)
+		(*====================*)
+
+		Cell[StyleData["Excluded"],
+			Background -> $ExcludedColor,
+			CellFrame -> {{3, False}, {False, False}},
+			CellFrameColor -> $ExcludedAccentColor
+		],
+
+		(*====================================*)
+		(* Toolbar button TemplateBox styles  *)
+		(*====================================*)
+
+		Cell[
+			StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
+			TemplateBoxOptions -> {
+				DisplayFunction -> $iconAndLabelButtonTemplate
+			}
+		]
+	}]
+]
+
+AddUnmatchedArgumentsHandler[MakeNotebookStyleDefinitions]
+
+(*------------------------------------*)
+
+(*
+	Parameters: {icon, label, tooltip, action, buttonMethod, buttonDefaultBackground, buttonAccentColor}
+
+	(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
+	very basic evaluator doesn't not support named Function parameters.)
+*)
+$iconAndLabelButtonTemplate = Function[
+	DynamicModuleBox[{state = "default"},
+		TagBox[
+			ButtonBox[
+				FrameBox[
+					GridBox[
+						{{
+							StyleBox[
+								#1,
+								GraphicsBoxOptions -> {
+									BaseStyle -> Dynamic[
+										Switch[state,
+											"hovered", White,
+											_, #7
+										]
+									]
+								}
+							],
+							PaneBox[#2]
+						}},
+						GridBoxAlignment -> {
+							"Columns" -> {{Left}},
+							"Rows" -> {{Center}}
+						}
+					],
+					BaseStyle -> {
+						FontSize -> 10,
+						FontWeight -> Automatic,
+						FontColor -> Dynamic[Switch[state,
+							"hovered", White,
+							_, #7
+						]]
+					},
+					FrameMargins -> {{2, 2}, {2, 1}},
+					FrameStyle -> Directive[Thickness[1], #7],
+					Background -> Dynamic[Switch[state,
+						"default",
+							#6,
+						"hovered",
+							RGBColor[1, 0.5, 0],
+						"pressed",
+							Gray
+					]],
+					RoundingRadius -> 3
+				],
+				Appearance -> None,
+				ButtonFunction :> #4,
+				Method -> #5,
+				Evaluator -> Automatic
+			],
+			EventHandlerTag[{		
+				"MouseEntered" :> (state = "hovered"),
+				"MouseExited" :> (state = "default"),
+				{"MouseDown", 1} :> (state = "pressed"),
+				{"MouseUp", 1} :> (state = "hovered"),
+				PassEventsDown -> True,
+				PassEventsUp -> True,
+				Method -> "Preemptive"
+			}]
+		],
+		DynamicModuleValues :> {}
+	]
+]
+
+(*====================================*)
+
+MakeNotebookDockedCells[documentType: _?StringQ] := Replace[documentType, {
+	"BlogPost" :> MakeBlogPostDockedCells[],
+	other_ :> RaiseError["Unhandled document type in MakeNotebookDockedCells: ``", other]
+}]
+
+AddUnmatchedArgumentsHandler[MakeNotebookDockedCells]
 
 (*====================================*)
 

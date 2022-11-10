@@ -2,10 +2,13 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]
 
 CreateBlogPostNotebook
 
+MakeBlogPostDockedCells
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`"]
+Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
 
 CreateBlogPostNotebook[title: _?StringQ] := Module[{nb},
 	nb = Notebook[{
@@ -15,8 +18,9 @@ CreateBlogPostNotebook[title: _?StringQ] := Module[{nb},
 			"Subtitle"
 		]
 	},
-		DockedCells -> makeBlogPostDockedCells[],
-		TaggingRules -> MakeNotebookTaggingRules["BlogPost"]
+		DockedCells -> MakeBlogPostDockedCells[],
+		TaggingRules -> MakeNotebookTaggingRules["BlogPost"],
+		StyleDefinitions -> MakeNotebookStyleDefinitions[]
 	];
 
 	nb
@@ -26,11 +30,9 @@ AddUnmatchedArgumentsHandler[CreateBlogPostNotebook]
 
 (*====================================*)
 
-makeBlogPostDockedCells[] := Module[{},
-	{}
-]
+MakeBlogPostDockedCells[] := MakeStandardWebsiteNotebookToolbar[]
 
-AddUnmatchedArgumentsHandler[makeBlogPostDockedCells]
+AddUnmatchedArgumentsHandler[MakeBlogPostDockedCells]
 
 End[]
 
