@@ -49,6 +49,13 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 			Cell[content, Sequence @@ DeleteCases[{a, b}, style]]
 		),
 		Cell[content_, styles___String, opts___?OptionQ] :> (
+			(* Note:
+				Place the newly added style at the end, to ensure it always
+				gets the last say on what the styling of the cell is. E.g. if
+				the style being added is "Excluded", then the cell will always
+				have a red background, even if it is also e.g. a "Program" cell
+				(which normally have gray backgrounds).
+			*)
 			Cell[content, styles, style, opts]
 		),
 		other_ :> RaiseError[
