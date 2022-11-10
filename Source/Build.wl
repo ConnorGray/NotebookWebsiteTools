@@ -208,27 +208,50 @@ convertToHtml[expr_] := Replace[expr, {
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[cells_?ListQ, Open]] :> Map[convertToHtml, cells],
-	Cell[content_, "Title", ___?OptionQ] :> XMLElement["h1", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Subtitle", ___?OptionQ] :> XMLElement["p", {"class" -> "nb-Subtitle"}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Chapter", ___?OptionQ] :> XMLElement["h2", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Section", ___?OptionQ] :> XMLElement["h3", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Subsection", ___?OptionQ] :> XMLElement["h4", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Subsubsection", ___?OptionQ] :> XMLElement["h5", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Subsubsubsection", ___?OptionQ] :> XMLElement["h6", {}, {convertToAnchorLinkHtml[content]}],
-	Cell[content_, "Text", ___?OptionQ] :> XMLElement["p", {}, {convertToHtml[content]}],
-	Cell[content_, "Item", ___?OptionQ] :>
-		XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
-	Cell[content_, "ItemNumbered", ___?OptionQ] :>
-		XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
-	Cell[content_, "Subitem", ___?OptionQ] :>
-		XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
 
-	(*-------------*)
-	(* Cells: Code *)
-	(*-------------*)
+	Cell[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
+		styles = {styles0},
+		options = {options0},
+		element
+	},
+		element = Fold[
+			{html, style} |-> Replace[style, {
+				(*===================================*)
+				(* Headers with auto-anchor linking. *)
+				(*===================================*)
 
-	Cell[content_, "Program", ___?OptionQ] :>
-		XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[content]}],
+				"Title" :> XMLElement["h1", {}, {makeAnchorLinkHtml[content, html]}],
+				"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {makeAnchorLinkHtml[content, html]}],
+				"Chapter" :> XMLElement["h2", {}, {makeAnchorLinkHtml[content, html]}],
+				"Section" :> XMLElement["h3", {}, {makeAnchorLinkHtml[content, html]}],
+				"Subsection" :> XMLElement["h4", {}, {makeAnchorLinkHtml[content, html]}],
+				"Subsubsection" :> XMLElement["h5", {}, {makeAnchorLinkHtml[content, html]}],
+				"Subsubsubsection" :> XMLElement["h6", {}, {makeAnchorLinkHtml[content, html]}],
+
+				(*===============*)
+				(* Textual cells *)
+				(*===============*)
+
+				"Text" :> XMLElement["p", {}, {convertToHtml[content]}],
+				"Item" :> XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
+				"ItemNumbered" :> XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
+				"Subitem" :> XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
+
+				(*============*)
+				(* Code cells *)
+				(*============*)
+
+				"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[content]}],
+
+				other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[content]]
+			}],
+			convertToHtml[content],
+			styles
+		];
+
+		(* TODO: Handle the `options` as well. *)
+		element
+	],
 
 	(*--------------------------------*)
 	(* Text                           *)
@@ -299,16 +322,24 @@ AddUnmatchedArgumentsHandler[convertToHtml]
 
 (*======================================*)
 
-convertToAnchorLinkHtml[content_] := Module[{
+makeAnchorLinkHtml[content_, html_] := Module[{
 	contentString = convertToString[content],
 	contentSlug
 },
+	RaiseAssert[StringQ[contentString]];
+
 	contentSlug = StringReplace[contentString, {
 		" " -> "-",
 		Whitespace.. -> "-"
 	}];
 
 	RaiseAssert[StringQ[contentSlug]];
+	RaiseAssert[
+		MatchQ[html, _XMLElement | _?StringQ],
+		"expected anchor link with label `` html value to be an XMLElement or string: ``",
+		InputForm[contentString],
+		InputForm[html]
+	];
 
 	XMLElement[
 		"a",
@@ -327,13 +358,11 @@ convertToAnchorLinkHtml[content_] := Module[{
 			"class" -> "anchor",
 			"href" -> "#" <> contentSlug
 		},
-		{
-			convertToHtml[content]
-		}
+		{html}
 	]
 ]
 
-AddUnmatchedArgumentsHandler[convertToAnchorLinkHtml]
+AddUnmatchedArgumentsHandler[makeAnchorLinkHtml]
 
 (*======================================*)
 
