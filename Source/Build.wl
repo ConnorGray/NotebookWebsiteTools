@@ -248,6 +248,32 @@ convertToHtml[expr_] := Replace[expr, {
 
 				"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[content]}],
 
+				(*===============*)
+				(* Special cells *)
+				(*===============*)
+
+				"LiteralHTML" :> Module[{literalHTMLString},
+					(* TODO: Option to convertToString that issues a warning if
+						this contains non-plain-text content? *)
+					literalHTMLString = convertToString[content];
+
+					RaiseAssert[StringQ[literalHTMLString]];
+
+					(* Parse the cell content into an XMLElement. This ensures
+					   that the resulting document doesn't have any syntax
+					   errors due to malformed HTML provided by the user. *)
+					literalHTML = Replace[ImportString[literalHTMLString, "XML"], {
+						XMLObject["Document"][{}, html_XMLElement, {}] :> html,
+						other_ :> RaiseError[
+							"Imported literal HTML had unexpected format: ``: ``",
+							InputForm @ Snippet[literalHTMLString, 3],
+							InputForm @ other
+						]
+					}];
+
+					literalHTML
+				],
+
 				other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[content]]
 			}],
 			convertToHtml[content],
@@ -318,7 +344,6 @@ convertToHtml[expr_] := Replace[expr, {
 		ButtonData -> {URL[url_?StringQ], None},
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
-
 
 	other_ :> RaiseError["unhandled: ``", InputForm[other]]
 }]
