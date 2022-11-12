@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      6448,        161]
-NotebookOptionsPosition[      1811,         55]
-NotebookOutlinePosition[      5950,        154]
-CellTagsIndexPosition[      5907,        151]
+NotebookDataLength[      7150,        180]
+NotebookOptionsPosition[      2388,         71]
+NotebookOutlinePosition[      6527,        170]
+CellTagsIndexPosition[      6484,        167]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -38,23 +38,39 @@ Cell["Literal HTML", "Subsubsection",
 9f8c28ce38e3"],
 
 Cell["\<\
-<div style=\"color: red; background: cyan; font-weight: \
-bold;\">\"hello\"</div>\
+<p style=\"color: red; background: cyan; font-weight: bold;\">
+\tThis is an HTML literal cell (a cell with style \
+<code>\"LiteralHTML\"</code>).
+</p>\
 \>", "LiteralHTML",
  CellChangeTimes->{{3.877097436078456*^9, 3.8770974393685207`*^9}, {
   3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
-  3.87709774123554*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
+  3.87709774123554*^9}, {3.877284887363449*^9, 
+  3.8772849319437113`*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
 30a951836bbf"]
 }, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell["Excluded Cells", "Subsubsection",
  CellChangeTimes->{{3.877097874831409*^9, 
   3.87709787809033*^9}},ExpressionUUID->"ddd37613-ac81-406e-8b4b-\
-d24fb658d2ef"]
+d24fb658d2ef"],
+
+Cell[TextData[{
+ "This is an excluded cell (a cell with style ",
+ StyleBox["\[OpenCurlyDoubleQuote]Excluded\[CloseCurlyDoubleQuote]", "Code"],
+ "). Excluded cells are not translated into HTML and are not shown in any way \
+in the website .html built from the notebook."
+}], "Text", "Excluded",
+ CellChangeTimes->{{3.8772847889344387`*^9, 
+  3.87728486771672*^9}},ExpressionUUID->"9c9c5778-9c2a-4857-871e-\
+f82c41209808"]
+}, Open  ]]
 }, Open  ]]
 },
 WindowSize->{808, 911},
-WindowMargins->{{Automatic, 422}, {Automatic, 146}},
+WindowMargins->{{Automatic, 289}, {109, Automatic}},
 DockedCells->{
   Cell[
    BoxData[
@@ -159,9 +175,12 @@ Cell[667, 24, 109, 0, 53, "Subtitle",ExpressionUUID->"8cdd3191-09f9-4f73-bbc6-cc
 Cell[779, 26, 308, 4, 46, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 Cell[CellGroupData[{
 Cell[1112, 34, 165, 3, 45, "Subsubsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
-Cell[1280, 39, 336, 7, 48, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+Cell[1280, 39, 456, 10, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
 }, Open  ]],
-Cell[1631, 49, 164, 3, 45, "Subsubsection",ExpressionUUID->"ddd37613-ac81-406e-8b4b-d24fb658d2ef"]
+Cell[CellGroupData[{
+Cell[1773, 54, 164, 3, 45, "Subsubsection",ExpressionUUID->"ddd37613-ac81-406e-8b4b-d24fb658d2ef"],
+Cell[1940, 59, 420, 8, 74, "Text",ExpressionUUID->"9c9c5778-9c2a-4857-871e-f82c41209808"]
+}, Open  ]]
 }, Open  ]]
 }
 ]
