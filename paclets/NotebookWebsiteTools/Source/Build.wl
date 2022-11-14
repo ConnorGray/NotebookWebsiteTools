@@ -3,6 +3,7 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`Build`"]
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
+Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
@@ -268,6 +269,36 @@ convertToHtml[expr_] := Replace[expr, {
 					literalHTML = importHTMLFragment[literalHTMLString];
 
 					literalHTML
+				],
+
+				"HighlightSyntax" :> Module[{
+					syntaxString,
+					syntaxName,
+					syntaxHTMLString,
+					syntaxHTML
+				},
+					(* TODO: Option to convertToString that issues a warning if
+						this contains non-plain-text content? *)
+					syntaxString = convertToString[content];
+
+					RaiseAssert[StringQ[syntaxString]];
+
+					syntaxName = Lookup[options, "Syntax", "Plain Text"];
+					theme = Lookup[options, "Theme", "Solarized (light)"];
+
+					syntaxHTMLString = Replace[
+						(* TODO(feature): Support theme argument here. *)
+						$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme],
+						{
+							html_?StringQ :> html,
+							error_?FailureQ :> RaiseError[error],
+							other_ :> RaiseError["Syntax highlighting returned unexpected result: ``", other]
+						}
+					];
+
+					syntaxHTML = importHTMLFragment[syntaxHTMLString];
+
+					syntaxHTML
 				],
 
 				other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[content]]

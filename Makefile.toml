@@ -1,0 +1,19 @@
+[config]
+default_to_workspace = false
+
+#---------------------------------------
+# Development tasks
+#---------------------------------------
+
+# Define `$ cargo make paclet`
+[tasks.paclet]
+dependencies = ["build-library-resources"]
+script = { file = "./scripts/build-paclet.wls" }
+
+#---------------------------------------
+# Helper tasks
+#---------------------------------------
+
+[tasks.build-library-resources]
+command = "cargo"
+args = ["build"]

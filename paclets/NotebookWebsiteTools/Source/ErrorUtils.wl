@@ -49,6 +49,10 @@ RaiseError[formatStr_?StringQ, args___] := (
 	]
 )
 
+RaiseError[failure: _Failure] := (
+	Throw[failure, $RaiseErrorTag]
+)
+
 RaiseError[args___] := Throw[
 	Failure["PackagesError", <|
 		"MessageTemplate" -> ToString[StringForm[

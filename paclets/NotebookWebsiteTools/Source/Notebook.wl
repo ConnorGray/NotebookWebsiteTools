@@ -115,6 +115,27 @@ MakeNotebookStyleDefinitions[] := Module[{},
 			]
 		],
 
+		Cell[StyleData["HighlightSyntax"],
+			CellMargins->{{66, 10}, {8, 8}},
+			Background -> RGBColor[0.58, 0.91, 1],
+			CellFrame -> {{3, False}, {False, False}},
+			CellFrameColor -> GrayLevel[0.8],
+			CellDingbat -> ToBoxes @ Style["</>", Bold, GrayLevel[0.6], ShowStringCharacters -> False],
+			(* Copied from Default.nb "Program" cells: *)
+			StripStyleOnPaste -> True,
+			CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
+			Hyphenation -> False,
+			AutoQuoteCharacters -> {},
+			PasteAutoQuoteCharacters -> {},
+			LanguageCategory -> None,
+			FontFamily -> Dynamic[
+				AbsoluteCurrentValue[
+					EvaluationCell[],
+					{StyleHints, "CodeFont"}
+				]
+			]
+		],
+
 		(*====================================*)
 		(* Toolbar button TemplateBox styles  *)
 		(*====================================*)

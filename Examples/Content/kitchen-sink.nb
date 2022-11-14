@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      7150,        180]
-NotebookOptionsPosition[      2388,         71]
-NotebookOutlinePosition[      6527,        170]
-CellTagsIndexPosition[      6484,        167]
+NotebookDataLength[      8767,        219]
+NotebookOptionsPosition[      3045,         93]
+NotebookOutlinePosition[      7827,        204]
+CellTagsIndexPosition[      7784,        201]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -32,7 +32,7 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
-Cell["Literal HTML", "Subsubsection",
+Cell["Literal HTML", "Subsection",
  CellChangeTimes->{{3.877097843281394*^9, 
   3.8770978486142683`*^9}},ExpressionUUID->"70442410-ef27-4aa1-b040-\
 9f8c28ce38e3"],
@@ -40,19 +40,19 @@ Cell["Literal HTML", "Subsubsection",
 Cell["\<\
 <p style=\"color: red; background: cyan; font-weight: bold;\">
 \tThis is an HTML literal cell (a cell with style \
-<code>\"LiteralHTML\"</code>).
+<code>\"LiteralHTML\"</code>). 
 </p>\
 \>", "LiteralHTML",
  CellChangeTimes->{{3.877097436078456*^9, 3.8770974393685207`*^9}, {
-  3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
-  3.87709774123554*^9}, {3.877284887363449*^9, 
-  3.8772849319437113`*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
+   3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
+   3.87709774123554*^9}, {3.877284887363449*^9, 3.8772849319437113`*^9}, 
+   3.8773987042215633`*^9},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
 30a951836bbf"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["Excluded Cells", "Subsubsection",
+Cell["Excluded Cells", "Subsection",
  CellChangeTimes->{{3.877097874831409*^9, 
   3.87709787809033*^9}},ExpressionUUID->"ddd37613-ac81-406e-8b4b-\
 d24fb658d2ef"],
@@ -62,15 +62,37 @@ Cell[TextData[{
  StyleBox["\[OpenCurlyDoubleQuote]Excluded\[CloseCurlyDoubleQuote]", "Code"],
  "). Excluded cells are not translated into HTML and are not shown in any way \
 in the website .html built from the notebook."
-}], "Text", "Excluded",
- CellChangeTimes->{{3.8772847889344387`*^9, 
-  3.87728486771672*^9}},ExpressionUUID->"9c9c5778-9c2a-4857-871e-\
-f82c41209808"]
+}], "Text", "Excluded",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Syntax Highlighting", "Subsection",
+ CellChangeTimes->{{3.877414851943595*^9, 
+  3.877414854437972*^9}},ExpressionUUID->"c9dd9044-901b-481b-9322-\
+7a051f0bdded"],
+
+Cell[TextData[{
+ "Cells with the style ",
+ StyleBox["\"HighlightSyntax\"", "Code"],
+ " will display with syntax highlighting in the built page."
+}], "Text",
+ CellChangeTimes->{{3.877426275058573*^9, 3.877426322463461*^9}, {
+  3.8774263638791447`*^9, 
+  3.8774263660800667`*^9}},ExpressionUUID->"e162ba3e-9261-4a33-9a9a-\
+9b93c6c0d30e"],
+
+Cell["\<\
+fn foo() {
+    println!(\"This is a function!\");
+}\
+\>", "HighlightSyntax",
+ "Syntax" -> "Rust",ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{808, 911},
-WindowMargins->{{Automatic, 289}, {109, Automatic}},
+WindowMargins->{{202, Automatic}, {Automatic, 35}},
 DockedCells->{
   Cell[
    BoxData[
@@ -110,6 +132,18 @@ StyleDefinitions->Notebook[{
       AbsoluteCurrentValue[
        EvaluationCell[], {StyleHints, "CodeFont"}]], Background -> 
     GrayLevel[0.95]], 
+   Cell[
+    StyleData["HighlightSyntax"], CellFrame -> {{3, False}, {False, False}}, 
+    CellDingbat -> StyleBox["\"</>\"", Bold, 
+      GrayLevel[0.6], ShowStringCharacters -> False, StripOnInput -> False], 
+    CellMargins -> {{66, 10}, {8, 8}}, StripStyleOnPaste -> True, 
+    CellFrameColor -> GrayLevel[0.8], 
+    CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, Hyphenation -> 
+    False, AutoQuoteCharacters -> {}, PasteAutoQuoteCharacters -> {}, 
+    LanguageCategory -> None, FontFamily -> Dynamic[
+      AbsoluteCurrentValue[
+       EvaluationCell[], {StyleHints, "CodeFont"}]], Background -> 
+    RGBColor[0.58, 0.91, 1]], 
    Cell[
     StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"], 
     TemplateBoxOptions -> {
@@ -174,12 +208,17 @@ Cell[580, 22, 84, 0, 98, "Title",ExpressionUUID->"ec3d4f7f-8896-4389-89da-91ce1c
 Cell[667, 24, 109, 0, 53, "Subtitle",ExpressionUUID->"8cdd3191-09f9-4f73-bbc6-cc9907c0ea8b"],
 Cell[779, 26, 308, 4, 46, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 Cell[CellGroupData[{
-Cell[1112, 34, 165, 3, 45, "Subsubsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
-Cell[1280, 39, 456, 10, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+Cell[1112, 34, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
+Cell[1277, 39, 484, 10, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1773, 54, 164, 3, 45, "Subsubsection",ExpressionUUID->"ddd37613-ac81-406e-8b4b-d24fb658d2ef"],
-Cell[1940, 59, 420, 8, 74, "Text",ExpressionUUID->"9c9c5778-9c2a-4857-871e-f82c41209808"]
+Cell[1798, 54, 161, 3, 54, "Subsection",ExpressionUUID->"ddd37613-ac81-406e-8b4b-d24fb658d2ef"],
+Cell[1962, 59, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2347, 69, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
+Cell[2517, 74, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[2855, 84, 162, 5, 82, "HighlightSyntax",ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"]
 }, Open  ]]
 }, Open  ]]
 }

@@ -5,6 +5,7 @@ PacletObject[<|
 	"WolframVersion" -> "13.1+",
 	"Extensions" -> {
 		{"Kernel", "Root" -> "Source", "Context" -> "ConnorGray`NotebookWebsiteTools`"},
+		{"LibraryLink"},
 		{"Documentation", "Language" -> "English"}
 	}
 |>]
