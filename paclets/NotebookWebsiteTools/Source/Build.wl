@@ -265,14 +265,7 @@ convertToHtml[expr_] := Replace[expr, {
 					(* Parse the cell content into an XMLElement. This ensures
 					   that the resulting document doesn't have any syntax
 					   errors due to malformed HTML provided by the user. *)
-					literalHTML = Replace[ImportString[literalHTMLString, "XML"], {
-						XMLObject["Document"][{}, html_XMLElement, {}] :> html,
-						other_ :> RaiseError[
-							"Imported literal HTML had unexpected format: ``: ``",
-							InputForm @ Snippet[literalHTMLString, 3],
-							InputForm @ other
-						]
-					}];
+					literalHTML = importHTMLFragment[literalHTMLString];
 
 					literalHTML
 				],
@@ -410,6 +403,43 @@ convertToString[expr_] := Replace[expr, {
 AddUnmatchedArgumentsHandler[convertToString]
 
 (*======================================*)
+
+importHTMLFragment[htmlString: _?StringQ] := Module[{},
+	(* NOTE:
+		Import using the {"HTML", "XMLObject"} format instead of "XML", because
+		whitespace is not significant in generic XML, but it is in HTML. E.g.
+		HTML with pre-formatted input (e.g. content in <pre> tags) is imported
+		incorrectly as XML:
+
+			ImportString["<pre>    leading spaces</pre>"]
+				=> XMLElement["pre", {}, {"leading spaces"}]
+	*)
+	Replace[ImportString[htmlString, {"HTML", "XMLObject"}], {
+		XMLObject["Document"][
+			{XMLObject["Declaration"]["Version" -> "1.0", "Standalone" -> "yes"]},
+			XMLElement[
+				"html",
+				{{"http://www.w3.org/2000/xmlns/", "xmlns"} -> "http://www.w3.org/1999/xhtml"},
+				{
+					XMLElement["body", {}, elements:{(_XMLElement | _String)...}]
+				}
+			],
+			{}
+		] :> Replace[elements, {
+			(* TODO(polish): Support empty LiteralHTML cells. *)
+			{} :> RaiseError["Unsupported empty LiteralHTML content: ``", InputForm[htmlString]],
+			{one_} :> one,
+			many:{__} :> RaiseError["Unsupported LiteralHTML cell with multiple top-level tags: ``", many]
+		}],
+		other_ :> RaiseError[
+			"Imported HTML had unexpected format: ``: ``",
+			InputForm @ Snippet[htmlString, 3],
+			InputForm @ other
+		]
+	}]
+]
+
+AddUnmatchedArgumentsHandler[importHTMLFragment]
 
 
 End[]
