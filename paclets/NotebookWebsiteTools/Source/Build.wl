@@ -252,7 +252,10 @@ convertToHtml[expr_] := Replace[expr, {
 				(* Special cells *)
 				(*===============*)
 
-				"LiteralHTML" :> Module[{literalHTMLString},
+				"LiteralHTML" :> Module[{
+					literalHTMLString,
+					literalHTML
+				},
 					(* TODO: Option to convertToString that issues a warning if
 						this contains non-plain-text content? *)
 					literalHTMLString = convertToString[content];
