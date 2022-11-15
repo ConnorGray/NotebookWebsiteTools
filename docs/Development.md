@@ -35,3 +35,34 @@ installed:
   ```shell
   $ cargo install cargo-make
   ```
+
+## Updating Kitchen Sink Examples
+
+*These instructions are currently only executable by me (Connor Gray), as they*
+*require access to my Wolfram Cloud account.*
+
+Delete the existing kitchen-sink.html page:
+
+```wolfram
+DeleteFile[CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html"]]
+```
+
+Publish the updated kitchen-sink.html page:
+
+```wolfram
+CopyFile[
+	"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/kitchen-sink.html",
+	CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html", Permissions -> "Public"]
+]
+```
+
+Update the rasterized view of [kitchen-sink.nb](./images/kitchen-sink.nb.png):
+
+```wolfram
+Export[
+	"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/docs/images/kitchen-sink.nb.png",
+	Rasterize[NotebookOpen[
+		"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/Content/kitchen-sink.nb"
+  ]]
+]
+```
