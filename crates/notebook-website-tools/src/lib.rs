@@ -6,8 +6,10 @@ use wolfram_library_link::{
 use once_cell::sync::Lazy;
 
 use syntect::{
-    highlighting::{Theme, ThemeSet},
+    easy::HighlightLines,
+    highlighting::{Color, Style, Theme, ThemeSet},
     parsing::{SyntaxReference, SyntaxSet},
+    util::LinesWithEndings,
 };
 
 #[wll::export(wstp, hidden)]
@@ -26,8 +28,8 @@ static THEME_SET: Lazy<ThemeSet> = Lazy::new(|| ThemeSet::load_defaults());
 /// Highlights the input source string and returns an HTML string.
 #[wll::export(wstp)]
 fn highlight_to_html(args: Vec<Expr>) -> Expr {
-    if args.len() != 3 {
-        panic!("expected 3 arguments, got {}: {args:?}", args.len())
+    if args.len() != 4 {
+        panic!("expected 4 arguments, got {}: {args:?}", args.len())
     }
 
     let source: &str = args[0]
@@ -39,6 +41,9 @@ fn highlight_to_html(args: Vec<Expr>) -> Expr {
     let theme_name: &str = args[2]
         .try_as_str()
         .expect("expected 3rd arg to be a String");
+    let line_numbering = args[3]
+        .try_as_bool()
+        .expect("expected 4th argument to be a boolean");
 
     let syntax = match lookup_syntax(syntax_name) {
         Ok(syntax) => syntax,
@@ -50,10 +55,45 @@ fn highlight_to_html(args: Vec<Expr>) -> Expr {
         Err(error) => return error,
     };
 
-    match syntect::html::highlighted_html_for_string(source, &SYNTAX_SET, syntax, theme) {
-        Ok(html) => Expr::string(html),
-        Err(error) => panic!("error generating highlighted source as HTML: {error}"),
+    let default_background = theme.settings.background.unwrap_or(Color::WHITE);
+
+    // Open a pre.nb-HighlightSyntax element.
+    // Note: This logic based on syntect::html::start_highlighted_html_snippet(theme);
+    let mut html = {
+        let class = match line_numbering {
+            true => "nb-HighlightSyntax line-numbers",
+            false => "nb-HighlightSyntax",
+        };
+        format!(
+            "<pre class=\"{class}\" style=\"background-color:#{:02x}{:02x}{:02x};\">\n",
+            default_background.r, default_background.g, default_background.b
+        )
+    };
+
+    let mut highlighter = HighlightLines::new(syntax, theme);
+
+    for line in LinesWithEndings::from(source) {
+        let ranges: Vec<(Style, &str)> = highlighter
+            .highlight_line(line, &SYNTAX_SET)
+            .expect("error highlighting line");
+
+        // Wrap each line in a `span.ln` element, so that the CSS line-numbering
+        // logic can use that selector.
+        html.push_str("<span class=\"ln\">");
+
+        syntect::html::append_highlighted_html_for_styled_line(
+            &ranges,
+            syntect::html::IncludeBackground::IfDifferent(default_background),
+            &mut html,
+        )
+        .expect("error converting highlight styles to HTML");
+
+        html.push_str("</span>");
     }
+
+    html.push_str("</pre>");
+
+    Expr::string(html)
 }
 
 //======================================

@@ -159,6 +159,26 @@ buildWebNotebook[
 
 					background: #e5e5e5;
 				}
+
+				pre.nb-HighlightSyntax {
+					counter-reset: line;
+
+					padding: 0.333em;
+					border-radius: 0.25em;
+
+					line-height: 1.35;
+				}
+
+				pre.nb-HighlightSyntax.line-numbers span.ln:before {
+					counter-increment: line;
+					content: counter(line);
+
+					display: inline-block;
+					border-right: 1px solid #ccc;
+					padding: 0 0.5em;
+					margin-right: 0.5em;
+					color: #888;
+				}
 				", StartOfLine ~~ "\t\t\t\t" -> ""]
 			}]
 		}],
@@ -285,10 +305,11 @@ convertToHtml[expr_] := Replace[expr, {
 
 					syntaxName = Lookup[options, "Syntax", "Plain Text"];
 					theme = Lookup[options, "Theme", "Solarized (light)"];
+					lineNumbering = Lookup[options, "LineNumbering", False];
 
 					syntaxHTMLString = Replace[
 						(* TODO(feature): Support theme argument here. *)
-						$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme],
+						$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
 						{
 							html_?StringQ :> html,
 							error_?FailureQ :> RaiseError[error],

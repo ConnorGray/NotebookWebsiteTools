@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      8767,        219]
-NotebookOptionsPosition[      3045,         93]
-NotebookOutlinePosition[      7827,        204]
-CellTagsIndexPosition[      7784,        201]
+NotebookDataLength[     13481,        355]
+NotebookOptionsPosition[      6565,        210]
+NotebookOutlinePosition[     11372,        321]
+CellTagsIndexPosition[     11329,        318]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -30,32 +30,59 @@ Cell[BoxData[
  CellChangeTimes->{{3.8770628822101393`*^9, 3.8770628972453527`*^9}},
  CellLabel->"In[4]:=",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 
+Cell[TextData[{
+ "This document is a \[OpenCurlyQuote]kitchen sink\[CloseCurlyQuote] overview \
+of features supported by ",
+ ButtonBox["NotebookWebsiteTools",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/ConnorGray/NotebookWebsiteTools"], None},
+  ButtonNote->"https://github.com/ConnorGray/NotebookWebsiteTools"],
+ " notebooks."
+}], "Text",
+ CellChangeTimes->{{3.877497320893478*^9, 3.877497354686792*^9}, {
+  3.877505877021611*^9, 3.8775058779704847`*^9}, {3.877506687931808*^9, 
+  3.8775066879322233`*^9}},ExpressionUUID->"8f825d87-0aa8-4d65-91e8-\
+62141c43b7ab"],
+
 Cell[CellGroupData[{
 
-Cell["Literal HTML", "Subsection",
- CellChangeTimes->{{3.877097843281394*^9, 
-  3.8770978486142683`*^9}},ExpressionUUID->"70442410-ef27-4aa1-b040-\
-9f8c28ce38e3"],
+Cell["Wolfram Cells", "Chapter",
+ CellChangeTimes->{{3.877491124761135*^9, 
+  3.877491125927259*^9}},ExpressionUUID->"ee491715-3deb-4568-961a-\
+3cc55e27e8a5"],
+
+Cell[CellGroupData[{
+
+Cell["Program Cells", "Subsection",
+ CellChangeTimes->{{3.877491115227833*^9, 
+  3.8774911165385237`*^9}},ExpressionUUID->"f788e770-b2ae-4d84-aaeb-\
+f807499c6eb0"],
 
 Cell["\<\
-<p style=\"color: red; background: cyan; font-weight: bold;\">
-\tThis is an HTML literal cell (a cell with style \
-<code>\"LiteralHTML\"</code>). 
-</p>\
-\>", "LiteralHTML",
- CellChangeTimes->{{3.877097436078456*^9, 3.8770974393685207`*^9}, {
-   3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
-   3.87709774123554*^9}, {3.877284887363449*^9, 3.8772849319437113`*^9}, 
-   3.8773987042215633`*^9},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
-30a951836bbf"]
+fn foo() {
+    println!(\"This is a function!\");
+}\
+\>", "Program",
+ CellChangeTimes->{
+  3.877491136481577*^9},ExpressionUUID->"e3e7235b-daf5-414f-9878-\
+6ed2342747ae"]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
-Cell["Excluded Cells", "Subsection",
+Cell["Special Cells", "Chapter",
+ CellChangeTimes->{{3.877491121561555*^9, 
+  3.877491123042555*^9}},ExpressionUUID->"7b230c34-298f-4add-bf4f-\
+c3ec5432283f"],
+
+Cell[CellGroupData[{
+
+Cell["Excluded Cells", "Subsection", "Excluded",
  CellChangeTimes->{{3.877097874831409*^9, 
-  3.87709787809033*^9}},ExpressionUUID->"ddd37613-ac81-406e-8b4b-\
-d24fb658d2ef"],
+  3.87709787809033*^9}},ExpressionUUID->"ff1ac35e-1ebd-402e-a3f7-\
+eef1b1e90bed"],
 
 Cell[TextData[{
  "This is an excluded cell (a cell with style ",
@@ -63,6 +90,38 @@ Cell[TextData[{
  "). Excluded cells are not translated into HTML and are not shown in any way \
 in the website .html built from the notebook."
 }], "Text", "Excluded",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Literal HTML", "Subsection",
+ CellChangeTimes->{{3.877097843281394*^9, 
+  3.8770978486142683`*^9}},ExpressionUUID->"70442410-ef27-4aa1-b040-\
+9f8c28ce38e3"],
+
+Cell[TextData[{
+ "Cells with the style ",
+ StyleBox["\"LiteralHTML\"", "Code"],
+ " will appear verbatim in the built page."
+}], "Text",
+ CellChangeTimes->{{3.8774914857177277`*^9, 3.877491510795855*^9}, {
+  3.877492677006702*^9, 
+  3.877492677730262*^9}},ExpressionUUID->"7c46da46-7f84-4b96-ae8a-\
+c4e2670f40a7"],
+
+Cell["\<\
+<p style=\"color: forestgreen; background: linen; border-radius: 1em; \
+padding: 1em;\">
+\tThis is an HTML literal cell. 
+</p>\
+\>", "LiteralHTML",
+ CellChangeTimes->{{3.877097436078456*^9, 3.8770974393685207`*^9}, {
+   3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
+   3.87709774123554*^9}, {3.877284887363449*^9, 3.8772849319437113`*^9}, 
+   3.8773987042215633`*^9, {3.87749117119818*^9, 3.8774913229064493`*^9}, {
+   3.877491553855647*^9, 
+   3.877491613082822*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
+30a951836bbf"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -87,12 +146,70 @@ fn foo() {
     println!(\"This is a function!\");
 }\
 \>", "HighlightSyntax",
- "Syntax" -> "Rust",ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"]
+ "Syntax" -> "Rust",
+ "Theme" -> "Solarized (light)",
+ "LineNumbering" -> 
+ True,ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"],
+
+Cell[CellGroupData[{
+
+Cell["Options", "Subsubsection",
+ CellChangeTimes->{{3.877493034890729*^9, 3.877493036220522*^9}, {
+  3.877493267432939*^9, 
+  3.877493267917397*^9}},ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-\
+8ecc1b7e7208"],
+
+Cell[TextData[{
+ "The following cell options can be used to customize the appearance of ",
+ StyleBox["\"HighlightSyntax\"", "Code"],
+ " cells."
+}], "Text",
+ CellChangeTimes->{{3.877493347804405*^9, 
+  3.87749338207983*^9}},ExpressionUUID->"4da4bb29-7929-44ce-ad6b-\
+b9dd0e856245"],
+
+Cell[TextData[{
+ StyleBox["\"Syntax\"", "Code"],
+ " \[RightArrow] ",
+ StyleBox["\"name\"", "Code",
+  FontSlant->"Italic"]
+}], "Item",
+ CellChangeTimes->{{3.87749303846797*^9, 3.877493054348742*^9}, {
+  3.877493114503499*^9, 3.877493128002964*^9}, {3.877493217384695*^9, 
+  3.8774932190261517`*^9}},ExpressionUUID->"e0c6f308-16a1-4ad1-a506-\
+fe236c52036e"],
+
+Cell[TextData[{
+ StyleBox["\"Theme\"", "Code"],
+ " \[RightArrow] ",
+ StyleBox["\"name\"", "Code",
+  FontSlant->"Italic"]
+}], "Item",
+ CellChangeTimes->{{3.87749303846797*^9, 3.877493054348742*^9}, {
+  3.877493114503499*^9, 3.877493128002964*^9}, {3.877493207136239*^9, 
+  3.8774932262337723`*^9}},ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-\
+e21a6c03cd7c"],
+
+Cell[TextData[{
+ StyleBox["\"LineNumbering\"", "Code"],
+ " \[RightArrow] ",
+ StyleBox["True", "Code"],
+ " | ",
+ StyleBox["False", "Code",
+  FontWeight->"Bold"]
+}], "Item",
+ CellChangeTimes->{{3.87749303846797*^9, 3.877493054348742*^9}, {
+  3.877493114503499*^9, 3.877493128002964*^9}, {3.877493207136239*^9, 
+  3.877493233994637*^9}, {3.8774932833319683`*^9, 
+  3.8774933144153137`*^9}},ExpressionUUID->"d15ede70-55a5-4378-8081-\
+4a775eb0f72d"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 },
 WindowSize->{808, 911},
-WindowMargins->{{202, Automatic}, {Automatic, 35}},
+WindowMargins->{{145, Automatic}, {Automatic, 0}},
 DockedCells->{
   Cell[
    BoxData[
@@ -128,7 +245,7 @@ StyleDefinitions->Notebook[{
     CellFrameColor -> GrayLevel[0.8], 
     CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, Hyphenation -> 
     False, AutoQuoteCharacters -> {}, PasteAutoQuoteCharacters -> {}, 
-    FontFamily -> Dynamic[
+    LanguageCategory -> None, FontFamily -> Dynamic[
       AbsoluteCurrentValue[
        EvaluationCell[], {StyleHints, "CodeFont"}]], Background -> 
     GrayLevel[0.95]], 
@@ -207,18 +324,37 @@ Cell[CellGroupData[{
 Cell[580, 22, 84, 0, 98, "Title",ExpressionUUID->"ec3d4f7f-8896-4389-89da-91ce1c535a32"],
 Cell[667, 24, 109, 0, 53, "Subtitle",ExpressionUUID->"8cdd3191-09f9-4f73-bbc6-cc9907c0ea8b"],
 Cell[779, 26, 308, 4, 46, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
+Cell[1090, 32, 591, 13, 35, "Text",ExpressionUUID->"8f825d87-0aa8-4d65-91e8-62141c43b7ab"],
 Cell[CellGroupData[{
-Cell[1112, 34, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
-Cell[1277, 39, 484, 10, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+Cell[1706, 49, 158, 3, 69, "Chapter",ExpressionUUID->"ee491715-3deb-4568-961a-3cc55e27e8a5"],
+Cell[CellGroupData[{
+Cell[1889, 56, 163, 3, 54, "Subsection",ExpressionUUID->"f788e770-b2ae-4d84-aaeb-f807499c6eb0"],
+Cell[2055, 61, 180, 7, 84, "Program",ExpressionUUID->"e3e7235b-daf5-414f-9878-6ed2342747ae"]
+}, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[1798, 54, 161, 3, 54, "Subsection",ExpressionUUID->"ddd37613-ac81-406e-8b4b-d24fb658d2ef"],
-Cell[1962, 59, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+Cell[2284, 74, 158, 3, 69, "Chapter",ExpressionUUID->"7b230c34-298f-4add-bf4f-c3ec5432283f"],
+Cell[CellGroupData[{
+Cell[2467, 81, 173, 3, 70, "Subsection",ExpressionUUID->"ff1ac35e-1ebd-402e-a3f7-eef1b1e90bed"],
+Cell[2643, 86, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2347, 69, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
-Cell[2517, 74, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
-Cell[2855, 84, 162, 5, 82, "HighlightSyntax",ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"]
+Cell[3028, 96, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
+Cell[3193, 101, 312, 8, 35, "Text",ExpressionUUID->"7c46da46-7f84-4b96-ae8a-c4e2670f40a7"],
+Cell[3508, 111, 560, 12, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4105, 128, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
+Cell[4275, 133, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[4613, 143, 223, 8, 82, "HighlightSyntax",ExpressionUUID->"ec489a92-0569-45a2-8d77-3c360939befd"],
+Cell[CellGroupData[{
+Cell[4861, 155, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
+Cell[5071, 161, 280, 7, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
+Cell[5354, 170, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
+Cell[5712, 181, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
+Cell[6069, 192, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 }, Open  ]]
 }
