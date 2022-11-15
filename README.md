@@ -1,6 +1,6 @@
 # NotebookWebsiteTools
 
-A static site generated based on Wolfram Notebooks.
+A static site generator based on Wolfram Notebooks.
 
 ## Examples
 
