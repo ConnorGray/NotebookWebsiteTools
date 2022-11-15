@@ -107,6 +107,7 @@ MakeNotebookStyleDefinitions[] := Module[{},
 			Hyphenation -> False,
 			AutoQuoteCharacters -> {},
 			PasteAutoQuoteCharacters -> {},
+			LanguageCategory -> None,
 			FontFamily -> Dynamic[
 				AbsoluteCurrentValue[
 					EvaluationCell[],
