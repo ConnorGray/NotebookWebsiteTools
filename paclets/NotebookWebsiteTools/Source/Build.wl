@@ -277,9 +277,9 @@ convertToHtml[expr_] := Replace[expr, {
 					literalHTMLString,
 					literalHTML
 				},
-					(* TODO: Option to convertToString that issues a warning if
+					(* TODO: Option to ConvertToString that issues a warning if
 						this contains non-plain-text content? *)
-					literalHTMLString = convertToString[content];
+					literalHTMLString = ConvertToString[content];
 
 					RaiseAssert[StringQ[literalHTMLString]];
 
@@ -297,9 +297,9 @@ convertToHtml[expr_] := Replace[expr, {
 					syntaxHTMLString,
 					syntaxHTML
 				},
-					(* TODO: Option to convertToString that issues a warning if
+					(* TODO: Option to ConvertToString that issues a warning if
 						this contains non-plain-text content? *)
-					syntaxString = convertToString[content];
+					syntaxString = ConvertToString[content];
 
 					RaiseAssert[StringQ[syntaxString]];
 
@@ -401,7 +401,7 @@ AddUnmatchedArgumentsHandler[convertToHtml]
 (*======================================*)
 
 makeAnchorLinkHtml[content_, html_] := Module[{
-	contentString = convertToString[content],
+	contentString = ConvertToString[content],
 	contentSlug
 },
 	RaiseAssert[StringQ[contentString]];
@@ -441,18 +441,6 @@ makeAnchorLinkHtml[content_, html_] := Module[{
 ]
 
 AddUnmatchedArgumentsHandler[makeAnchorLinkHtml]
-
-(*======================================*)
-
-convertToString[expr_] := Replace[expr, {
-	string_?StringQ :> string,
-	items_?ListQ :> StringJoin[convertToString /@ items],
-	TextData[content_] :> convertToString[content],
-	StyleBox[content_, ___] :> convertToString[content],
-	other_ :> RaiseError["no rule to convert form to string: ``", InputForm[other]]
-}]
-
-AddUnmatchedArgumentsHandler[convertToString]
 
 (*======================================*)
 

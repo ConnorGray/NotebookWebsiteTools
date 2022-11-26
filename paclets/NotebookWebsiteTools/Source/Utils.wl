@@ -2,7 +2,11 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`Utils`"]
 
 RelativePath
 
+ConvertToString
+
 Begin["`Private`"]
+
+Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 (*========================================================*)
 
@@ -26,6 +30,25 @@ RelativePath[
 		FileNameJoin[pathParts[[Length[rootParts] + 1 ;;]]]
 	]
 ]
+
+(*========================================================*)
+
+ConvertToString[expr_] := Replace[expr, {
+	string_?StringQ /; StringMatchQ[string, "\"" ~~ ___ ~~ "\""] :> ToExpression[string],
+	string_?StringQ :> string,
+	items_?ListQ :> StringJoin[ConvertToString /@ items],
+	TextData[content_] :> ConvertToString[content],
+	StyleBox[content_, ___] :> ConvertToString[content],
+	BoxData[content_] :> ConvertToString[content],
+	RowBox[items_?ListQ] :> StringJoin[ConvertToString /@ items],
+	TemplateBox[items_?ListQ, "RowDefault"] :> StringJoin[ConvertToString /@ items],
+	other_ :> RaiseError["no rule to convert form to string: ``", InputForm[other]]
+}]
+
+AddUnmatchedArgumentsHandler[ConvertToString]
+
+(*======================================*)
+
 
 End[]
 
