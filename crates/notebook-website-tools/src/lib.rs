@@ -7,7 +7,7 @@ use once_cell::sync::Lazy;
 
 use syntect::{
     easy::HighlightLines,
-    highlighting::{Color, Style, Theme, ThemeSet},
+    highlighting::{Color, FontStyle, Style, Theme, ThemeSet},
     parsing::{SyntaxReference, SyntaxSet},
     util::LinesWithEndings,
 };
@@ -94,6 +94,134 @@ fn highlight_to_html(args: Vec<Expr>) -> Expr {
     html.push_str("</pre>");
 
     Expr::string(html)
+}
+
+/// Highlights the input source string and returns Wolfram `Style[..]`
+/// expressions.
+#[wll::export(wstp)]
+fn highlight_to_wolfram(args: Vec<Expr>) -> Expr {
+    if args.len() != 3 {
+        panic!("expected 3 arguments, got {}: {args:?}", args.len())
+    }
+
+    let source: &str = args[0]
+        .try_as_str()
+        .expect("expected 1st arg to be a String");
+    let syntax_name: &str = args[1]
+        .try_as_str()
+        .expect("expected 2nd arg to be a String");
+    let theme_name: &str = args[2]
+        .try_as_str()
+        .expect("expected 3rd arg to be a String");
+
+    let syntax = match lookup_syntax(syntax_name) {
+        Ok(syntax) => syntax,
+        Err(error) => return error,
+    };
+
+    let theme = match lookup_theme(theme_name) {
+        Ok(theme) => theme,
+        Err(error) => return error,
+    };
+
+    let default_background = theme.settings.background.unwrap_or(Color::WHITE);
+
+    let mut highlighter = HighlightLines::new(syntax, theme);
+
+    let mut segments = Vec::new();
+
+    for line in LinesWithEndings::from(source) {
+        let ranges: Vec<(Style, &str)> = highlighter
+            .highlight_line(line, &SYNTAX_SET)
+            .expect("error highlighting line");
+
+        segments.extend(ranges.into_iter().map(|(style, source_fragment)| {
+            syntect_style_span_to_wolfram(style, source_fragment, default_background)
+        }))
+    }
+
+    Expr::list(segments)
+}
+
+fn syntect_style_span_to_wolfram(
+    style: Style,
+    source_fragment: &str,
+    default_background: Color,
+) -> Expr {
+    let Style {
+        foreground,
+        background,
+        font_style,
+    } = style;
+
+    let mut wl_style_args = vec![
+        Expr::string(source_fragment),
+        Expr::rule(
+            Symbol::new("System`FontColor"),
+            syntect_color_to_wolfram(foreground),
+        ),
+    ];
+
+    // Only include this option if it is different from
+    // the (presumed to exist) theme default background
+    // color.
+    if background != default_background {
+        wl_style_args.push(Expr::rule(
+            Symbol::new("System`Background"),
+            syntect_color_to_wolfram(background),
+        ));
+    }
+
+    if font_style.intersects(FontStyle::BOLD) {
+        wl_style_args.push(Expr::from(Symbol::new("System`Bold")));
+    }
+
+    if font_style.intersects(FontStyle::UNDERLINE) {
+        wl_style_args.push(Expr::from(Symbol::new("System`Underlined")));
+    }
+
+    if font_style.intersects(FontStyle::ITALIC) {
+        wl_style_args.push(Expr::from(Symbol::new("System`Italic")));
+    }
+
+    Expr::normal(Symbol::new("System`Style"), wl_style_args)
+}
+
+fn syntect_color_to_wolfram(color: syntect::highlighting::Color) -> Expr {
+    let syntect::highlighting::Color { r, g, b, a } = color;
+
+    let mut rgb = vec![
+        Expr::real(r as f64 / 255.0),
+        Expr::real(g as f64 / 255.0),
+        Expr::real(b as f64 / 255.0),
+    ];
+
+    if a != 255 {
+        rgb.push(Expr::real(a as f64 / 255.0));
+    }
+
+    Expr::normal(Symbol::new("System`RGBColor"), rgb)
+}
+
+#[wll::export(wstp)]
+fn theme_default_background(args: Vec<Expr>) -> Expr {
+    if args.len() != 1 {
+        panic!("expected 1 arguments, got {}: {args:?}", args.len())
+    }
+
+    let theme_name: &str = args[0]
+        .try_as_str()
+        .expect("expected 1st arg to be a String");
+
+    let theme = match lookup_theme(theme_name) {
+        Ok(theme) => theme,
+        Err(error) => return error,
+    };
+
+    match theme.settings.background {
+        Some(color) => syntect_color_to_wolfram(color),
+        None => Expr::symbol(Symbol::new("System`None")),
+    }
 }
 
 //======================================

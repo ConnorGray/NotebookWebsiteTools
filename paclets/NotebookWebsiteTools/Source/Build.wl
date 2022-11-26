@@ -293,7 +293,9 @@ convertToHtml[expr_] := Replace[expr, {
 
 				"HighlightSyntax" :> Module[{
 					syntaxString,
+					highlightOptions,
 					syntaxName,
+					theme,
 					syntaxHTMLString,
 					syntaxHTML
 				},
@@ -303,9 +305,21 @@ convertToHtml[expr_] := Replace[expr, {
 
 					RaiseAssert[StringQ[syntaxString]];
 
-					syntaxName = Lookup[options, "Syntax", "Plain Text"];
-					theme = Lookup[options, "Theme", "Solarized (light)"];
-					lineNumbering = Lookup[options, "LineNumbering", False];
+					highlightOptions = Replace[options, {
+						KeyValuePattern[
+							TaggingRules -> KeyValuePattern[
+								"HighlightSyntaxOptions" -> value:(_?AssociationQ | {___?OptionQ})
+							]
+						] :> value,
+						_ -> <||>
+					}];
+
+					(* TODO(polish): If using default for both syntax and theme,
+						use a gray colored background instead of Solarized. Defaulting
+						for both should look much like a Program cell. *)
+					syntaxName = Lookup[highlightOptions, "Syntax", "Plain Text"];
+					theme = Lookup[highlightOptions, "Theme", "Solarized (light)"];
+					lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
 
 					syntaxHTMLString = Replace[
 						(* TODO(feature): Support theme argument here. *)

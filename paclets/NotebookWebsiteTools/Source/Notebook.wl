@@ -11,6 +11,8 @@ Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
+Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
+Needs["ConnorGray`NotebookWebsiteTools`UI`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]
 
@@ -117,8 +119,9 @@ MakeNotebookStyleDefinitions[] := Module[{},
 		],
 
 		Cell[StyleData["HighlightSyntax"],
+			MenuSortingValue -> 1600,
 			CellMargins->{{66, 10}, {8, 8}},
-			Background -> RGBColor[0.58, 0.91, 1],
+			Background :> Dynamic[HighlightSyntaxCellDefaultBackground[EvaluationCell[]]],
 			CellFrame -> {{3, False}, {False, False}},
 			CellFrameColor -> GrayLevel[0.8],
 			CellDingbat -> ToBoxes @ Style["</>", Bold, GrayLevel[0.6], ShowStringCharacters -> False],
@@ -134,7 +137,22 @@ MakeNotebookStyleDefinitions[] := Module[{},
 					EvaluationCell[],
 					{StyleHints, "CodeFont"}
 				]
-			]
+			],
+			CellEventActions -> {
+				PassEventsDown -> True,
+				(* Note: This undocumented option causes the cell event handler
+					actions to be run AFTER the default FE behavior for the
+					event runs (the default is that user-specified event handlers
+					are run before the default FE ones).
+
+					We want this because we need the character the user typed to
+					be added to the content of the cell before we read the
+					contents of the cell in our "KeyDown" event hander. *)
+				EvaluationOrder -> After,
+				"KeyDown" :> (
+					HandleHighlightSyntaxCellEvent[EvaluationCell[], "KeyDown"]
+				)
+			}
 		],
 
 		(*====================================*)
@@ -210,7 +228,7 @@ $iconAndLabelButtonTemplate = Function[
 				Method -> #5,
 				Evaluator -> Automatic
 			],
-			EventHandlerTag[{		
+			EventHandlerTag[{
 				"MouseEntered" :> (state = "hovered"),
 				"MouseExited" :> (state = "default"),
 				{"MouseDown", 1} :> (state = "pressed"),
