@@ -371,11 +371,11 @@ convertToHtml[expr_] := Replace[expr, {
 		element = Fold[
 			{elem, option} |-> Replace[option, {
 				(FontWeight -> weight_) :> Replace[weight, {
-					"Bold" :> XMLElement["b", {}, {elem}],
+					"Bold" | Bold :> XMLElement["b", {}, {elem}],
 					other_ :> RaiseError["unhandled FontWeight option value: ``", InputForm[weight]]
 				}],
 				(FontSlant -> slant_) :> Replace[slant, {
-					"Italic" :> XMLElement["i", {}, {elem}],
+					"Italic" | Italic :> XMLElement["i", {}, {elem}],
 					other_ :> RaiseError["unhandled FontSlant option value: ``", InputForm[slant]]
 				}],
 				(FontColor -> color_) :> Replace[color, {
