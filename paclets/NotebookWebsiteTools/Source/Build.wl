@@ -317,8 +317,8 @@ convertToHtml[expr_] := Replace[expr, {
 					(* TODO(polish): If using default for both syntax and theme,
 						use a gray colored background instead of Solarized. Defaulting
 						for both should look much like a Program cell. *)
-					syntaxName = Lookup[highlightOptions, "Syntax", "Plain Text"];
-					theme = Lookup[highlightOptions, "Theme", "Solarized (light)"];
+					syntaxName = Lookup[highlightOptions, "Syntax", $DefaultSyntax];
+					theme = Lookup[highlightOptions, "Theme", $DefaultTheme];
 					lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
 
 					syntaxHTMLString = Replace[

@@ -224,6 +224,32 @@ fn theme_default_background(args: Vec<Expr>) -> Expr {
     }
 }
 
+#[wll::export(wstp)]
+fn known_highlight_choices(args: Vec<Expr>) -> Expr {
+    if args.len() != 0 {
+        panic!("expected 0 arguments, got {}: {args:?}", args.len())
+    }
+
+    let syntaxes = SYNTAX_SET
+        .syntaxes()
+        .iter()
+        .map(|syntax| Expr::string(&syntax.name))
+        .collect();
+    let themes = THEME_SET
+        .themes
+        .keys()
+        .map(|name| Expr::string(name))
+        .collect();
+
+    Expr::normal(
+        Symbol::new("System`Association"),
+        vec![
+            Expr::rule(Expr::string("Syntaxes"), Expr::list(syntaxes)),
+            Expr::rule(Expr::string("Themes"), Expr::list(themes)),
+        ],
+    )
+}
+
 //======================================
 // Helpers
 //======================================

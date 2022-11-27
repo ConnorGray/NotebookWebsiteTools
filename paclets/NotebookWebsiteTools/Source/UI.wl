@@ -24,9 +24,11 @@ ToggleExcluded::usage = "ToggleExcluded toggles the Excluded status of selected 
 
 HandleHighlightSyntaxCellEvent::usage = "HandleHighlightSyntaxCellEvent[cellObj, event]"
 HighlightSyntaxCellDefaultBackground
+KnownHighlightChoices
 
 Begin["`Private`"]
 
+Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
@@ -154,6 +156,10 @@ AddUnmatchedArgumentsHandler[HighlightSyntaxCellDefaultBackground]
 
 (*====================================*)
 
+KnownHighlightChoices[] := GetLibraryFunction["known_highlight_choices"][]
+
+(*====================================*)
+
 getHighlightSyntaxCellSyntaxAndTheme[cellObj_CellObject] := Module[{},
 	syntaxOptions = Replace[AbsoluteCurrentValue[cellObj, {TaggingRules, "HighlightSyntaxOptions"}], {
 		Inherited -> <||>,
@@ -166,8 +172,8 @@ getHighlightSyntaxCellSyntaxAndTheme[cellObj_CellObject] := Module[{},
 	}];
 
 	{
-		Lookup[syntaxOptions, "Syntax", "Plain Text"],
-		Lookup[syntaxOptions, "Theme", "Solarized (light)"]
+		Lookup[syntaxOptions, "Syntax", $DefaultSyntax],
+		Lookup[syntaxOptions, "Theme", $DefaultTheme]
 	}
 ]
 

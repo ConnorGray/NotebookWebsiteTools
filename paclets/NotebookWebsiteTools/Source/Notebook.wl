@@ -9,6 +9,7 @@ UpdateNotebook::usage = "UpdateNotebook[obj] updates the website notebook specif
 
 Begin["`Private`"]
 
+Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
@@ -124,7 +125,6 @@ MakeNotebookStyleDefinitions[] := Module[{},
 			Background :> Dynamic[HighlightSyntaxCellDefaultBackground[EvaluationCell[]]],
 			CellFrame -> {{3, False}, {False, False}},
 			CellFrameColor -> GrayLevel[0.8],
-			CellDingbat -> ToBoxes @ Style["</>", Bold, GrayLevel[0.6], ShowStringCharacters -> False],
 			(* Copied from Default.nb "Program" cells: *)
 			StripStyleOnPaste -> True,
 			CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
@@ -137,6 +137,114 @@ MakeNotebookStyleDefinitions[] := Module[{},
 					EvaluationCell[],
 					{StyleHints, "CodeFont"}
 				]
+			],
+			(* TODO: Uncomment this PageWidth setting after the bug with its
+				interaction with attached cells is fixed. (The Right-aligned
+				attached cell is not shown) *)
+			(* Don't word wrap content in HighlightSyntax cells, which is
+			   typically pre-formatted code input. *)
+			(* PageWidth -> Infinity, *)
+			Initialization :> (
+				AttachCell[
+					EvaluationCell[],
+					Cell[
+						BoxData @ ToBoxes @ PaneSelector[
+							{
+								True -> Row[{
+									PopupMenu[
+										Dynamic @ CurrentValue[
+											ParentCell @ EvaluationCell[],
+											{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
+										],
+										KnownHighlightChoices[]["Syntaxes"],
+										$DefaultSyntax,
+										Framed[
+											Style[
+												Row[{
+													Dynamic @ Replace[
+														CurrentValue[
+															ParentCell @ EvaluationCell[],
+															{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
+														],
+														Inherited -> $DefaultSyntax
+													],
+													"\[VeryThinSpace]\[RightAngleBracket]"
+												}],
+												FontSize -> 11,
+												FontWeight -> "Bold",
+												FontColor -> GrayLevel[0.5]
+											],
+											FrameMargins -> 4,
+											FrameStyle -> Directive[
+												RGBColor[0.8549, 0.83137, 0.72549],
+												AbsoluteThickness[1]
+											],
+											ImageMargins -> {{0, 3}, {0, 0}},
+											RoundingRadius -> 3,
+											Background -> LightYellow
+										]
+									],
+									PopupMenu[
+										Dynamic @ CurrentValue[
+											ParentCell @ EvaluationCell[],
+											{TaggingRules, "HighlightSyntaxOptions", "Theme"}
+										],
+										KnownHighlightChoices[]["Themes"],
+										$DefaultTheme,
+										Framed[
+											Style[
+												Row[{
+													Dynamic @ Replace[
+														CurrentValue[
+															ParentCell @ EvaluationCell[],
+															{TaggingRules, "HighlightSyntaxOptions", "Theme"}
+														],
+														Inherited -> $DefaultTheme
+													],
+													"\[VeryThinSpace]\[RightAngleBracket]"
+												}],
+												FontSize -> 11,
+												FontWeight -> "Bold",
+												FontColor -> GrayLevel[0.5]
+											],
+											FrameMargins -> 4,
+											FrameStyle -> Directive[
+												RGBColor[0.8549, 0.83137, 0.72549],
+												AbsoluteThickness[1]
+											],
+											ImageMargins -> {{0, 3}, {0, 0}},
+											RoundingRadius -> 3,
+											Background -> LightYellow
+										]
+									]
+								}],
+								False -> ""
+							},
+							(* Display the Syntax picker popup if the mouse is
+							   over the parent HighlightSynax cell or this
+							   attached cell. *)
+							Dynamic[
+								CurrentValue[
+									ParentCell @ EvaluationCell[],
+									{TaggingRules, "parent_cell_is_hovered"}
+								] || CurrentValue["MouseOver"]
+							]
+						],
+						CellEventActions -> None,
+						Background -> Transparent
+					],
+					{Right, Top},
+					-2,
+					{Right, Top}
+				]
+			),
+			CellDynamicExpression -> Dynamic[
+				(* If this HighlightSyntax cell is hovered, set this tagging rule
+					so that the attached settings cell knows to display itself.
+					Use `Inherited` in the False case so that this tagging rule
+					is removed when hovering ends. *)
+				CurrentValue[EvaluationCell[], {TaggingRules, "parent_cell_is_hovered"}] =
+					If[TrueQ[CurrentValue["MouseOver"]], True, Inherited];
 			],
 			CellEventActions -> {
 				PassEventsDown -> True,
