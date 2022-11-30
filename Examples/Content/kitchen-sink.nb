@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     22581,        565]
-NotebookOptionsPosition[     11504,        332]
-NotebookOutlinePosition[     20048,        525]
-CellTagsIndexPosition[     20005,        522]
+NotebookDataLength[     22592,        566]
+NotebookOptionsPosition[     11515,        333]
+NotebookOutlinePosition[     20059,        526]
+CellTagsIndexPosition[     20016,        523]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -150,8 +150,9 @@ Cell[TextData[{
  StyleBox[ButtonBox["XMLElement",
   BaseStyle->"Hyperlink",
   ButtonData->{
-    URL["https://reference.wolfram.com/language/XMLElement"], None},
-  ButtonNote->"https://reference.wolfram.com/language/XMLElement"], "Code"],
+    URL["https://reference.wolfram.com/language/ref/XMLElement"], None},
+  ButtonNote->"https://reference.wolfram.com/language/ref/XMLElement"], 
+  "Code"],
  " expression, which will be converted into HTML that will appear in the \
 built page."
 }], "Text",
@@ -550,19 +551,19 @@ Cell[3508, 111, 784, 15, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9
 Cell[CellGroupData[{
 Cell[4329, 131, 236, 4, 54, "Subsection",ExpressionUUID->"c02d7087-3a6d-4f4e-8537-b63166142970"],
 Cell[4568, 137, 394, 8, 58, "Text",ExpressionUUID->"8a64d2f3-02cc-407d-9e83-297df2fe5301"],
-Cell[4965, 147, 553, 13, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
-Cell[5521, 162, 1583, 32, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
+Cell[4965, 147, 564, 14, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
+Cell[5532, 163, 1583, 32, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[7141, 199, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
-Cell[7311, 204, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
-Cell[7649, 214, 2082, 58, 82, "HighlightSyntax",ExpressionUUID->"55b2dae0-f21f-489e-9bf7-21fcdc64025f"],
+Cell[7152, 200, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
+Cell[7322, 205, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[7660, 215, 2082, 58, 82, "HighlightSyntax",ExpressionUUID->"55b2dae0-f21f-489e-9bf7-21fcdc64025f"],
 Cell[CellGroupData[{
-Cell[9756, 276, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
-Cell[9966, 282, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
-Cell[10293, 292, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
-Cell[10651, 303, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
-Cell[11008, 314, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
+Cell[9767, 277, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
+Cell[9977, 283, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
+Cell[10304, 293, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
+Cell[10662, 304, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
+Cell[11019, 315, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
