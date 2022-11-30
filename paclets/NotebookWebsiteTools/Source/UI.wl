@@ -61,6 +61,16 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	highlightedContent,
 	newCell
 },
+	(* Optimization: If the key the user pressed was an arrow key (moving the
+		cursor position), don't reparse and rehighlight the content of the
+		cell. *)
+	Replace[CurrentValue["EventKey"], {
+		(* Arrow keys: up, down, left, right *)
+		"\:f700" | "\:f701" | "\:f702" | "\:f703" :> (
+			Return[Null]
+		)
+	}];
+
 	cellObj = EvaluationCell[];
 
 	(*---------------------------------------------------*)
