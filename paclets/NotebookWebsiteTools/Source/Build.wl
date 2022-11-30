@@ -37,6 +37,26 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 
 	RaiseConfirm @ CreateDirectory[buildDir];
 
+	(*----------------------------*)
+	(* Copy the common web assets *)
+	(*----------------------------*)
+
+	Module[{webAssetsSource},
+		webAssetsSource = PacletObject["ConnorGray/NotebookWebsiteTools"]["AssetLocation", "web_assets"];
+
+		RaiseAssert[
+			DirectoryQ[webAssetsSource],
+			"invalid NotebookWebsiteTools web_assets directory: ``",
+			webAssetsSource
+		];
+
+		RaiseConfirm @ CopyDirectory[webAssetsSource, FileNameJoin[{buildDir, "web_assets"}]]
+	];
+
+	(*--------------------------*)
+	(* Build the notebook files *)
+	(*--------------------------*)
+
 	Scan[
 		nbFile |-> Module[{},
 			buildWebNotebook[nbFile, contentDir, buildDir]
@@ -54,6 +74,9 @@ buildWebNotebook[
 	contentDir: _?StringQ,
 	buildDir: _?StringQ
 ] := Module[{
+	(* Relative path to the web_assets directory. *)
+	(* TODO: Adjust this based on the URL of the notebook being processed. *)
+	webAssetsLocation = "web_assets/",
 	nbFileRelative = RelativePath[contentDir, nbFile],
 	htmlFile,
 	metadata
@@ -106,83 +129,10 @@ buildWebNotebook[
 
 	html = XMLElement["html", {}, {
 		XMLElement["head", {}, {
-			XMLElement["style", {}, {
-				StringReplace["
-				body {
-					margin: 0 auto;
-					max-width: 50em;
-
-					font-family: \"Helvetica\", \"Arial\", sans-serif;
-
-					line-height: 1.5;
-					padding: 4em 1em;
-
-					color: #555;
-				}
-
-				h2 {
-					margin-top: 1em;
-					padding-top: 1em;
-				}
-
-				h1, h2, h3, strong {
-					color: #333;
-				}
-
-				a.anchor {
-					color: inherit;
-					text-decoration: none;
-				}
-
-				a.anchor:hover {
-					text-decoration: underline;
-				}
-
-				/* Display a yellow background on `#<id>` anchor link sections. */
-				a.anchor:target {
-					background: #ff0b;
-					text-decoration: underline;
-				}
-
-				p.nb-Subtitle {
-					font-style: oblique;
-				}
-
-				code {
-					padding: 0.25em;
-					background: #ddd;
-				}
-
-				pre.nb-Program {
-					display: block;
-
-					padding: 1em;
-					margin: 1em auto;
-
-					background: #e5e5e5;
-				}
-
-				pre.nb-HighlightSyntax {
-					counter-reset: line;
-
-					padding: 0.333em;
-					border-radius: 0.25em;
-
-					line-height: 1.35;
-				}
-
-				pre.nb-HighlightSyntax.line-numbers span.ln:before {
-					counter-increment: line;
-					content: counter(line);
-
-					display: inline-block;
-					border-right: 1px solid #ccc;
-					padding: 0 0.5em;
-					margin-right: 0.5em;
-					color: #888;
-				}
-				", StartOfLine ~~ "\t\t\t\t" -> ""]
-			}]
+			XMLElement["link", {
+				"rel" -> "stylesheet",
+				"href" -> URLBuild[{webAssetsLocation, "notebook-website-default.css"}]
+			}, {}]
 		}],
 		XMLElement["body", {}, elements]
 	}];

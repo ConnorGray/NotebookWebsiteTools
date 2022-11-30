@@ -6,6 +6,9 @@ PacletObject[<|
 	"Extensions" -> {
 		{"Kernel", "Root" -> "Source", "Context" -> "ConnorGray`NotebookWebsiteTools`"},
 		{"LibraryLink"},
+		{"Asset", "Assets" -> {
+			{"web_assets", "Assets/web_assets"}
+		}},
 		{"Documentation", "Language" -> "English"}
 	}
 |>]
