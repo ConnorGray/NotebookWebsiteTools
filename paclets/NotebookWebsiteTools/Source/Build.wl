@@ -43,6 +43,8 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 		],
 		notebooks
 	];
+
+	Success["NotebookWebsiteBuild", <| "ProcessedNotebooks" -> notebooks |>]
 ]
 
 (*======================================*)
