@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     18633,        478]
-NotebookOptionsPosition[      8468,        261]
-NotebookOutlinePosition[     16522,        444]
-CellTagsIndexPosition[     16479,        441]
+NotebookDataLength[     22581,        565]
+NotebookOptionsPosition[     11504,        332]
+NotebookOutlinePosition[     20048,        525]
+CellTagsIndexPosition[     20005,        522]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -28,7 +28,7 @@ Cell[BoxData[
  RowBox[{"ConnorGray`NotebookWebsiteTools`Notebook`UpdateNotebook", "[", 
   RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]], "Input", "Excluded",
  CellChangeTimes->{{3.8770628822101393`*^9, 3.8770628972453527`*^9}},
- CellLabel->"In[4]:=",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
+ CellLabel->"In[9]:=",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 
 Cell[TextData[{
  "This document is a \[OpenCurlyQuote]kitchen sink\[CloseCurlyQuote] overview \
@@ -112,16 +112,87 @@ c4e2670f40a7"],
 Cell["\<\
 <p style=\"color: forestgreen; background: linen; border-radius: 1em; \
 padding: 1em;\">
-\tThis is an HTML literal cell. 
+\tThis is an HTML literal cell.
 </p>\
 \>", "LiteralHTML",
  CellChangeTimes->{{3.877097436078456*^9, 3.8770974393685207`*^9}, {
    3.8770974824228897`*^9, 3.877097488445972*^9}, {3.877097683125455*^9, 
    3.87709774123554*^9}, {3.877284887363449*^9, 3.8772849319437113`*^9}, 
    3.8773987042215633`*^9, {3.87749117119818*^9, 3.8774913229064493`*^9}, {
-   3.877491553855647*^9, 
-   3.877491613082822*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
+   3.877491553855647*^9, 3.877491613082822*^9}, {3.8787841960012093`*^9, 
+   3.8787842070115643`*^9}, {3.878784331435953*^9, 3.8787843753753767`*^9}, 
+   3.878784536120648*^9, {3.87878477737866*^9, 3.878784781046134*^9}, {
+   3.8788088788306217`*^9, 
+   3.878808879011531*^9}},ExpressionUUID->"5528dc19-497c-4b5b-9646-\
 30a951836bbf"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Computed HTML", "Subsection",
+ CellChangeTimes->{{3.878549994340487*^9, 3.8785499963398323`*^9}, {
+   3.878550935285842*^9, 3.878550937116639*^9}, 
+   3.878550968353672*^9},ExpressionUUID->"c02d7087-3a6d-4f4e-8537-\
+b63166142970"],
+
+Cell[TextData[{
+ "Cells with the style ",
+ StyleBox["\"ComputedHTML\"", "Code"],
+ " will be evaluated at the time the notebook is being converted into HTML."
+}], "Text",
+ CellChangeTimes->{{3.8774914857177277`*^9, 3.877491510795855*^9}, {
+  3.877492677006702*^9, 3.877492677730262*^9}, {3.8788090436456738`*^9, 
+  3.878809133118314*^9}},ExpressionUUID->"8a64d2f3-02cc-407d-9e83-\
+297df2fe5301"],
+
+Cell[TextData[{
+ "The evaluation result must be an ",
+ StyleBox[ButtonBox["XMLElement",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://reference.wolfram.com/language/XMLElement"], None},
+  ButtonNote->"https://reference.wolfram.com/language/XMLElement"], "Code"],
+ " expression, which will be converted into HTML that will appear in the \
+built page."
+}], "Text",
+ CellChangeTimes->{{3.8788091360349693`*^9, 3.8788091660044603`*^9}, {
+  3.878809202550849*^9, 
+  3.87880920311462*^9}},ExpressionUUID->"6697fa46-1e86-4c1e-ab47-\
+44094b78200b"],
+
+Cell[BoxData[
+ RowBox[{"XMLElement", "[", 
+  RowBox[{"\"\<p\>\"", ",", 
+   RowBox[{"{", "}"}], ",", 
+   RowBox[{"{", "\n", "\t", 
+    RowBox[{"XMLElement", "[", 
+     RowBox[{"\"\<i\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<title\>\"", "->", 
+        RowBox[{"DateString", "[", 
+         RowBox[{"{", 
+          RowBox[{"\"\<ISODateTime\>\"", ",", "\"\<ISOTimeZone\>\""}], "}"}], 
+         "]"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"\"\<Last built: \>\"", ",", 
+        RowBox[{"DateString", "[", 
+         RowBox[{"{", 
+          RowBox[{
+          "\"\<DayName\>\"", ",", " ", "\"\<, \>\"", ",", " ", 
+           "\"\<DayShort\>\"", ",", "\"\< \>\"", ",", "\"\<MonthName\>\"", 
+           ",", "\"\< \>\"", ",", "\"\<Year\>\"", ",", "\"\<, \>\"", ",", 
+           "\"\<Hour12Short\>\"", ",", "\"\<:\>\"", ",", "\"\<Minute\>\"", 
+           ",", "\"\<AMPMLowerCase\>\""}], "}"}], "]"}]}], "}"}]}], "]"}], 
+    "\n", "}"}]}], "]"}]], "ComputedHTML", "Input",
+ CellChangeTimes->{{3.878549925916852*^9, 3.8785499624412823`*^9}, {
+   3.8785510748087397`*^9, 3.878551120249165*^9}, {3.878783399850669*^9, 
+   3.878783406404936*^9}, {3.8787835909300947`*^9, 3.8787836225036077`*^9}, 
+   3.8787842606861897`*^9, {3.878784813623411*^9, 3.878784865239756*^9}, {
+   3.878786473312522*^9, 3.87878655279186*^9}, {3.878786876899218*^9, 
+   3.878786877144885*^9}, {3.878786920797873*^9, 3.8787869967638273`*^9}, {
+   3.8787870310571327`*^9, 3.878787096764105*^9}, {3.878808923557695*^9, 
+   3.878808927361516*^9}},ExpressionUUID->"7b228d23-c167-41b2-83e0-\
+6c0aa568e590"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -259,8 +330,8 @@ Cell[TextData[{
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{808, 911},
-WindowMargins->{{388, Automatic}, {Automatic, 0}},
+WindowSize->{801, 911},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 DockedCells->{
   Cell[
    BoxData[
@@ -286,8 +357,8 @@ StyleDefinitions->Notebook[{
     StyleData[StyleDefinitions -> "Default.nb"]], 
    Cell[
     StyleData["Excluded"], CellFrame -> {{3, False}, {False, False}}, 
-    CellFrameColor -> RGBColor[0.8, 0., 0.], Background -> 
-    RGBColor[1, 0.85, 0.85]], 
+    CellFrameColor -> RGBColor[0.8, 0., 0.], MenuSortingValue -> 2500, 
+    Background -> RGBColor[1, 0.85, 0.85]], 
    Cell[
     StyleData["LiteralHTML"], CellFrame -> {{3, False}, {False, False}}, 
     CellDingbat -> StyleBox["\"</>\"", Bold, 
@@ -296,10 +367,16 @@ StyleDefinitions->Notebook[{
     CellFrameColor -> GrayLevel[0.8], 
     CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, Hyphenation -> 
     False, AutoQuoteCharacters -> {}, PasteAutoQuoteCharacters -> {}, 
-    LanguageCategory -> None, FontFamily -> Dynamic[
+    LanguageCategory -> None, MenuSortingValue -> 2525, FontFamily -> 
+    Dynamic[
       AbsoluteCurrentValue[
        EvaluationCell[], {StyleHints, "CodeFont"}]], Background -> 
     GrayLevel[0.95]], 
+   Cell[
+    StyleData["ComputedHTML"], CellDingbat -> StyleBox["\"</>\"", Bold, 
+      GrayLevel[0.6], ShowStringCharacters -> False, StripOnInput -> False], 
+    DefaultFormatType -> DefaultInputFormatType, FormatType -> InputForm, 
+    MenuSortingValue -> 2550], 
    Cell[
     StyleData["HighlightSyntax"], CellFrame -> {{3, False}, {False, False}}, 
     CellMargins -> {{66, 10}, {8, 8}}, StripStyleOnPaste -> True, 
@@ -378,7 +455,7 @@ StyleDefinitions->Notebook[{
     GrayLevel[0.8], CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, 
     Hyphenation -> False, AutoQuoteCharacters -> {}, 
     PasteAutoQuoteCharacters -> {}, LanguageCategory -> None, 
-    MenuSortingValue -> 1600, FontFamily -> Dynamic[
+    MenuSortingValue -> 2575, FontFamily -> Dynamic[
       AbsoluteCurrentValue[
        EvaluationCell[], {StyleHints, "CodeFont"}]], Background :> Dynamic[
       ConnorGray`NotebookWebsiteTools`UI`HighlightSyntaxCellDefaultBackground[
@@ -429,7 +506,11 @@ StyleDefinitions->Notebook[{
             "hovered"), PassEventsDown -> True, PassEventsUp -> True, Method -> 
            "Preemptive"}]], DynamicModuleValues :> {}]& )}]}, Visible -> 
   False, FrontEndVersion -> "13.1 for Mac OS X ARM (64-bit) (June 16, 2022)", 
-  StyleDefinitions -> "Default.nb"],
+  StyleDefinitions -> Notebook[{
+     Cell[
+      StyleData["Input"]]}, Visible -> False, FrontEndVersion -> 
+    "13.1 for Mac OS X ARM (64-bit) (June 16, 2022)", StyleDefinitions -> 
+    "Default.nb"]],
 ExpressionUUID->"947ec5c0-85a2-401d-b044-22b4f1b28db5"
 ]
 (* End of Notebook Content *)
@@ -464,18 +545,24 @@ Cell[2643, 86, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-91543
 Cell[CellGroupData[{
 Cell[3028, 96, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
 Cell[3193, 101, 312, 8, 35, "Text",ExpressionUUID->"7c46da46-7f84-4b96-ae8a-c4e2670f40a7"],
-Cell[3508, 111, 560, 12, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+Cell[3508, 111, 784, 15, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[4105, 128, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
-Cell[4275, 133, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
-Cell[4613, 143, 2082, 58, 82, "HighlightSyntax",ExpressionUUID->"55b2dae0-f21f-489e-9bf7-21fcdc64025f"],
+Cell[4329, 131, 236, 4, 54, "Subsection",ExpressionUUID->"c02d7087-3a6d-4f4e-8537-b63166142970"],
+Cell[4568, 137, 394, 8, 58, "Text",ExpressionUUID->"8a64d2f3-02cc-407d-9e83-297df2fe5301"],
+Cell[4965, 147, 553, 13, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
+Cell[5521, 162, 1583, 32, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
+}, Open  ]],
 Cell[CellGroupData[{
-Cell[6720, 205, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
-Cell[6930, 211, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
-Cell[7257, 221, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
-Cell[7615, 232, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
-Cell[7972, 243, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
+Cell[7141, 199, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
+Cell[7311, 204, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[7649, 214, 2082, 58, 82, "HighlightSyntax",ExpressionUUID->"55b2dae0-f21f-489e-9bf7-21fcdc64025f"],
+Cell[CellGroupData[{
+Cell[9756, 276, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
+Cell[9966, 282, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
+Cell[10293, 292, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
+Cell[10651, 303, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
+Cell[11008, 314, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

@@ -240,6 +240,52 @@ convertToHtml[expr_] := Replace[expr, {
 			Return[{}, Module];
 		];
 
+		If[MemberQ[styles, "ComputedHTML"],
+			Module[{heldExpr, xml},
+				(*---------------------------------------------------------------*)
+				(* Parse the typeset content of the cell into a held expression. *)
+				(*---------------------------------------------------------------*)
+
+				heldExpr = Replace[content, {
+					(* TODO: What if content is not StandardForm? *)
+					BoxData[_] :> MakeExpression[content, StandardForm],
+					(* TODO: What if content is not BoxData? *)
+					TextData[_] :> RaiseError[
+						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
+						content
+					],
+					other_ :> RaiseError[
+						"Malformed ComputedHTML cell: expected BoxData: ",
+						InputForm[other]
+					]
+				}];
+
+				xml = ReleaseHold[heldExpr];
+
+				(*------------------------------------------------------------*)
+				(* Validate the result of evaluating the "ComputedHTML" cell. *)
+				(*------------------------------------------------------------*)
+
+				Replace[xml, {
+					XMLElement[_?StringQ, _?ListQ, _?ListQ] :> Null,
+					_XMLElement :> RaiseError[
+						"Malformed XMLElement returned from \"ComputedHTML\" cell: ``",
+						InputForm[xml]
+					],
+					other_ :> RaiseError[
+						"Expected evaluation of \"ComputedHTML\" to return XMLElement; got: ``",
+						InputForm[other]
+					]
+				}];
+
+				Return[xml];
+			]
+		];
+
+		(*------------------------------------------------------------------------*)
+		(* Assume this is a cell whose content can be converted directly to HTML. *)
+		(*------------------------------------------------------------------------*)
+
 		element = Fold[
 			{html, style} |-> Replace[style, {
 				(*===================================*)
@@ -407,7 +453,7 @@ convertToHtml[expr_] := Replace[expr, {
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
 
-	other_ :> RaiseError["unhandled: ``", InputForm[other]]
+	other_ :> RaiseError["unhandled cell content: ``", InputForm[other]]
 }]
 
 AddUnmatchedArgumentsHandler[convertToHtml]

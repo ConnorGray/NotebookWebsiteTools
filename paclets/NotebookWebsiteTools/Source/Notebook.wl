@@ -80,6 +80,8 @@ AddUnmatchedArgumentsHandler[MakeNotebookTaggingRules]
 
 (*====================================*)
 
+$MenuSortingValueOffset = 2500;
+
 MakeNotebookStyleDefinitions[] := Module[{},
 	Notebook[{
 		Cell[StyleData[StyleDefinitions -> "Default.nb"] ],
@@ -89,6 +91,7 @@ MakeNotebookStyleDefinitions[] := Module[{},
 		(*====================*)
 
 		Cell[StyleData["Excluded"],
+			MenuSortingValue -> $MenuSortingValueOffset,
 			Background -> $ExcludedColor,
 			CellFrame -> {{3, False}, {False, False}},
 			CellFrameColor -> $ExcludedAccentColor
@@ -99,6 +102,7 @@ MakeNotebookStyleDefinitions[] := Module[{},
 		(*===============*)
 
 		Cell[StyleData["LiteralHTML"],
+			MenuSortingValue -> $MenuSortingValueOffset + 25,
 			CellMargins->{{66, 10}, {8, 8}},
 			Background -> GrayLevel[0.95],
 			CellFrame -> {{3, False}, {False, False}},
@@ -119,8 +123,18 @@ MakeNotebookStyleDefinitions[] := Module[{},
 			]
 		],
 
+		(* TODO: Better name for this style. Template, plugin, etc? *)
+		Cell[StyleData["ComputedHTML"],
+			MenuSortingValue -> $MenuSortingValueOffset + 50,
+			StyleDefinitions -> StyleData["Input"],
+			DefaultFormatType -> DefaultInputFormatType,
+			FormatType -> InputForm,
+			MenuSortingValue -> $MenuSortingValueOffset,
+			CellDingbat -> ToBoxes @ Style["</>", Bold, GrayLevel[0.6], ShowStringCharacters -> False]
+		],
+
 		Cell[StyleData["HighlightSyntax"],
-			MenuSortingValue -> 1600,
+			MenuSortingValue -> $MenuSortingValueOffset + 75,
 			CellMargins->{{66, 10}, {8, 8}},
 			Background :> Dynamic[HighlightSyntaxCellDefaultBackground[EvaluationCell[]]],
 			CellFrame -> {{3, False}, {False, False}},
