@@ -430,8 +430,9 @@ makeAnchorLinkHtml[content_, html_] := Module[{
 	RaiseAssert[StringQ[contentString]];
 
 	contentSlug = StringReplace[contentString, {
-		" " -> "-",
-		Whitespace.. -> "-"
+		c:LetterCharacter :> ToLowerCase[c],
+		WhitespaceCharacter.. -> "-",
+		_ -> ""
 	}];
 
 	RaiseAssert[StringQ[contentSlug]];
