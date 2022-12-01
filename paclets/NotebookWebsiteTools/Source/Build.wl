@@ -204,14 +204,20 @@ convertToHtml[expr_] := Replace[expr, {
 		];
 
 		If[MemberQ[styles, "ComputedHTML"],
-			Module[{heldExpr, xml},
+			Module[{context, heldExpr, xml},
 				(*---------------------------------------------------------------*)
 				(* Parse the typeset content of the cell into a held expression. *)
 				(*---------------------------------------------------------------*)
 
+				context = UniqueContext["NotebookWebsiteBuild"];
+
 				heldExpr = Replace[content, {
 					(* TODO: What if content is not StandardForm? *)
-					BoxData[_] :> MakeExpression[content, StandardForm],
+					BoxData[_] :> (
+						Block[{$Context = context, $ContextPath = {"System`"}},
+							MakeExpression[content, StandardForm]
+						]
+					),
 					(* TODO: What if content is not BoxData? *)
 					TextData[_] :> RaiseError[
 						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
@@ -223,7 +229,9 @@ convertToHtml[expr_] := Replace[expr, {
 					]
 				}];
 
-				xml = ReleaseHold[heldExpr];
+				xml = Block[{$Context = context, $ContextPath = {"System`"}},
+					ReleaseHold[heldExpr]
+				];
 
 				(*------------------------------------------------------------*)
 				(* Validate the result of evaluating the "ComputedHTML" cell. *)

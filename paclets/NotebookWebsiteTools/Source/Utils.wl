@@ -4,6 +4,8 @@ RelativePath
 
 ConvertToString
 
+UniqueContext::usage = "UniqueContext[stem] generates a unique context name beginning with stem."
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
@@ -46,6 +48,22 @@ ConvertToString[expr_] := Replace[expr, {
 }]
 
 AddUnmatchedArgumentsHandler[ConvertToString]
+
+(*========================================================*)
+
+UniqueContext[stem_?StringQ] := Module[{ctx},
+	If[!TrueQ[Internal`SymbolNameQ[stem]],
+		Return[Failure["UniqueContext", <|
+			"MessageTemplate" -> "Invalid non-Symbol stem: ``"|>,
+			"MessageParameters" -> {stem}
+		]];
+	];
+
+	ctx = stem <> "$" <> ToString[$ModuleNumber] <> "`";
+	$ModuleNumber += 1;
+
+	ctx
+]
 
 (*======================================*)
 
