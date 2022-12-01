@@ -11,7 +11,8 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 	inputDir = RaiseConfirm @ ExpandFileName[inputDir0],
 	buildDir,
 	contentDir,
-	notebooks
+	notebooks,
+	htmlFiles
 },
 	buildDir = FileNameJoin[{inputDir, "build"}];
 	contentDir = FileNameJoin[{inputDir, "Content"}];
@@ -57,14 +58,22 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 	(* Build the notebook files *)
 	(*--------------------------*)
 
-	Scan[
+	htmlFiles = Map[
 		nbFile |-> Module[{},
 			buildWebNotebook[nbFile, contentDir, buildDir]
 		],
 		notebooks
 	];
 
-	Success["NotebookWebsiteBuild", <| "ProcessedNotebooks" -> notebooks |>]
+	RaiseAssert[MatchQ[htmlFiles, {File[_?StringQ]...}]];
+
+	Success["NotebookWebsiteBuild", <|
+		"ProcessedNotebooks" -> notebooks,
+		(* NOTE(UX): These File[..] values are clickable in the FE, making it
+			a quick and easy way for the caller of NotebookWebsiteBuild to open
+			one of the built files. *)
+		"OutputHTMLFiles" -> htmlFiles
+	|>]
 ]
 
 (*======================================*)
@@ -147,6 +156,8 @@ buildWebNotebook[
 	RaiseConfirm @ WriteString[htmlFile, htmlString];
 	(* Close the file we just opened, to work around bug #348068. *)
 	RaiseConfirm @ Close[File[htmlFile]];
+
+	File[htmlFile]
 
 
 
