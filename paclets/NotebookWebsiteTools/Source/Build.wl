@@ -279,6 +279,7 @@ convertToHtml[expr_] := Replace[expr, {
 				"Item" :> XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
 				"ItemNumbered" :> XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
 				"Subitem" :> XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
+				"Subsubitem" :> XMLElement["ul", {}, {"\t\t", XMLElement["li", {}, {convertToHtml[content]}]}],
 
 				(*============*)
 				(* Code cells *)
