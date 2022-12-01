@@ -395,6 +395,11 @@ convertToHtml[expr_] := Replace[expr, {
 					],
 					other_ :> RaiseError["unhandled FontColor option value: ``", InputForm[other]]
 				}],
+				(FontVariations -> {"StrikeThrough" -> True}) :> XMLElement[
+					"span",
+					{"style" -> "text-decoration: line-through"},
+					{elem}
+				],
 				other_ :> RaiseError["unhandled StyleBox option value: ``", InputForm[other]]
 			}],
 			element,
