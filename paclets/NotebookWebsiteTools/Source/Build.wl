@@ -213,9 +213,9 @@ convertToHtml[expr_] := Replace[expr, {
 
 				heldExpr = Replace[content, {
 					(* TODO: What if content is not StandardForm? *)
-					BoxData[_] :> (
+					BoxData[boxes_] :> (
 						Block[{$Context = context, $ContextPath = {"System`"}},
-							MakeExpression[content, StandardForm]
+							MakeExpression[boxes, StandardForm]
 						]
 					),
 					(* TODO: What if content is not BoxData? *)
@@ -230,7 +230,12 @@ convertToHtml[expr_] := Replace[expr, {
 				}];
 
 				xml = Block[{$Context = context, $ContextPath = {"System`"}},
-					ReleaseHold[heldExpr]
+					Replace[heldExpr, {
+						(* The cell has multiple input expressions. Return the
+							result of the last one. *)
+						{__HoldComplete} :> Last[ReleaseHold[heldExpr]],
+						_ :> ReleaseHold[heldExpr]
+					}]
 				];
 
 				(*------------------------------------------------------------*)
