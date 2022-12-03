@@ -124,12 +124,8 @@ MakeNotebookStyleDefinitions[] := Module[{},
 		],
 
 		(* TODO: Better name for this style. Template, plugin, etc? *)
-		Cell[StyleData["ComputedHTML"],
+		Cell[StyleData["ComputedHTML", StyleDefinitions -> StyleData["Input"]],
 			MenuSortingValue -> $MenuSortingValueOffset + 50,
-			StyleDefinitions -> StyleData["Input"],
-			DefaultFormatType -> DefaultInputFormatType,
-			FormatType -> InputForm,
-			MenuSortingValue -> $MenuSortingValueOffset,
 			CellDingbat -> ToBoxes @ Style["</>", Bold, GrayLevel[0.6], ShowStringCharacters -> False]
 		],
 
