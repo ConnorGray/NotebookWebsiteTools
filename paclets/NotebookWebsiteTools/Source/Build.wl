@@ -442,19 +442,32 @@ AddUnmatchedArgumentsHandler[convertToHtml]
 
 (*======================================*)
 
+makeAnchorContentSlug[content_] := Module[{
+	contentString = ConvertToString[content]
+},
+	RaiseAssert[StringQ[contentString]];
+
+	StringReplace[contentString, {
+		c:LetterCharacter :> ToLowerCase[c],
+		WhitespaceCharacter.. -> "-",
+		_ -> ""
+	}]
+]
+
+AddUnmatchedArgumentsHandler[makeAnchorContentSlug]
+
+(*======================================*)
+
 makeAnchorLinkHtml[content_, html_] := Module[{
 	contentString = ConvertToString[content],
 	contentSlug
 },
 	RaiseAssert[StringQ[contentString]];
 
-	contentSlug = StringReplace[contentString, {
-		c:LetterCharacter :> ToLowerCase[c],
-		WhitespaceCharacter.. -> "-",
-		_ -> ""
-	}];
+	contentSlug = makeAnchorContentSlug[contentString];
 
 	RaiseAssert[StringQ[contentSlug]];
+
 	RaiseAssert[
 		MatchQ[html, _XMLElement | _?StringQ],
 		"expected anchor link with label `` html value to be an XMLElement or string: ``",
