@@ -73,3 +73,31 @@ pre.nb-HighlightSyntax.line-numbers span.ln:before {
     margin-right: 0.5em;
     color: #888;
 }
+
+/*========================================================*/
+/* Built-In Widgets                                       */
+/*========================================================*/
+
+/*====================================*/
+/* TableOfContents[..]                */
+/*====================================*/
+
+nav.TableOfContents {
+    padding: 0em 1em;
+    display: inline-block;
+    background-color: #eee;
+    border: 2px solid gray;
+}
+
+nav.TableOfContents a {
+    color: cornflowerblue;
+    text-decoration: unset;
+}
+
+nav.TableOfContents a:hover {
+    text-decoration: underline
+}
+
+nav.TableOfContents ul {
+    padding-inline-start: 20px;
+}

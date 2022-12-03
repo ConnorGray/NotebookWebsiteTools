@@ -1,9 +1,13 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`Build`"]
 
+makeAnchorContentSlug
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
+Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
+
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
@@ -90,12 +94,17 @@ buildWebNotebook[
 	htmlFile,
 	metadata
 },
+Block[{
+	$CurrentNotebook
+},
 	RaiseAssert[StringQ[nbFileRelative]];
 
 	nb = Replace[Get[File[nbFile]], {
 		nb_Notebook :> nb,
 		other_ :> RaiseError["Error importing notebook at ``: ``", nbFile, InputForm[other]]
 	}];
+
+	$CurrentNotebook = nb;
 
 	metadata = Replace[Options[nb, TaggingRules], {
 		KeyValuePattern[TaggingRules -> KeyValuePattern["ConnorGray/NotebookWebsiteTools" -> value_]] :> value,
@@ -169,7 +178,7 @@ buildWebNotebook[
 	(* RaiseAssert[StringQ[urlPath]] *)
 	(* Print["    URL: ", InputForm @ urlPath]; *)
 
-]
+]]
 
 (*======================================*)
 
