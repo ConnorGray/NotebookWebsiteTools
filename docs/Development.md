@@ -51,8 +51,12 @@ Publish the updated kitchen-sink.html page:
 
 ```wolfram
 CopyFile[
-	"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/kitchen-sink.html",
-	CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html", Permissions -> "Public"]
+    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/kitchen-sink.html",
+    CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html", Permissions -> "Public"]
+]
+CopyFile[
+    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/web_assets/notebook-website-default.css",
+    CloudObject["Examples/NotebookWebsiteTools/web_assets/notebook-website-default.css", Permissions -> "Public"]
 ]
 ```
 
@@ -60,9 +64,9 @@ Update the rasterized view of [kitchen-sink.nb](./images/kitchen-sink.nb.png):
 
 ```wolfram
 Export[
-	"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/docs/images/kitchen-sink.nb.png",
-	Rasterize[NotebookOpen[
-		"~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/Content/kitchen-sink.nb"
-  ]]
+    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/docs/images/kitchen-sink.nb.png",
+    Rasterize[NotebookOpen[
+        "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/Content/kitchen-sink.nb"
+    ]]
 ]
 ```
