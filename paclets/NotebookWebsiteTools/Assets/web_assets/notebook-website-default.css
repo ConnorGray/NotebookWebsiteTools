@@ -79,7 +79,7 @@ pre.nb-HighlightSyntax.line-numbers span.ln:before {
 /*========================================================*/
 
 /*====================================*/
-/* TableOfContents[..]                */
+/* TableOfContentsHtml[..]            */
 /*====================================*/
 
 nav.TableOfContents {
@@ -100,4 +100,39 @@ nav.TableOfContents a:hover {
 
 nav.TableOfContents ul {
     padding-inline-start: 20px;
+}
+
+/*====================================*/
+/* PagesSummaryList[..]                */
+/*====================================*/
+
+nav.PagesSummaryList > ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+nav.PagesSummaryList > ul > li {
+    border-radius: 0.5em;
+    border-left: 0.15em solid lightgray;
+    border-right: 0.15em solid lightgray;
+
+    padding: 0.25em 0.5em;
+    margin: 1.5em 0;
+}
+
+nav.PagesSummaryList > ul > li h4 {
+    margin: 0;
+}
+
+nav.PagesSummaryList > ul > li p {
+    margin-bottom: 0;
+}
+
+nav.PagesSummaryList a {
+    text-decoration: none;
+    color: cornflowerblue;
+}
+
+nav.PagesSummaryList a:hover {
+    text-decoration: underline;
 }

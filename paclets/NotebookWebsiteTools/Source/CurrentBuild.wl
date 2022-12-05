@@ -1,17 +1,21 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 
 $CurrentNotebook::usage = "$CurrentNotebook returns the Notebook expression of the notebook that is currently being processed."
+$CurrentNotebookWebsiteDirectory = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
 
 TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLObject containing a table of contents for $CurrentNotebook."
+PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLObject containing a site map table of contents for the current notebook website."
 
 Begin["`Private`"]
 
+Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 
 $CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
+$CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
 
 (*========================================================*)
 
@@ -105,6 +109,76 @@ extractCellGroupHeadings[cells:{___Cell}] := Module[{},
 AddUnmatchedArgumentsHandler[extractCellGroupHeadings]
 
 (*========================================================*)
+
+PagesSummaryListHtml[
+	websiteDir0 : _?StringQ : Automatic
+] := Module[{
+	websiteDir = Replace[
+		Replace[websiteDir0, Automatic :> $CurrentNotebookWebsiteDirectory],
+		File[dir_?StringQ] :> dir
+	],
+	contentDir,
+	notebooks,
+	listItems
+},
+	contentDir = FileNameJoin[{websiteDir, "Content"}];
+
+	RaiseAssert[DirectoryQ[contentDir], "bad contentDir: ``", contentDir];
+
+	notebooks = FileNames["*.nb", contentDir, Infinity];
+
+	listItems = Map[
+		nbFile |-> Module[{
+			nbFileRelative = RelativePath[contentDir, nbFile],
+			nb,
+			title,
+			snippet
+		},
+			nb = RaiseConfirm @ Get[nbFile];
+			RaiseAssert[MatchQ[nb, _Notebook]];
+
+			title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+			snippet = RaiseConfirm @ Replace[
+				WebsiteNotebookSnippet[nb],
+				_?MissingQ -> None
+			];
+
+			RaiseAssert[StringQ[title], "bad title: ``", InputForm[title]];
+			RaiseAssert[MatchQ[snippet, _?StringQ | None], "bad snippet: ``", InputForm[snippet]];
+
+			XMLElement["li", {}, {
+				XMLElement[
+					"a",
+					{"href" -> notebookRelativeFileToURL[nbFileRelative]},
+					{XMLElement["h4", {}, {title}]}
+				],
+				If[StringQ[snippet],
+					XMLElement["p", {}, {snippet}]
+					,
+					Nothing
+				]
+			}]
+		],
+		notebooks
+	];
+
+	XMLElement["nav", {"class" -> "PagesSummaryList"}, {
+		XMLElement["ul", {}, listItems]
+	}]
+]
+
+(*========================================================*)
+
+notebookRelativeFileToURL[path_?StringQ] :=
+	StringReplace[
+		URLBuild[FileNameSplit[path]],
+		".nb" ~~ EndOfString -> ".html"
+	]
+
+AddUnmatchedArgumentsHandler[notebookRelativeFileToURL]
+
+(*========================================================*)
+
 
 End[]
 

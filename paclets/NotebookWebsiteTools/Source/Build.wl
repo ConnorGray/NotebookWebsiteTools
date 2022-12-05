@@ -12,11 +12,18 @@ Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Module[{
-	inputDir = RaiseConfirm @ ExpandFileName[inputDir0],
+	(* Note: Make sure inputDir is always StringQ, so that FileNameJoin works. *)
+	inputDir = Replace[
+		RaiseConfirm @ ExpandFileName[inputDir0],
+		File[dir_?StringQ] :> dir
+	],
 	buildDir,
 	contentDir,
 	notebooks,
 	htmlFiles
+},
+Block[{
+	$CurrentNotebookWebsiteDirectory = Replace[inputDir, _?StringQ :> File[inputDir]]
 },
 	buildDir = FileNameJoin[{inputDir, "build"}];
 	contentDir = FileNameJoin[{inputDir, "Content"}];
@@ -78,7 +85,7 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 			one of the built files. *)
 		"OutputHTMLFiles" -> htmlFiles
 	|>]
-]
+]]
 
 (*======================================*)
 

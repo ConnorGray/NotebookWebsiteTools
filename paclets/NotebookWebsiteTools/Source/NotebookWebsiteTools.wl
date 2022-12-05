@@ -12,6 +12,15 @@ $DefaultTheme = "Solarized (light)"
 
 Protect[{$DefaultSyntax, $DefaultTheme}]
 
+(*----------------------------*)
+(* Querying Website Notebooks *)
+(*----------------------------*)
+
+WebsiteNotebookTitle::usage = "WebsiteNotebookTitle[nb] returns the title of the specified website notebook.
+	The title is defined as the textual content of the first cell with style \"Title\"."
+WebsiteNotebookSnippet::usage = "WebsiteNotebookSnippet[nb] returns a snippet of text that is intended to be a teaser or summary of the notebook content."
+
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
@@ -37,6 +46,65 @@ CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := CatchRaised @ Module
 
 AddUnmatchedArgumentsHandler[CreateWebsiteNotebook]
 
+(*========================================================*)
+
+WebsiteNotebookTitle[
+	Notebook[cells:{___Cell}, ___?OptionQ]
+] := Module[{
+	cellData,
+	title
+},
+	cellData = FirstCase[
+		cells,
+		Cell[data_, ___, "Title", ___] :> data,
+		Missing["NotFound"],
+		Infinity
+	];
+
+	title = Replace[cellData, {
+		Missing["NotFound"] :> Return[cellData, Module],
+		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
+		other_ :> RaiseError[
+			"Error getting website notebook title: unexpected \"Title\" cell data: ``",
+			InputForm[other]
+		]
+	}];
+
+	RaiseAssert[StringQ[title]];
+
+	title
+]
+
+AddUnmatchedArgumentsHandler[WebsiteNotebookTitle]
+
+(*========================================================*)
+
+WebsiteNotebookSnippet[
+	nb:Notebook[{___Cell}, ___?OptionQ]
+] := Module[{
+	cells = NotebookCells[nb],
+	firstText
+},
+	cellData = FirstCase[
+		cells,
+		Cell[data_, ___, "Text", ___] :> data
+	];
+
+	firstText = Replace[cellData, {
+		Missing["NotFound"] :> Return[cellData, Module],
+		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
+		other_ :> RaiseError[
+			"Error getting website notebook snippet: unexpected \"Text\" cell data: ``",
+			InputForm[other]
+		]
+	}];
+
+	RaiseAssert[StringQ[firstText]];
+
+	firstText
+]
+
+(*========================================================*)
 
 End[] (* End `Private` *)
 

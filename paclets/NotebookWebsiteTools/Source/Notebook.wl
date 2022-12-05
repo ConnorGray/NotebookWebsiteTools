@@ -1,5 +1,8 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`Notebook`"]
 
+(*----------------------------*)
+(* Creating Website Notebooks *)
+(*----------------------------*)
 
 MakeNotebookTaggingRules
 MakeNotebookStyleDefinitions
