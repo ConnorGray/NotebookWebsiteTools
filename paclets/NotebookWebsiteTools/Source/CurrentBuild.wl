@@ -132,10 +132,13 @@ PagesSummaryListHtml[
 			nbFileRelative = RelativePath[contentDir, nbFile],
 			nb,
 			title,
-			snippet
+			snippet,
+			url
 		},
 			nb = RaiseConfirm @ Get[nbFile];
 			RaiseAssert[MatchQ[nb, _Notebook]];
+
+			url = notebookRelativeFileToURL[nbFileRelative];
 
 			title = RaiseConfirm @ WebsiteNotebookTitle[nb];
 			snippet = RaiseConfirm @ Replace[
@@ -145,11 +148,12 @@ PagesSummaryListHtml[
 
 			RaiseAssert[StringQ[title], "bad title: ``", InputForm[title]];
 			RaiseAssert[MatchQ[snippet, _?StringQ | None], "bad snippet: ``", InputForm[snippet]];
+			RaiseAssert[StringQ[url]];
 
 			XMLElement["li", {}, {
 				XMLElement[
 					"a",
-					{"href" -> notebookRelativeFileToURL[nbFileRelative]},
+					{"href" -> url},
 					{XMLElement["h4", {}, {title}]}
 				],
 				If[StringQ[snippet],
@@ -166,16 +170,6 @@ PagesSummaryListHtml[
 		XMLElement["ul", {}, listItems]
 	}]
 ]
-
-(*========================================================*)
-
-notebookRelativeFileToURL[path_?StringQ] :=
-	StringReplace[
-		URLBuild[FileNameSplit[path]],
-		".nb" ~~ EndOfString -> ".html"
-	]
-
-AddUnmatchedArgumentsHandler[notebookRelativeFileToURL]
 
 (*========================================================*)
 

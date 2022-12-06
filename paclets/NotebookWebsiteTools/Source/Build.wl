@@ -2,6 +2,8 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`Build`"]
 
 makeAnchorContentSlug
 
+notebookRelativeFileToURL
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
@@ -552,6 +554,21 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 ]
 
 AddUnmatchedArgumentsHandler[importHTMLFragment]
+
+
+(*========================================================*)
+(* URL Processing                                         *)
+(*========================================================*)
+
+notebookRelativeFileToURL[path_?StringQ] :=
+	StringReplace[
+		URLBuild[FileNameSplit[path]],
+		".nb" ~~ EndOfString -> ".html"
+	]
+
+AddUnmatchedArgumentsHandler[notebookRelativeFileToURL]
+
+(*========================================================*)
 
 
 End[]
