@@ -99,7 +99,9 @@ buildWebNotebook[
 	(* Relative path to the web_assets directory. *)
 	(* TODO: Adjust this based on the URL of the notebook being processed. *)
 	webAssetsLocation = "web_assets/",
+	relativeWebAssetsLocation,
 	nbFileRelative = RelativePath[contentDir, nbFile],
+	nbUrl,
 	htmlFile,
 	metadata
 },
@@ -150,15 +152,31 @@ Block[{
 		InputForm[elements]
 	];
 
-	(*--------------------------------*)
-	(* Write out the HTML output      *)
-	(*--------------------------------*)
+	(*---------------------------------*)
+	(* Generate the HTML output string *)
+	(*---------------------------------*)
+
+	nbUrl = notebookRelativeFileToURL[nbFileRelative];
+
+	RaiseAssert[StringQ[nbUrl]];
+
+	(* Determine the appropriate relative URL to point to the
+	   web_assets directory. *)
+	relativeWebAssetsLocation = URLBuild[{
+		Replace[Length[URLParse[nbUrl, "Path"]], {
+			(* The only component of the URL is the .nb file name itself, so
+			   a relative path to web_assets doesn't need to go up any levels. *)
+			1 -> Nothing,
+			components_Integer :> StringRepeat["../", components - 1]
+		}],
+		webAssetsLocation
+	}];
 
 	html = XMLElement["html", {}, {
 		XMLElement["head", {}, {
 			XMLElement["link", {
 				"rel" -> "stylesheet",
-				"href" -> URLBuild[{webAssetsLocation, "notebook-website-default.css"}]
+				"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
 			}, {}]
 		}],
 		XMLElement["body", {}, elements]
@@ -170,6 +188,37 @@ Block[{
 		buildDir,
 		StringReplace[nbFileRelative, ".nb" ~~ EndOfString -> ".html"]
 	}];
+
+	(*--------------------------------------------------------*)
+	(* Create an appropriate parent directory for `htmlFile`. *)
+	(*--------------------------------------------------------*)
+
+	With[{parentDir = FileNameDrop[htmlFile]},
+		Replace[FileType[parentDir], {
+			(* Do nothing, we want this directory to exist. *)
+			Directory -> {},
+			None :> (
+				RaiseConfirm @ CreateDirectory[
+					parentDir,
+					CreateIntermediateDirectories -> True
+				];
+			),
+			type:File :> RaiseError[
+				"Unable to export HTML file: path to parent directory of HTML file export file path is a non-directory type file: ``: type: ``",
+				parentDir,
+				type
+			],
+			other_ :> RaiseError[
+				"Unexpected FileType during for expected HTML file parent directory: ``: ``",
+				parentDir,
+				other
+			]
+		}];
+	];
+
+	(*--------------------------------*)
+	(* Write the HTML to `htmlFile`   *)
+	(*--------------------------------*)
 
 	RaiseConfirm @ WriteString[htmlFile, htmlString];
 	(* Close the file we just opened, to work around bug #348068. *)
