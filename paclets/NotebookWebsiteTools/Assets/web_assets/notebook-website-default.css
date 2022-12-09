@@ -63,6 +63,8 @@ pre.nb-HighlightSyntax {
     border-left: 3px solid lightgray;
 
     line-height: 1.35;
+
+    overflow: scroll;
 }
 
 pre.nb-HighlightSyntax.line-numbers span.ln:before {
