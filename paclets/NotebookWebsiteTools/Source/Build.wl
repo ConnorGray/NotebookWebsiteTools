@@ -260,7 +260,7 @@ convertToHtml[expr_] := Replace[expr, {
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
-	Cell[CellGroupData[cells_?ListQ, Open]] :> Map[convertToHtml, cells],
+	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Map[convertToHtml, cells],
 
 	Cell[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
