@@ -1,5 +1,37 @@
 /* Default CSS styles used by NotebookWebsiteTools .html pages. */
 
+/*
+    Add padding at the end of a notebook article that is the last element in
+    the HTML page.
+
+    This padding allows the user to scroll past the bottom of the notebook
+    content. This makes content near the bottom of the page easier to scroll in
+    to view.
+
+    This is especially important for making anchor links to content at
+    the bottom of the page work nicely. Without this, an anchor link to the last
+    heading on the page may leave that heading near the bottom of the browser
+    window, instead of at the top of the window where readers typically expect
+    the linked-to header/anchor to appear.
+
+    This behavior mirrors the scroll-past-bottom behavior of .nb files.
+
+    NOTE:
+        A simpler variant of this selector might have been just `html { .. }`.
+        However, this extra padding for scrolling behavior is not typically
+        necessary if the page has a footer or other content after the notebook
+        content. Using this narrowly defined CSS selector ensures that we only
+        add padding when a notebook is the last element on the page.
+
+        This narrow selector additionally ensures that this styling won't
+        unintentionally confict with or change the styling of a page that a
+        notebook has been embedded in.
+*/
+body > article.Notebook:last-child:last-of-type {
+    /* https://superuser.com/a/872654 */
+    padding-bottom: 50vh !important;
+}
+
 body {
     margin: 0 auto;
     max-width: 50em;

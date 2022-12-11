@@ -179,7 +179,9 @@ Block[{
 				"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
 			}, {}]
 		}],
-		XMLElement["body", {}, elements]
+		XMLElement["body", {}, {
+			XMLElement["article", {"class" -> "Notebook"}, elements]
+		}]
 	}];
 
 	htmlString = ExportString[html, "HTMLFragment"];
