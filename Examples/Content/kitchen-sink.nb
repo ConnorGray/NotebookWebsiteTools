@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     27306,        676]
-NotebookOptionsPosition[     15362,        430]
-NotebookOutlinePosition[     23794,        621]
-CellTagsIndexPosition[     23751,        618]
+NotebookDataLength[     27312,        677]
+NotebookOptionsPosition[     15415,        431]
+NotebookOutlinePosition[     23800,        622]
+CellTagsIndexPosition[     23757,        619]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -404,12 +404,13 @@ Cell["Pages Summary List", "Subsection",
 98cbf4b2ff09"],
 
 Cell[TextData[{
- StyleBox["PagesSummaryList[]", "Code"],
+ StyleBox["PagesSummaryListHtml[]", "Code"],
  " returns a formatted list of notebook website pages, with a summary derived \
 from their initial textual content."
 }], "Text",
- CellChangeTimes->{{3.8792387067316313`*^9, 
-  3.879238810446659*^9}},ExpressionUUID->"5ff3067e-b62c-44cf-8896-\
+ CellChangeTimes->{{3.8792387067316313`*^9, 3.879238810446659*^9}, {
+  3.879767946210841*^9, 
+  3.879767948220605*^9}},ExpressionUUID->"5ff3067e-b62c-44cf-8896-\
 34b994eb5193"],
 
 Cell[BoxData[{
@@ -450,7 +451,7 @@ TaggingRules->{
  "ConnorGray/NotebookWebsiteTools" -> {
    "DocumentType" -> "BlogPost", "CreatedByPacletVersion" -> "0.0.1"}, 
   "TryRealOnly" -> False},
-FrontEndVersion->"13.1 for Mac OS X ARM (64-bit) (June 16, 2022)",
+FrontEndVersion->"13.2 for Mac OS X ARM (64-bit) (November 18, 2022)",
 StyleDefinitions->Notebook[{
    Cell[
     StyleData[StyleDefinitions -> "Default.nb"]], 
@@ -603,10 +604,10 @@ StyleDefinitions->Notebook[{
             "pressed"), {"MouseUp", 1} :> (
             ConnorGray`NotebookWebsiteTools`Notebook`Private`state = 
             "hovered"), PassEventsDown -> True, PassEventsUp -> True, Method -> 
-           "Preemptive"}]], DynamicModuleValues :> {}]& )}]}, 
-  WindowMargins -> {{624, Automatic}, {Automatic, 134}}, Visible -> False, 
-  FrontEndVersion -> "13.1 for Mac OS X ARM (64-bit) (June 16, 2022)", 
-  StyleDefinitions -> "Default.nb"],
+           "Preemptive"}]], DynamicModuleValues :> {}]& )}]}, Visible -> 
+  False, FrontEndVersion -> 
+  "13.2 for Mac OS X ARM (64-bit) (November 18, 2022)", StyleDefinitions -> 
+  "Default.nb"],
 ExpressionUUID->"947ec5c0-85a2-401d-b044-22b4f1b28db5"
 ]
 (* End of Notebook Content *)
@@ -621,39 +622,39 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 84, 0, 97, "Title",ExpressionUUID->"ec3d4f7f-8896-4389-89da-91ce1c535a32"],
-Cell[667, 24, 109, 0, 52, "Subtitle",ExpressionUUID->"8cdd3191-09f9-4f73-bbc6-cc9907c0ea8b"],
-Cell[779, 26, 308, 4, 68, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
+Cell[580, 22, 84, 0, 98, "Title",ExpressionUUID->"ec3d4f7f-8896-4389-89da-91ce1c535a32"],
+Cell[667, 24, 109, 0, 53, "Subtitle",ExpressionUUID->"8cdd3191-09f9-4f73-bbc6-cc9907c0ea8b"],
+Cell[779, 26, 308, 4, 46, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 Cell[1090, 32, 591, 13, 58, "Text",ExpressionUUID->"8f825d87-0aa8-4d65-91e8-62141c43b7ab"],
 Cell[1684, 47, 569, 10, 52, "ComputedHTML",ExpressionUUID->"7c8e3754-3937-4ee4-a46d-56ed29161397"],
 Cell[CellGroupData[{
-Cell[2278, 61, 158, 3, 68, "Chapter",ExpressionUUID->"ee491715-3deb-4568-961a-3cc55e27e8a5"],
+Cell[2278, 61, 158, 3, 69, "Chapter",ExpressionUUID->"ee491715-3deb-4568-961a-3cc55e27e8a5"],
 Cell[CellGroupData[{
 Cell[2461, 68, 163, 3, 54, "Subsection",ExpressionUUID->"f788e770-b2ae-4d84-aaeb-f807499c6eb0"],
-Cell[2627, 73, 180, 7, 81, "Program",ExpressionUUID->"e3e7235b-daf5-414f-9878-6ed2342747ae"]
+Cell[2627, 73, 180, 7, 84, "Program",ExpressionUUID->"e3e7235b-daf5-414f-9878-6ed2342747ae"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[2856, 86, 158, 3, 68, "Chapter",ExpressionUUID->"7b230c34-298f-4add-bf4f-c3ec5432283f"],
+Cell[2856, 86, 158, 3, 69, "Chapter",ExpressionUUID->"7b230c34-298f-4add-bf4f-c3ec5432283f"],
 Cell[CellGroupData[{
 Cell[3039, 93, 173, 3, 70, "Subsection",ExpressionUUID->"ff1ac35e-1ebd-402e-a3f7-eef1b1e90bed"],
-Cell[3215, 98, 348, 5, 97, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+Cell[3215, 98, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[3600, 108, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
 Cell[3765, 113, 312, 8, 35, "Text",ExpressionUUID->"7c46da46-7f84-4b96-ae8a-c4e2670f40a7"],
-Cell[4080, 123, 784, 15, 96, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+Cell[4080, 123, 784, 15, 99, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[4901, 143, 236, 4, 54, "Subsection",ExpressionUUID->"c02d7087-3a6d-4f4e-8537-b63166142970"],
 Cell[5140, 149, 394, 8, 58, "Text",ExpressionUUID->"8a64d2f3-02cc-407d-9e83-297df2fe5301"],
 Cell[5537, 159, 564, 14, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
-Cell[6104, 175, 1676, 34, 176, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
+Cell[6104, 175, 1676, 34, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[7817, 214, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
-Cell[7987, 219, 335, 8, 58, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
-Cell[8325, 229, 2225, 61, 64, "HighlightSyntax",ExpressionUUID->"6a7a15f8-9cf2-4aae-a7e7-84cee56c8663"],
+Cell[7987, 219, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[8325, 229, 2225, 61, 66, "HighlightSyntax",ExpressionUUID->"6a7a15f8-9cf2-4aae-a7e7-84cee56c8663"],
 Cell[CellGroupData[{
 Cell[10575, 294, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
 Cell[10785, 300, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
@@ -673,8 +674,8 @@ Cell[13607, 385, 569, 10, 52, "ComputedHTML",ExpressionUUID->"16e62a6d-6e3d-4f3e
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[14213, 400, 168, 3, 54, "Subsection",ExpressionUUID->"748711c2-a92d-4998-bb8d-98cbf4b2ff09"],
-Cell[14384, 405, 313, 7, 58, "Text",ExpressionUUID->"5ff3067e-b62c-44cf-8896-34b994eb5193"],
-Cell[14700, 414, 622, 11, 52, "ComputedHTML",ExpressionUUID->"0dd2c49e-fc2a-4836-897c-57957b23bac7"]
+Cell[14384, 405, 366, 8, 58, "Text",ExpressionUUID->"5ff3067e-b62c-44cf-8896-34b994eb5193"],
+Cell[14753, 415, 622, 11, 52, "ComputedHTML",ExpressionUUID->"0dd2c49e-fc2a-4836-897c-57957b23bac7"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
