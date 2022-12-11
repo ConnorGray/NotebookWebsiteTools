@@ -227,17 +227,6 @@ Block[{
 	RaiseConfirm @ Close[File[htmlFile]];
 
 	File[htmlFile]
-
-
-
-	(* Construct an absolute URL equivalent of `nbFileRelative`. *)
-	(* urlPath = "/" <> StringRiffle[
-		URLEncode /@ FileNameSplit[nbFileRelative],
-		"/"
-	]; *)
-	(* RaiseAssert[StringQ[urlPath]] *)
-	(* Print["    URL: ", InputForm @ urlPath]; *)
-
 ]]
 
 (*======================================*)
