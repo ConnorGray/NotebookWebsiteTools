@@ -431,7 +431,8 @@ convertToHtml[expr_] := Replace[expr, {
 	(* Text                           *)
 	(*--------------------------------*)
 
-	plainText_?StringQ :> plainText,
+	plainText_?StringQ :> HTMLEscape[plainText],
+
 	TextData[inline_?ListQ] :> Map[convertToHtml, inline],
 	TextData[content_] :> convertToHtml[content],
 

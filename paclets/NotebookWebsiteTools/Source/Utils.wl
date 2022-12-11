@@ -8,6 +8,8 @@ UniqueContext::usage = "UniqueContext[stem] generates a unique context name begi
 
 NotebookCells::usage = "NotebookCells[notebook] returns a list of all top-level cells in notebook, after flattening out cell groups."
 
+HTMLEscape::usage = "HTMLEscape[string] escapes string so that it can be embedded in HTML as regular text."
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
@@ -96,6 +98,17 @@ flattenCellGroups[cells: {___Cell}] :=
 
 AddUnmatchedArgumentsHandler[NotebookCells]
 
+(*========================================================*)
+
+(* NOTE: This function is required because exporint an XMLElement[..] using the
+	"XML" format escapes '<' and '>' characters in `text`, but exporting as
+	using the "HTMLFragment" format does not escape those characters. *)
+HTMLEscape[text_?StringQ] := StringReplace[
+	ExportString[XMLElement["Text", {}, {text}], "XML"],
+	StartOfString ~~ "<Text>" ~~ content___ ~~ "</Text>" ~~ EndOfString :> content
+]
+
+AddUnmatchedArgumentsHandler[HTMLEscape]
 
 End[]
 
