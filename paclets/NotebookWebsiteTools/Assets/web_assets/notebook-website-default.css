@@ -68,6 +68,10 @@ a.anchor:target {
     text-decoration: underline;
 }
 
+/*========================================================*/
+/* Standard Wolfram Styles                                */
+/*========================================================*/
+
 p.nb-Subtitle {
     font-style: oblique;
 }
@@ -85,6 +89,128 @@ pre.nb-Program {
 
     background: #e5e5e5;
 }
+
+/*====================================*/
+/* Item styles                        */
+/*====================================*/
+
+/*----------------*/
+/* Margins        */
+/*----------------*/
+
+/* Left margins. These are derived from the default item style CellMargins,
+   where the left margin increases by 24pt for each 'Sub' indentation. */
+
+div.nb-Item, div.nb-ItemNumbered, div.nb-ItemParagraph {
+    margin-left: 12pt;
+}
+
+div.nb-Subitem, div.nb-SubitemNumbered, div.nb-SubitemParagraph {
+    margin-left: 36pt; /* 12 + 24 */
+}
+
+div.nb-Subsubitem, div.nb-SubsubitemNumbered, div.nb-SubsubitemParagraph {
+    margin-left: 60pt; /* 12 + 24 + 24 */
+}
+
+/* Top and bottom margins. These are the same as the vertical CellMargins. */
+
+div.nb-Item,       div.nb-ItemNumbered,       div.nb-ItemParagraph,
+div.nb-Subitem,    div.nb-SubitemNumbered,    div.nb-SubitemParagraph,
+div.nb-Subsubitem, div.nb-SubsubitemNumbered, div.nb-SubsubitemParagraph {
+    margin-top: 4pt;
+}
+
+div.nb-Item, div.nb-ItemNumbered {
+    margin-bottom: 8pt;
+}
+
+div.nb-Subitem, div.nb-SubsubItem, div.nb-SubitemNumbered, div.nb-SubsubItemNumbered {
+    margin-bottom: 4pt;
+}
+
+div.nb-ItemParagraph, div.nb-SubitemParagraph, div.nb-SubsubItemParagraph {
+    margin-bottom: 1pt;
+}
+
+/*----------------*/
+/* List markers   */
+/*----------------*/
+
+div.nb-Item,       div.nb-ItemNumbered,
+div.nb-Subitem,    div.nb-SubitemNumbered,
+div.nb-Subsubitem, div.nb-SubsubitemNumbered {
+    display: list-item;
+}
+
+div.nb-Item, div.nb-Subitem, div.nb-Subsubitem {
+    list-style-type: square;
+}
+
+div.nb-Item::marker, div.nb-Subitem::marker, div.nb-Subsubitem::marker {
+    /* TODO: Pick a better color */
+    color: darkslategray;
+}
+
+div.nb-ItemNumbered::marker {
+    content: counter(nb-ItemNumbered) '. ';
+
+    font-weight: bold;
+    font-size: smaller;
+    color: black;
+}
+
+div.nb-SubitemNumbered::marker {
+    content: counter(nb-ItemNumbered) '.' counter(nb-SubitemNumbered) '. ';
+
+    font-weight: bold;
+    font-size: smaller;
+    color: black;
+}
+
+div.nb-SubsubitemNumbered::marker {
+    content: counter(nb-ItemNumbered) '.' counter(nb-SubitemNumbered) '.' counter(nb-SubsubitemNumbered) '. ';
+
+    font-size: smaller;
+    font-weight: bold;
+    color: black;
+}
+
+/*-------------------------*/
+/* Updating counter values */
+/*-------------------------*/
+
+div.nb-Item {
+	counter-reset: nb-Subitem nb-Subsubitem;
+	counter-increment: nb-Item;
+}
+
+div.nb-Subitem {
+	counter-reset: nb-Subsubitem;
+	counter-increment: nb-Subitem;
+}
+
+div.nb-Subsubitem {
+	counter-increment: nb-Subsubitem;
+}
+
+div.nb-ItemNumbered {
+	counter-reset: nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-ItemNumbered;
+}
+
+div.nb-SubitemNumbered {
+	counter-reset: nb-SubsubitemNumbered;
+	counter-increment: nb-SubitemNumbered;
+}
+
+div.nb-SubsubitemNumbered {
+	counter-increment: nb-SubsubitemNumbered;
+}
+
+/*========================================================*/
+/* NotebookWebsiteTools Special Styles                    */
+/*========================================================*/
 
 pre.nb-HighlightSyntax {
     counter-reset: line;

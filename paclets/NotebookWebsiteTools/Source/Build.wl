@@ -340,10 +340,16 @@ convertToHtml[expr_] := Replace[expr, {
 				(*===============*)
 
 				"Text" :> XMLElement["p", {}, {convertToHtml[content]}],
-				"Item" :> XMLElement["ul", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
-				"ItemNumbered" :> XMLElement["ol", {}, {XMLElement["li", {}, {convertToHtml[content]}]}],
-				"Subitem" :> XMLElement["ul", {}, {"\t", XMLElement["li", {}, {convertToHtml[content]}]}],
-				"Subsubitem" :> XMLElement["ul", {}, {"\t\t", XMLElement["li", {}, {convertToHtml[content]}]}],
+
+				"Item"
+				| "ItemNumbered"
+				| "ItemParagraph"
+				| "Subitem"
+				| "SubitemNumbered"
+				| "SubitemParagraph"
+				| "Subsubitem"
+				| "SubsubitemNumbered"
+				| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {convertToHtml[content]}],
 
 				(*============*)
 				(* Code cells *)
