@@ -327,13 +327,13 @@ convertToHtml[expr_] := Replace[expr, {
 				(* Headers with auto-anchor linking. *)
 				(*===================================*)
 
-				"Title" :> XMLElement["h1", {}, {makeAnchorLinkHtml[content, html]}],
+				"Title" :> XMLElement["h1", {"class" -> "nb-Title"}, {makeAnchorLinkHtml[content, html]}],
 				"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {makeAnchorLinkHtml[content, html]}],
-				"Chapter" :> XMLElement["h2", {}, {makeAnchorLinkHtml[content, html]}],
-				"Section" :> XMLElement["h3", {}, {makeAnchorLinkHtml[content, html]}],
-				"Subsection" :> XMLElement["h4", {}, {makeAnchorLinkHtml[content, html]}],
-				"Subsubsection" :> XMLElement["h5", {}, {makeAnchorLinkHtml[content, html]}],
-				"Subsubsubsection" :> XMLElement["h6", {}, {makeAnchorLinkHtml[content, html]}],
+				"Chapter" :> XMLElement["h2", {"class" -> "nb-Chapter"}, {makeAnchorLinkHtml[content, html]}],
+				"Section" :> XMLElement["h3", {"class" -> "nb-Section"}, {makeAnchorLinkHtml[content, html]}],
+				"Subsection" :> XMLElement["h4", {"class" -> "nb-Subsection"}, {makeAnchorLinkHtml[content, html]}],
+				"Subsubsection" :> XMLElement["h5", {"class" -> "nb-Subsubsection"}, {makeAnchorLinkHtml[content, html]}],
+				"Subsubsubsection" :> XMLElement["h6", {"class" -> "nb-Subsubsubsection"}, {makeAnchorLinkHtml[content, html]}],
 
 				(*===============*)
 				(* Textual cells *)

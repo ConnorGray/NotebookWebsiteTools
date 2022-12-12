@@ -180,6 +180,51 @@ div.nb-SubsubitemNumbered::marker {
 /* Updating counter values */
 /*-------------------------*/
 
+.nb-Title {
+	counter-reset: nb-Section nb-Equation nb-Figure nb-Subtitle nb-Subsubtitle nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Title;
+}
+
+.nb-Subtitle {
+	counter-reset: nb-Section nb-Equation nb-Figure nb-Subsubtitle nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subtitle;
+}
+
+.nb-Chapter {
+	counter-reset: nb-Subchapter nb-Section nb-Equation nb-Figure nb-Subsubtitle nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Chapter;
+}
+
+.nb-Subchapter {
+	counter-reset: nb-Section nb-Equation nb-Figure nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subchapter;
+}
+
+.nb-Section {
+	counter-reset: nb-Subsection nb-Subsubsection nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Section;
+}
+
+.nb-Subsection {
+	counter-reset: nb-Subsubsection nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subsection;
+}
+
+.nb-Subsubsection {
+	counter-reset: nb-Subsubsubsection nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subsubsection;
+}
+
+.nb-Subsubsubsection {
+	counter-reset: nb-Subsubsubsubsection nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subsubsubsection;
+}
+
+.nb-Subsubsubsubsection {
+	counter-reset: nb-Item nb-Subitem nb-Subsubitem nb-ItemNumbered nb-SubitemNumbered nb-SubsubitemNumbered;
+	counter-increment: nb-Subsubsubsubsection;
+}
+
 div.nb-Item {
 	counter-reset: nb-Subitem nb-Subsubitem;
 	counter-increment: nb-Item;

@@ -61,7 +61,7 @@ WolframStyleToCSS[
 },
 	declarations = Flatten @ Map[cellOptionToCSSDeclarations, optionValues];
 
-	CSSRuleset[styleNameToCSS[style], declarations]
+	CSSRuleset["." <> styleNameToCSS[style], declarations]
 ]
 
 AddUnmatchedArgumentsHandler[WolframStyleToCSS]
