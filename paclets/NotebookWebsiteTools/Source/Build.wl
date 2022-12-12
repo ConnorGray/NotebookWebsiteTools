@@ -140,11 +140,7 @@ Block[{
 	(* Convert the cells to HTML      *)
 	(*--------------------------------*)
 
-	elements = Flatten @ Map[
-		convertToHtml,
-		(* TODO: Validate this. *)
-		nb[[1]]
-	];
+	elements = Flatten[convertToHtml[nb]];
 
 	RaiseAssert[
 		MatchQ[elements, {XMLElement[__]...}],
@@ -242,6 +238,11 @@ Block[{
 *)
 
 convertToHtml[expr_] := Replace[expr, {
+	Notebook[cells_?ListQ, options0___?OptionQ] :> (
+		(* TODO: Handle relevant `options0`. *)
+		Map[convertToHtml, cells]
+	),
+
 	(*--------------------------------*)
 	(* Cells                          *)
 	(*--------------------------------*)
