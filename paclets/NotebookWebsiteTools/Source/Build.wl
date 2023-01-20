@@ -4,6 +4,16 @@ makeAnchorContentSlug
 
 notebookRelativeFileToURL
 
+(*------------------------------------*)
+(* State set during the build         *)
+(*------------------------------------*)
+
+$CurrentNotebook::usage = "$CurrentNotebook returns the Notebook expression of the notebook that is currently being processed."
+$CurrentNotebookWebsiteDirectory = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
+
+$CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
+$CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]

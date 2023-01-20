@@ -1,8 +1,5 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 
-$CurrentNotebook::usage = "$CurrentNotebook returns the Notebook expression of the notebook that is currently being processed."
-$CurrentNotebookWebsiteDirectory = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
-
 TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLObject containing a table of contents for $CurrentNotebook."
 PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLObject containing a site map table of contents for the current notebook website."
 
@@ -13,9 +10,6 @@ Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
-
-$CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
-$CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
 
 (*========================================================*)
 
