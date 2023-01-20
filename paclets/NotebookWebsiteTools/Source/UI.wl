@@ -192,28 +192,39 @@ getHighlightSyntaxCellSyntaxAndTheme[cellObj_CellObject] := Module[{},
 (*========================================================*)
 
 toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
-	cellExpr = NotebookRead[cell]
+	(* Note: StyleNames is an undocumented special option that returns all of
+		the "secondary" styles of a cell.
+
+		For example, given a cell with the structure:
+
+			Cell["Some content", "Title", "Excluded"]
+
+		The the primary style is the first style, `"Title"` in this case, and
+		the secondary styles are `{"Excluded"}`.
+	*)
+	currentStyles = RaiseConfirm @ Lookup[Options[cell, StyleNames], StyleNames]
 },
-	NotebookWrite[cell, Replace[cellExpr, {
-		Cell[content_, a___String, style, b___String, opts___?OptionQ] :> (
-			Cell[content, Sequence @@ DeleteCases[{a, b}, style]]
-		),
-		Cell[content_, styles___String, opts___?OptionQ] :> (
-			(* Note:
-				Place the newly added style at the end, to ensure it always
-				gets the last say on what the styling of the cell is. E.g. if
-				the style being added is "Excluded", then the cell will always
-				have a red background, even if it is also e.g. a "Program" cell
-				(which normally have gray backgrounds).
-			*)
-			Cell[content, styles, style, opts]
-		),
-		other_ :> RaiseError[
-			"Unable to toggle cell style in malformed cell: ``: expr: ``",
-			cell,
-			cellExpr
-		]
-	}]]
+	RaiseAssert[MatchQ[currentStyles, {___?StringQ}], "currentStyles: ``", InputForm @ currentStyles];
+
+	If[MemberQ[currentStyles, style],
+		(* Remove all occurences of `style` from `currentStyles`. *)
+		(* Note: This requires two SetOptions calls because setting this property
+			to any value other than Inherited can only *add* styles to the cell,
+			not remove them. So we first clear the secondary styles by setting
+			this to Inherited, and then we add back only the styles we want to
+			keep. *)
+		SetOptions[cell, StyleNames -> Inherited];
+		SetOptions[cell, StyleNames -> DeleteCases[currentStyles, style]];
+	,
+		(* Note:
+			Place the newly added style at the end, to ensure it always
+			gets the last say on what the styling of the cell is. E.g. if
+			the style being added is "Excluded", then the cell will always
+			have a red background, even if it is also e.g. a "Program" cell
+			(which normally have gray backgrounds).
+		*)
+		SetOptions[cell, StyleNames -> Append[currentStyles, style]];
+	];
 ]
 
 AddUnmatchedArgumentsHandler[toggleCellStyle]
