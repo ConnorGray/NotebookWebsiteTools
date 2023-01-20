@@ -322,110 +322,7 @@ convertToHtml[expr_] := Replace[expr, {
 		(*------------------------------------------------------------------------*)
 
 		element = Fold[
-			{html, style} |-> Replace[style, {
-				(*===================================*)
-				(* Headers with auto-anchor linking. *)
-				(*===================================*)
-
-				"Title" :> XMLElement["h1", {"class" -> "nb-Title"}, {makeAnchorLinkHtml[content, html]}],
-				"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {makeAnchorLinkHtml[content, html]}],
-				"Chapter" :> XMLElement["h2", {"class" -> "nb-Chapter"}, {makeAnchorLinkHtml[content, html]}],
-				"Section" :> XMLElement["h3", {"class" -> "nb-Section"}, {makeAnchorLinkHtml[content, html]}],
-				"Subsection" :> XMLElement["h4", {"class" -> "nb-Subsection"}, {makeAnchorLinkHtml[content, html]}],
-				"Subsubsection" :> XMLElement["h5", {"class" -> "nb-Subsubsection"}, {makeAnchorLinkHtml[content, html]}],
-				"Subsubsubsection" :> XMLElement["h6", {"class" -> "nb-Subsubsubsection"}, {makeAnchorLinkHtml[content, html]}],
-
-				(*===============*)
-				(* Textual cells *)
-				(*===============*)
-
-				"Text" :> XMLElement["p", {}, {convertToHtml[content]}],
-
-				"Item"
-				| "ItemNumbered"
-				| "ItemParagraph"
-				| "Subitem"
-				| "SubitemNumbered"
-				| "SubitemParagraph"
-				| "Subsubitem"
-				| "SubsubitemNumbered"
-				| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {convertToHtml[content]}],
-
-				(*============*)
-				(* Code cells *)
-				(*============*)
-
-				"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[content]}],
-
-				(*===============*)
-				(* Special cells *)
-				(*===============*)
-
-				"LiteralHTML" :> Module[{
-					literalHTMLString,
-					literalHTML
-				},
-					(* TODO: Option to ConvertToString that issues a warning if
-						this contains non-plain-text content? *)
-					literalHTMLString = ConvertToString[content];
-
-					RaiseAssert[StringQ[literalHTMLString]];
-
-					(* Parse the cell content into an XMLElement. This ensures
-					   that the resulting document doesn't have any syntax
-					   errors due to malformed HTML provided by the user. *)
-					literalHTML = importHTMLFragment[literalHTMLString];
-
-					literalHTML
-				],
-
-				"HighlightSyntax" :> Module[{
-					syntaxString,
-					highlightOptions,
-					syntaxName,
-					theme,
-					syntaxHTMLString,
-					syntaxHTML
-				},
-					(* TODO: Option to ConvertToString that issues a warning if
-						this contains non-plain-text content? *)
-					syntaxString = ConvertToString[content];
-
-					RaiseAssert[StringQ[syntaxString]];
-
-					highlightOptions = Replace[options, {
-						KeyValuePattern[
-							TaggingRules -> KeyValuePattern[
-								"HighlightSyntaxOptions" -> value:(_?AssociationQ | {___?OptionQ})
-							]
-						] :> value,
-						_ -> <||>
-					}];
-
-					(* TODO(polish): If using default for both syntax and theme,
-						use a gray colored background instead of Solarized. Defaulting
-						for both should look much like a Program cell. *)
-					syntaxName = Lookup[highlightOptions, "Syntax", $DefaultSyntax];
-					theme = Lookup[highlightOptions, "Theme", $DefaultTheme];
-					lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
-
-					syntaxHTMLString = Replace[
-						(* TODO(feature): Support theme argument here. *)
-						$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
-						{
-							html_?StringQ :> html,
-							error_?FailureQ :> RaiseError[error],
-							other_ :> RaiseError["Syntax highlighting returned unexpected result: ``", other]
-						}
-					];
-
-					syntaxHTML = importHTMLFragment[syntaxHTMLString];
-
-					syntaxHTML
-				],
-
-				other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[content]]
-			}],
+			{html, style} |-> wrapHtmlForStyle[content, html, style],
 			convertToHtml[content],
 			styles
 		];
@@ -505,6 +402,121 @@ convertToHtml[expr_] := Replace[expr, {
 }]
 
 AddUnmatchedArgumentsHandler[convertToHtml]
+
+(*======================================*)
+
+wrapHtmlForStyle[
+	cellData_?CellDataQ,
+	html_,
+	style_?StringQ
+] := Module[{},
+	Replace[style, {
+		(*===================================*)
+		(* Headers with auto-anchor linking. *)
+		(*===================================*)
+
+		"Title" :> XMLElement["h1", {"class" -> "nb-Title"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Chapter" :> XMLElement["h2", {"class" -> "nb-Chapter"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Section" :> XMLElement["h3", {"class" -> "nb-Section"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Subsection" :> XMLElement["h4", {"class" -> "nb-Subsection"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Subsubsection" :> XMLElement["h5", {"class" -> "nb-Subsubsection"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Subsubsubsection" :> XMLElement["h6", {"class" -> "nb-Subsubsubsection"}, {makeAnchorLinkHtml[cellData, html]}],
+
+		(*===============*)
+		(* Textual cells *)
+		(*===============*)
+
+		"Text" :> XMLElement["p", {}, {convertToHtml[cellData]}],
+
+		"Item"
+		| "ItemNumbered"
+		| "ItemParagraph"
+		| "Subitem"
+		| "SubitemNumbered"
+		| "SubitemParagraph"
+		| "Subsubitem"
+		| "SubsubitemNumbered"
+		| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {convertToHtml[cellData]}],
+
+		(*============*)
+		(* Code cells *)
+		(*============*)
+
+		"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[cellData]}],
+
+		(*===============*)
+		(* Special cells *)
+		(*===============*)
+
+		"LiteralHTML" :> Module[{
+			literalHTMLString,
+			literalHTML
+		},
+			(* TODO: Option to ConvertToString that issues a warning if
+				this contains non-plain-text content? *)
+			literalHTMLString = ConvertToString[cellData];
+
+			RaiseAssert[StringQ[literalHTMLString]];
+
+			(* Parse the cell content into an XMLElement. This ensures
+				that the resulting document doesn't have any syntax
+				errors due to malformed HTML provided by the user. *)
+			literalHTML = importHTMLFragment[literalHTMLString];
+
+			literalHTML
+		],
+
+		"HighlightSyntax" :> Module[{
+			syntaxString,
+			highlightOptions,
+			syntaxName,
+			theme,
+			syntaxHTMLString,
+			syntaxHTML
+		},
+			(* TODO: Option to ConvertToString that issues a warning if
+				this contains non-plain-text content? *)
+			syntaxString = ConvertToString[cellData];
+
+			RaiseAssert[StringQ[syntaxString]];
+
+			highlightOptions = Replace[options, {
+				KeyValuePattern[
+					TaggingRules -> KeyValuePattern[
+						"HighlightSyntaxOptions" -> value:(_?AssociationQ | {___?OptionQ})
+					]
+				] :> value,
+				_ -> <||>
+			}];
+
+			(* TODO(polish): If using default for both syntax and theme,
+				use a gray colored background instead of Solarized. Defaulting
+				for both should look much like a Program cell. *)
+			syntaxName = Lookup[highlightOptions, "Syntax", $DefaultSyntax];
+			theme = Lookup[highlightOptions, "Theme", $DefaultTheme];
+			lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
+
+			syntaxHTMLString = Replace[
+				(* TODO(feature): Support theme argument here. *)
+				$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
+				{
+					highlightedHtml_?StringQ :> highlightedHtml,
+					error_?FailureQ :> RaiseError[error],
+					other_ :> RaiseError["Syntax highlighting returned unexpected result: ``", other]
+				}
+			];
+
+			syntaxHTML = importHTMLFragment[syntaxHTMLString];
+
+			syntaxHTML
+		],
+
+		other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
+	}]
+]
+
+AddUnmatchedArgumentsHandler[wrapHtmlForStyle]
 
 (*======================================*)
 

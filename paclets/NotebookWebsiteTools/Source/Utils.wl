@@ -1,5 +1,7 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`Utils`"]
 
+Needs["GeneralUtilities`"] (* For SetUsage *)
+
 RelativePath
 
 ConvertToString
@@ -9,6 +11,11 @@ UniqueContext::usage = "UniqueContext[stem] generates a unique context name begi
 NotebookCells::usage = "NotebookCells[notebook] returns a list of all top-level cells in notebook, after flattening out cell groups."
 
 HTMLEscape::usage = "HTMLEscape[string] escapes string so that it can be embedded in HTML as regular text."
+
+SetUsage[CellDataQ, "CellDataQ[expr$] returns True if expr$ is a valid cell content type, typically a string, TextData[$$] or BoxData[$$].
+* Box expressions are not considered valid cell data, as they cannot validly appear as the first\
+  argument of Cell[$$].
+"]
 
 Begin["`Private`"]
 
@@ -109,6 +116,20 @@ HTMLEscape[text_?StringQ] := StringReplace[
 ]
 
 AddUnmatchedArgumentsHandler[HTMLEscape]
+
+(*========================================================*)
+
+CellDataQ[expr_] :=
+	(* TODO: More obscure or deprecated forms. e.g. GraphicsData or OutputFormData? *)
+	MatchQ[expr, Alternatives[
+		_?StringQ,
+		TextData[_],
+		BoxData[_]
+	]]
+
+AddUnmatchedArgumentsHandler[CellDataQ]
+
+(*========================================================*)
 
 End[]
 
