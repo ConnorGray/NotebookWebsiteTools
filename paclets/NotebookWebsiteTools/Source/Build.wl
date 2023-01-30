@@ -294,9 +294,9 @@ convertToHtml[expr_] := Replace[expr, {
 		Map[convertToHtml, cells]
 	),
 
-	(*--------------------------------*)
+	(*================================*)
 	(* Cells                          *)
-	(*--------------------------------*)
+	(*================================*)
 
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
@@ -465,6 +465,10 @@ convertToHtml[expr_] := Replace[expr, {
 		(* TODO: Handle the `options` as well. *)
 		element
 	],
+
+	(*================================*)
+	(* Cell data                      *)
+	(*================================*)
 
 	(*--------------------------------*)
 	(* Text                           *)
