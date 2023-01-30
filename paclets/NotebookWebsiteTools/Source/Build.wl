@@ -9,7 +9,11 @@ notebookRelativeFileToURL
 (*------------------------------------*)
 
 $CurrentNotebook::usage = "$CurrentNotebook returns the Notebook expression of the notebook that is currently being processed."
-$CurrentNotebookWebsiteDirectory = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
+$CurrentNotebookFile::usage = "$CurrentNotebookFile returns the absolute file path to the source notebook that is currently being built."
+$CurrentNotebookWebsiteDirectory::usage = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
+$CurrentNotebookSupportFiles::usage = "$CurrentNotebookSupportFiles returns an Association containing the 'support files' that are used in the HTML generated for the notebook currently being built."
+
+GeneralUtilities`SetUsage[AddSupportFile, "AddSupportFile[filename$, content$] adds content for a 'support' file that is used by the HTML for the current notebook being built."]
 
 Begin["`Private`"]
 
@@ -23,7 +27,9 @@ Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 (*====================================*)
 
 $CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
+$CurrentNotebookFile := RaiseError["Unexpected use of $CurrentNotebookFile: no notebook is currently being built."]
 $CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
+$CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
 
 (*====================================*)
 
@@ -120,7 +126,18 @@ buildWebNotebook[
 	metadata
 },
 Block[{
-	$CurrentNotebook
+	$CurrentNotebook,
+	(* Absolute file path to the source file of the notebook currently being
+	   built. *)
+	$CurrentNotebookFile = nbFile,
+	(*
+		An association of:
+
+			File["relative/file/path.(png|gif|etc)"] -> (_?ImageQ | etc.)
+
+		Do not modify this assocation directly. Instead use AddSupportFile.
+	*)
+	$CurrentNotebookSupportFiles = <||>
 },
 	RaiseAssert[StringQ[nbFileRelative]];
 
@@ -229,6 +246,26 @@ Block[{
 	];
 
 	(*--------------------------------*)
+	(* Write the support files        *)
+	(*--------------------------------*)
+
+	KeyValueMap[
+		{relativeFilePath, value} |-> Module[{
+			filePath
+		},
+			filePath = FileNameJoin[{
+				FileNameDrop[htmlFile],
+				Replace[relativeFilePath, File[s_?StringQ] :> s]
+			}];
+
+			RaiseAssert[StringQ[filePath]];
+
+			RaiseConfirm @ Export[filePath, value];
+		],
+		$CurrentNotebookSupportFiles
+	];
+
+	(*--------------------------------*)
 	(* Write the HTML to `htmlFile`   *)
 	(*--------------------------------*)
 
@@ -265,6 +302,90 @@ convertToHtml[expr_] := Replace[expr, {
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Map[convertToHtml, cells],
+
+	(*--------------------------------*)
+	(* Rasterized cell types          *)
+	(*--------------------------------*)
+
+	cell:Cell[_, "Input" | "Output", options0___?OptionQ] :> UsingFrontEnd @ Module[{
+		$rasterResolution = 270,
+		(* The native PPI resolution of the FrontEnd on this device. This is
+		   typically 144 on HiDPI computers. *)
+		$frontEndResolution,
+		$frontEndScale,
+		image,
+		imageRelativeUrl,
+		imageCSSPixelDimensions
+	},
+		{$frontEndResolution, $frontEndScale} = Replace[CurrentValue["ConnectedDisplays"], {
+			{
+				KeyValuePattern[{
+					"Resolution" -> resolution_?NumberQ,
+					"Scale" -> scale_?NumberQ
+				}],
+				___
+			} :> {resolution, scale},
+			other_ :> RaiseError[
+				"unexpected \"ConnectedDisplays\" value: ``",
+				InputForm[other]
+			]
+		}];
+
+		RaiseAssert[NumberQ[$frontEndResolution]];
+
+		RaiseAssert[
+			$frontEndResolution == 144 || $frontEndResolution == 72,
+			"unexpected FrontEnd resolution: ``", $frontEndResolution
+		];
+
+		image = Rasterize[
+			cell,
+			ImageResolution -> $rasterResolution,
+			Background -> ColorConvert[Transparent, "RGB"]
+		];
+
+		RaiseAssert[ImageQ[image]];
+
+		(*------------------------------------------------------------------*)
+		(* Calculate the image dimensions in CSS pixels that will result in *)
+		(* the cell image having the same physical on-screen size as when   *)
+		(* viewed  in a notebook. When viewing the notebook next to the web *)
+		(* page at the same magnification, the two should appear identical  *)
+		(* in size.                                                         *)
+		(*------------------------------------------------------------------*)
+
+		(* These are the dimensions `image` would have if `image` was rasterized
+		   at the default front end resolution. *)
+		imageCSSPixelDimensions =
+			ImageDimensions[image] / ($rasterResolution / $frontEndResolution);
+
+		(* Account for the fact that HTML pixels are defined as 1/96th of an inch,
+		   so they already compensate for the DPI scale; meaning we need to
+		   divide the physical dimensions of the image by the scaling factor of
+		   the FE they were rendered by. *)
+		imageCSSPixelDimensions /= $frontEndScale;
+
+		imageCSSPixelDimensions //= Round;
+
+		RaiseAssert[MatchQ[imageCSSPixelDimensions, {_?IntegerQ, _?IntegerQ}]];
+
+		(*-------------------------*)
+		(* Return the HTML element *)
+		(*-------------------------*)
+
+		imageRelativeUrl = AddSupportFile[Automatic, image];
+
+		XMLElement["img", {
+			"src" -> imageRelativeUrl,
+			"width" -> imageCSSPixelDimensions[[1]],
+			"height" -> imageCSSPixelDimensions[[2]],
+			"style" -> "display: block; padding: 4pt 0 4pt 0;"
+		}, {}]
+	],
+
+	(*--------------------------------*)
+	(* Converted cell types           *)
+	(*--------------------------------*)
 
 	Cell[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
@@ -531,6 +652,72 @@ wrapHtmlForStyle[
 ]
 
 AddUnmatchedArgumentsHandler[wrapHtmlForStyle]
+
+(*======================================*)
+
+(*
+	Use this to add supporting files, like:
+
+		* Images embedded in the notebook
+		* Rasterized cells
+		* TODO: Inline e.g. JS files written by the author
+
+	The location of the support file in the built website is chosen
+	automatically.
+
+	This function will return a string containing the URL path to the support
+	file that is relative to the URL of the notebook currently being built.
+*)
+AddSupportFile[
+	name0: _?StringQ | Automatic,
+	content: _?ImageQ
+] := Module[{
+	name = Replace[name0,
+		Automatic :> ToString[Length[$CurrentNotebookSupportFiles]]
+	],
+	ext,
+	filePath,
+	urlPath
+},
+	RaiseAssert[
+		!StringContainsQ[name, "/" | "\\"],
+		"support file name contains file path separator character: ``", name
+	];
+
+	RaiseAssert[AssociationQ[$CurrentNotebookSupportFiles]];
+
+	If[KeyMemberQ[$CurrentNotebookSupportFiles, name],
+		RaiseError["support file with name `` has already been added.", InputForm[name]];
+	];
+
+	ext = Replace[content, {
+		_?ImageQ :> ".png",
+		other_ :> RaiseError["unsupported support file data: ``", other]
+	}];
+
+	(* FIXME: Validate name or encode so that `filePath` only contains URL-safe
+		characters? *)
+	(*
+		Store support files in a directory that has the same name as the base
+		name of the notebook they support.
+
+		E.g. if the current notebook is kitchen-sink.nb, then the support file
+		will be located at the file path `kitchen-sink/<name>.<ext>`
+	*)
+	filePath = FileNameJoin[{
+		FileBaseName[$CurrentNotebookFile],
+		name <> ext
+	}];
+
+	AssociateTo[$CurrentNotebookSupportFiles, File[filePath] -> content];
+
+	(* Return a string containing the HTML relative path to this file. *)
+	urlPath = URLBuild @ FileNameSplit[filePath];
+	RaiseAssert[StringQ[urlPath]];
+	urlPath
+]
+
+AddUnmatchedArgumentsHandler[AddSupportFile]
 
 (*======================================*)
 

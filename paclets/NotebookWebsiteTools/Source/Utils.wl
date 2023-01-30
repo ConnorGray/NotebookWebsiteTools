@@ -107,7 +107,7 @@ AddUnmatchedArgumentsHandler[NotebookCells]
 
 (*========================================================*)
 
-(* NOTE: This function is required because exporint an XMLElement[..] using the
+(* NOTE: This function is required because exporting an XMLElement[..] using the
 	"XML" format escapes '<' and '>' characters in `text`, but exporting as
 	using the "HTMLFragment" format does not escape those characters. *)
 HTMLEscape[text_?StringQ] := StringReplace[
