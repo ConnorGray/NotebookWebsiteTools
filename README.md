@@ -29,6 +29,18 @@ NotebookWebsiteBuild["/path/to/NotebookWebsiteTools/Examples"]
 
 The built website assets will be placed in the `Examples/build` directory.
 
+### Command-Line Interface
+
+A command-line interface to NotebookWebsiteTools functionality is available via
+the unofficial [`wolfram-cli`](https://github.com/ConnorGray/wolfram-cli) tool.
+
+If `wolfram-cli` is available, and the `NotebookWebsiteTools` paclet is
+installed, then a notebook website can be built using:
+
+```shell
+$ wolfram-cli notebook-website build [WEBSITE_DIR]
+```
+
 ### Contributing
 
 See [**Development.md**](./docs/Development.md) for instructions on how to

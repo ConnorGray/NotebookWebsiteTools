@@ -9,6 +9,10 @@ PacletObject[<|
 		{"Asset", "Assets" -> {
 			{"web_assets", "Assets/web_assets"}
 		}},
-		{"Documentation", "Language" -> "English"}
+		{"Documentation", "Language" -> "English"},
+		{"WolframCLI",
+			"Subcommand" -> "notebook-website",
+			"HandlerFunction" -> "ConnorGray`NotebookWebsiteTools`CLI`HandleNotebookWebsiteSubcommand"
+		}
 	}
 |>]
