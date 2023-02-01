@@ -4,6 +4,7 @@ RaiseError::usage  = "RaiseError[formatStr, args___] throws a Failure object ind
 RaiseConfirm
 RaiseAssert::usage = "RaiseAssert[cond, formatStr, args___] throws a Failure object indicating a failed assertion encountered during the build process.";
 CatchRaised::usage = "CatchRaised[expr] catches all exceptions raised with Raise* functions.";
+WrapRaised::usage = "WrapRaised[formatStr$, args___][expr$] wraps any Failure's raised by the evaluation of expr$ in an outer Failure where the original error is the \"CausedBy\" field of the new error."
 AddUnmatchedArgumentsHandler::usage = "AddUnmatchedArgumentsHandler[symbol] adds a downvalue to symbol that generates an error when no other downvalues match."
 $RaiseErrorTag
 
@@ -127,6 +128,29 @@ RaiseAssert[args:PatternSequence[Optional[cond_, Sequence[]], ___]] := Throw[
 Attributes[CatchRaised] := {HoldFirst}
 
 CatchRaised[expr_] := Catch[expr, $RaiseErrorTag]
+
+(*========================================================*)
+
+WrapRaised[formatStr_?StringQ, args___] :=
+	Function[
+		{expr},
+		Replace[Catch[expr, $RaiseErrorTag, "CaughtRaisedError"], {
+			"CaughtRaisedError"[
+				cause:Failure[tag_?StringQ, assoc_?AssociationQ],
+				$RaiseErrorTag
+			] :> (
+				RaiseError @ Failure[$failureTag, <|
+					"MessageTemplate" -> formatStr,
+					"MessageParameters" -> {args},
+					"CausedBy" -> cause
+				|>]
+			),
+			other:"CaughtRaisedError"[___] :> (
+				RaiseError["unexpected raised error format: ``", InputForm[other]]
+			)
+		}],
+		HoldFirst
+	]
 
 (*========================================================*)
 

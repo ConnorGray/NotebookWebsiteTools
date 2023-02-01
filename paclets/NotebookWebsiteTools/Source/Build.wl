@@ -93,7 +93,9 @@ Block[{
 
 	htmlFiles = Map[
 		nbFile |-> Module[{},
-			buildWebNotebook[nbFile, contentDir, buildDir]
+			WrapRaised["Error building notebook ``", nbFile][
+				buildWebNotebook[nbFile, contentDir, buildDir]
+			]
 		],
 		notebooks
 	];
