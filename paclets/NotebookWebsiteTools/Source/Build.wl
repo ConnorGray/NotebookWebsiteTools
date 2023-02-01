@@ -105,6 +105,11 @@ Block[{
 		(* NOTE(UX): These File[..] values are clickable in the FE, making it
 			a quick and easy way for the caller of NotebookWebsiteBuild to open
 			one of the built files. *)
+		(* TODO: Sort this list using a heuristic for which is the most
+			'general' type of document, so that the first is always most useful
+			for the user to click, and is the best document for the `--open`
+			CLI flag to open. See PacletDocumentationBuild[..] Success result
+			sorting, which already has a similar heuristic. *)
 		"OutputHTMLFiles" -> htmlFiles
 	|>]
 ]]
