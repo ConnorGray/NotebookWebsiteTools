@@ -16,11 +16,8 @@ HandleNotebookWebsiteSubcommand[
 },
 	(* TODO: Provide a helper function in WolframCLI` for this? *)
 	Replace[cliArgs, {
-		{_, "notebook-website", "build"} :> (
-			inputDir = Directory[]
-		),
-		{_, "notebook-website", "build", inputDir0_} :> (
-			inputDir = inputDir0
+		{_, "notebook-website", "build", inputDir0 : _?StringQ : Automatic} :> (
+			inputDir = Replace[inputDir0, Automatic :> Directory[]]
 		),
 		other_ :> RaiseError["Unexpected command line arguments: ``", other]
 	}];
