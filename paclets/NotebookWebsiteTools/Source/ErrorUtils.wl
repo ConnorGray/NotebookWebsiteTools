@@ -14,6 +14,8 @@ RaiseAssert::assertfail = "``"
 
 Begin["`Private`"]
 
+$failureTag = "NotebookWebsiteError";
+
 (*========================================================*)
 
 $ExitOnExceptionPreHandler = Function[
@@ -41,7 +43,7 @@ RaiseError[formatStr_?StringQ, args___] := (
 	];
 
 	Throw[
-		Failure["PackagesError", <|
+		Failure[$failureTag, <|
 			"MessageTemplate" -> formatStr,
 			"MessageParameters" -> {args}
 		|>],
@@ -54,7 +56,7 @@ RaiseError[failure: _Failure] := (
 )
 
 RaiseError[args___] := Throw[
-	Failure["PackagesError", <|
+	Failure[$failureTag, <|
 		"MessageTemplate" -> ToString[StringForm[
 		"Unknown error occurred: ``",
 		StringJoin[Map[ToString, {args}]]
@@ -93,7 +95,7 @@ RaiseAssert[
 	];
 
 	Throw[
-		Failure["PackagesError", <|
+		Failure[$failureTag, <|
 			"MessageTemplate" -> "RaiseAssert[..] failed: " <> formatStr,
 			"MessageParameters" -> {args}
 		|>],
@@ -110,7 +112,7 @@ RaiseAssert[cond_] :=
 	]
 
 RaiseAssert[args:PatternSequence[Optional[cond_, Sequence[]], ___]] := Throw[
-	Failure["PackagesError", <|
+	Failure[$failureTag, <|
 		"MessageTemplate" -> ToString[StringForm[
 			"Malformed RaiseAssert[``, ...] call: ``",
 			HoldForm @ InputForm @ cond,
