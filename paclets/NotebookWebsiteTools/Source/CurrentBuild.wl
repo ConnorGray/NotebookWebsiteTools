@@ -45,6 +45,7 @@ makeTableOfContentsHtml[
 		Replace[{
 			(* Remove "Excluded" cells. *)
 			Rule[Cell[_, ___, "Excluded", ___], _] -> Nothing,
+
 			(* Prevent Item cells from showing up in the table of contents. *)
 			Rule[Cell[
 				_,
@@ -54,6 +55,10 @@ makeTableOfContentsHtml[
 				| "ItemParagraph" | "SubitemParagraph" | "SubsubitemParagraph",
 				___
 			], _] -> Nothing,
+
+			(* Prevent Input/Output cell groups from showing up in the table of
+			   contents. *)
+			(Cell[___, "Input", ___] -> {}) -> Nothing,
 
 			Rule[Cell[cellData_, ___], children_?ListQ] :> Module[{
 				contentString = ConvertToString[cellData],
