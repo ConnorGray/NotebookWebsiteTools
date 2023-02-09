@@ -15,6 +15,14 @@ $ cargo make paclet
 The resulting build files and final .paclet archive file will be located in the
 `build` subdirectory of the repository.
 
+Use [`wolfram-cli`](https://github.com/ConnorGray/wolfram-cli) to install the
+built paclet:
+
+```shell
+$ wolfram-cli paclet install build/ConnorGray__NotebookWebsiteTools-X.X.X.paclet
+```
+
+
 ## Setup
 
 Developing NotebookWebsiteTools requires that the following software be
