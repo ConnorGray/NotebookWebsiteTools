@@ -24,13 +24,24 @@ HandleNotebookWebsiteSubcommand[
 			]
 		} :> (
 			openFlag = StringQ[openFlag0];
-			inputDir = Replace[inputDir0, Automatic :> Directory[]]
+			inputDir = Replace[inputDir0, Automatic :> Directory[]];
+
+			handleBuild[inputDir, openFlag]
 		),
 		other_ :> RaiseError["Unexpected command line arguments: ``", other]
-	}];
+	}]
+]
 
-	RaiseAssert[StringQ[inputDir]];
+AddUnmatchedArgumentsHandler[HandleNotebookWebsiteSubcommand]
 
+(*======================================*)
+
+handleBuild[
+	inputDir: _?StringQ,
+	openFlag: _?BooleanQ
+] := Module[{
+	result
+},
 	result = NotebookWebsiteBuild[inputDir];
 
 	Replace[result, {
@@ -53,6 +64,8 @@ HandleNotebookWebsiteSubcommand[
 		)
 	}]
 ]
+
+AddUnmatchedArgumentsHandler[handleBuild]
 
 (*======================================*)
 
