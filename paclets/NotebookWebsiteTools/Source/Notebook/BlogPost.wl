@@ -18,6 +18,16 @@ CreateBlogPostNotebook[title: _?StringQ] := Module[{nb},
 			"Subtitle"
 		]
 	},
+		Initialization :> (
+			(* Set a tagging rule to indicate if NotebookWebsiteTools is
+				installed. This tagging rule is read dynamically by a docked
+				cell that will display an error to the user if the paclet isn't
+				installed. *)
+			CurrentValue[
+				EvaluationNotebook[],
+				{TaggingRules, "NotebookWebsiteToolsIsInstalled"}
+			] = !FailureQ[PacletObject["ConnorGray/NotebookWebsiteTools"]];
+		),
 		DockedCells -> MakeBlogPostDockedCells[],
 		TaggingRules -> MakeNotebookTaggingRules["BlogPost"],
 		StyleDefinitions -> MakeNotebookStyleDefinitions[]

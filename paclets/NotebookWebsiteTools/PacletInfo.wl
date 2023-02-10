@@ -9,6 +9,7 @@ PacletObject[<|
 		{"Asset", "Assets" -> {
 			{"web_assets", "Assets/web_assets"}
 		}},
+		{"FrontEnd"},
 		{"Documentation", "Language" -> "English"},
 		{"WolframCLI",
 			"Subcommand" -> "notebook-website",
