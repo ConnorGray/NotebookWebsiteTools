@@ -28,6 +28,16 @@ HandleNotebookWebsiteSubcommand[
 
 			handleBuild[inputDir, openFlag]
 		),
+		{_, "notebook-website", "new",
+			fileName : _?ArgQ : Automatic,
+			OrderlessPatternSequence[
+				openFlag0 : "--open" : False
+			]
+		} :> (
+			openFlag = StringQ[openFlag0];
+
+			handleNew[fileName, openFlag]
+		),
 		other_ :> RaiseError["Unexpected command line arguments: ``", other]
 	}]
 ]
@@ -66,6 +76,45 @@ handleBuild[
 ]
 
 AddUnmatchedArgumentsHandler[handleBuild]
+
+(*======================================*)
+
+handleNew[
+	fileName0: _?StringQ,
+	openFlag: _?BooleanQ
+] := Module[{
+	fileName = RaiseConfirm @ ExpandFileName[fileName0],
+	nb
+},
+	Replace[FileExtension[fileName], {
+		".nb" :> {},
+		"" :> (
+			fileName = fileName <> ".nb";
+		),
+		other_?StringQ :> RaiseError[
+			"unsupported file extension specified for new website notebook file path: ``",
+			fileName
+		]
+	}];
+
+	UsingFrontEnd[
+		nb = CreateWebsiteNotebook["BlogPost", "<Unnamed>"];
+
+		RaiseAssert[MatchQ[nb, _NotebookObject], "unexpected CreateWebsiteNotebook result: ``", nb];
+
+		If[FileExistsQ[fileName],
+			RaiseError["file already exists at path: ``", fileName];
+		];
+
+		RaiseConfirm @ NotebookSave[nb, fileName];
+
+		If[openFlag,
+			SystemOpen[fileName];
+		];
+	];
+]
+
+AddUnmatchedArgumentsHandler[handleNew]
 
 (*======================================*)
 
