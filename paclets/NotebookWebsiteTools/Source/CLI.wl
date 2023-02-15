@@ -87,7 +87,7 @@ handleNew[
 	nb
 },
 	Replace[FileExtension[fileName], {
-		".nb" :> {},
+		"nb" :> {},
 		"" :> (
 			fileName = fileName <> ".nb";
 		),
