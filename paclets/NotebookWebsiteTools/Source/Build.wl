@@ -100,7 +100,9 @@ Block[{
 		notebooks
 	];
 
-	RaiseAssert[MatchQ[htmlFiles, {File[_?StringQ]...}]];
+	RaiseAssert[MatchQ[htmlFiles, {(File[_?StringQ] | Missing["Excluded"])...}]];
+
+	htmlFiles = DeleteCases[htmlFiles, Missing["Excluded"]];
 
 	Success["NotebookWebsiteBuild", <|
 		"ProcessedNotebooks" -> notebooks,
@@ -151,6 +153,14 @@ Block[{
 	nb = Replace[Get[File[nbFile]], {
 		nb_Notebook :> nb,
 		other_ :> RaiseError["Error importing notebook at ``: ``", nbFile, InputForm[other]]
+	}];
+
+	Replace[WebsiteNotebookStatus[nb], {
+		(* Proceed normally. *)
+		Missing["KeyAbsent", "DocumentStatus"] :> {},
+		(* This document is marked as excluded from the build, so skip it. *)
+		"Excluded" :> Return[Missing["Excluded"], Module],
+		other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	$CurrentNotebook = nb;

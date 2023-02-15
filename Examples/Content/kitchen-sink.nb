@@ -3,17 +3,17 @@
 (*** Wolfram Notebook File ***)
 (* http://www.wolfram.com/nb *)
 
-(* CreatedBy='Mathematica 13.1' *)
+(* CreatedBy='Mathematica 13.2' *)
 
 (*CacheID: 234*)
 (* Internal cache information:
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    264606,       4688]
-NotebookOptionsPosition[    250420,       4405]
-NotebookOutlinePosition[    258807,       4596]
-CellTagsIndexPosition[    258764,       4593]
+NotebookDataLength[    259183,       4577]
+NotebookOptionsPosition[    251506,       4434]
+NotebookOutlinePosition[    253163,       4481]
+CellTagsIndexPosition[    253120,       4478]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -28,7 +28,7 @@ Cell[BoxData[
  RowBox[{"ConnorGray`NotebookWebsiteTools`Notebook`UpdateNotebook", "[", 
   RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]], "Input", "Excluded",
  CellChangeTimes->{{3.8770628822101393`*^9, 3.8770628972453527`*^9}},
- CellLabel->"In[6]:=",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
+ CellLabel->"In[4]:=",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d279d5a4"],
 
 Cell[TextData[{
  "This document is a \[OpenCurlyQuote]kitchen sink\[CloseCurlyQuote] overview \
@@ -56,6 +56,35 @@ Cell[BoxData[{
    3.878876691420257*^9, {3.879046178476137*^9, 
    3.8790461787431507`*^9}},ExpressionUUID->"7c8e3754-3937-4ee4-a46d-\
 56ed29161397"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CurrentValue", "[", 
+  RowBox[{
+   RowBox[{"EvaluationNotebook", "[", "]"}], ",", "TaggingRules"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.885423343000133*^9, 3.8854233494014597`*^9}},
+ CellLabel->"In[7]:=",ExpressionUUID->"15135d07-fffb-4879-bf14-c26bf1f34967"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\<\"ConnorGray/NotebookWebsiteTools\"\>", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"\<\"DocumentType\"\>", "\[Rule]", "\<\"BlogPost\"\>"}], ",", 
+      RowBox[{"\<\"CreatedByPacletVersion\"\>", "\[Rule]", "\<\"0.0.1\"\>"}], 
+      ",", 
+      RowBox[{"\<\"DocumentStatus\"\>", "\[Rule]", "\<\"Excluded\"\>"}]}], 
+     "}"}]}], ",", 
+   RowBox[{"\<\"NotebookWebsiteToolsIsInstalled\"\>", "\[Rule]", "True"}], 
+   ",", 
+   RowBox[{"\<\"TryRealOnly\"\>", "\[Rule]", "False"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.885423349611948*^9, 3.885423361582028*^9}, {
+  3.885423407648943*^9, 3.8854234576424923`*^9}},
+ CellLabel->"Out[7]=",ExpressionUUID->"c1bb57d8-348a-48e4-a8b0-489ccc896df2"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4403,186 +4432,42 @@ Cell[BoxData[{
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{855, 1257},
-WindowMargins->{{Automatic, 409}, {Automatic, 0}},
+WindowSize->{808, 911},
+WindowMargins->{{155, Automatic}, {125, Automatic}},
 DockedCells->{
   Cell[
-   BoxData[
-    GridBox[{{
-       TemplateBox[{
-         GraphicsBox[{
-           InsetBox[
-            FormBox["\"TD\"", TraditionalForm], {0, 0}]}, {
-          ImageSize -> 15, BaselinePosition -> Center}], "Exclude", 
-         "Toggle whether the selected cells are marked as Excluded.", 
-         ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[
-          ButtonNotebook[]]& , "Queued", 
-         RGBColor[1, 0.85, 0.85], 
-         RGBColor[0.8, 0., 0.]}, 
-        "NotebookWebsiteTools:IconAndLabelButtonTemplate"]}}]], Background -> 
-   GrayLevel[0.9], CellFrameMargins -> {{Inherited, Inherited}, {0, 0}}]},
+   TextData[{
+     StyleBox[{
+       StyleBox["Error: ", Bold, 
+        RGBColor[1, 0.25, 0.25]], 
+       "Unable to locate NotebookWebsiteTools paclet. ", 
+       "This notebook might not render or behave correctly. ", 
+       "Install ConnorGray/NotebookWebsiteTools and reopen this notebook to \
+resolve this error."}, FontFamily -> "Source Sans Pro", FontSize -> 15]}], 
+   Background -> RGBColor[1, 0.85, 0.85], CellOpen -> Dynamic[
+     Not[
+      TrueQ[
+       CurrentValue[
+        EvaluationNotebook[], {
+        TaggingRules, "NotebookWebsiteToolsIsInstalled"}]]]]], Inherited},
 TaggingRules->{
  "ConnorGray/NotebookWebsiteTools" -> {
-   "DocumentType" -> "BlogPost", "CreatedByPacletVersion" -> "0.0.1"}, 
-  "TryRealOnly" -> False},
+   "DocumentType" -> "BlogPost", "CreatedByPacletVersion" -> "0.0.1", 
+    "DocumentStatus" -> "Excluded"}, "NotebookWebsiteToolsIsInstalled" -> 
+  True, "TryRealOnly" -> False},
+Initialization:>(CurrentValue[
+    EvaluationNotebook[], {TaggingRules, "NotebookWebsiteToolsIsInstalled"}] = 
+  Not[
+    FailureQ[
+     PacletObject["ConnorGray/NotebookWebsiteTools"]]]; Null),
 FrontEndVersion->"13.2 for Mac OS X ARM (64-bit) (November 18, 2022)",
 StyleDefinitions->Notebook[{
    Cell[
-    StyleData[StyleDefinitions -> "Default.nb"]], 
-   Cell[
-    StyleData["Excluded"], CellFrame -> {{3, False}, {False, False}}, 
-    CellFrameColor -> RGBColor[0.8, 0., 0.], MenuSortingValue -> 2500, 
-    Background -> RGBColor[1, 0.85, 0.85]], 
-   Cell[
-    StyleData["LiteralHTML"], CellFrame -> {{3, False}, {False, False}}, 
-    CellDingbat -> StyleBox["\"</>\"", Bold, 
-      GrayLevel[0.6], ShowStringCharacters -> False, StripOnInput -> False], 
-    CellMargins -> {{66, 10}, {8, 8}}, StripStyleOnPaste -> True, 
-    CellFrameColor -> GrayLevel[0.8], 
-    CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, Hyphenation -> 
-    False, AutoQuoteCharacters -> {}, PasteAutoQuoteCharacters -> {}, 
-    LanguageCategory -> None, MenuSortingValue -> 2525, FontFamily -> 
-    Dynamic[
-      AbsoluteCurrentValue[
-       EvaluationCell[], {StyleHints, "CodeFont"}]], Background -> 
-    GrayLevel[0.95]], 
-   Cell[
-    StyleData["ComputedHTML", StyleDefinitions -> StyleData["Input"]], 
-    CellDingbat -> StyleBox["\"</>\"", Bold, 
-      GrayLevel[0.6], ShowStringCharacters -> False, StripOnInput -> False], 
-    MenuSortingValue -> 2550], 
-   Cell[
-    StyleData["HighlightSyntax"], CellFrame -> {{3, False}, {False, False}}, 
-    CellMargins -> {{66, 10}, {8, 8}}, StripStyleOnPaste -> True, 
-    Initialization :> AttachCell[
-      EvaluationCell[], 
-      Cell[
-       BoxData[
-        ToBoxes[
-         PaneSelector[{True -> Row[{
-              PopupMenu[
-               Dynamic[
-                CurrentValue[
-                 ParentCell[
-                  EvaluationCell[]], {
-                 TaggingRules, "HighlightSyntaxOptions", "Syntax"}]], 
-               ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[][
-               "Syntaxes"], ConnorGray`NotebookWebsiteTools`$DefaultSyntax, 
-               Framed[
-                Style[
-                 Row[{
-                   Dynamic[
-                    Replace[
-                    CurrentValue[
-                    ParentCell[
-                    EvaluationCell[]], {
-                    TaggingRules, "HighlightSyntaxOptions", "Syntax"}], 
-                    Inherited -> 
-                    ConnorGray`NotebookWebsiteTools`$DefaultSyntax]], 
-                   "\[VeryThinSpace]\[RightAngleBracket]"}], FontSize -> 11, 
-                 FontWeight -> "Bold", FontColor -> GrayLevel[0.5]], 
-                FrameMargins -> 4, FrameStyle -> Directive[
-                  RGBColor[0.8549, 0.83137, 0.72549], 
-                  AbsoluteThickness[1]], ImageMargins -> {{0, 3}, {0, 0}}, 
-                RoundingRadius -> 3, Background -> LightYellow]], 
-              PopupMenu[
-               Dynamic[
-                CurrentValue[
-                 ParentCell[
-                  EvaluationCell[]], {
-                 TaggingRules, "HighlightSyntaxOptions", "Theme"}]], 
-               ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[][
-               "Themes"], ConnorGray`NotebookWebsiteTools`$DefaultTheme, 
-               Framed[
-                Style[
-                 Row[{
-                   Dynamic[
-                    Replace[
-                    CurrentValue[
-                    ParentCell[
-                    EvaluationCell[]], {
-                    TaggingRules, "HighlightSyntaxOptions", "Theme"}], 
-                    Inherited -> 
-                    ConnorGray`NotebookWebsiteTools`$DefaultTheme]], 
-                   "\[VeryThinSpace]\[RightAngleBracket]"}], FontSize -> 11, 
-                 FontWeight -> "Bold", FontColor -> GrayLevel[0.5]], 
-                FrameMargins -> 4, FrameStyle -> Directive[
-                  RGBColor[0.8549, 0.83137, 0.72549], 
-                  AbsoluteThickness[1]], ImageMargins -> {{0, 3}, {0, 0}}, 
-                RoundingRadius -> 3, Background -> LightYellow]]}], False -> 
-           ""}, 
-          Dynamic[
-           Or[
-            CurrentValue[
-             ParentCell[
-              EvaluationCell[]], {TaggingRules, "parent_cell_is_hovered"}], 
-            CurrentValue["MouseOver"]]]]]], CellEventActions -> None, 
-       Background -> Transparent], {Right, Top}, -2, {Right, Top}], 
-    CellEventActions -> {
-     PassEventsDown -> True, EvaluationOrder -> After, "KeyDown" :> 
-      ConnorGray`NotebookWebsiteTools`UI`HandleHighlightSyntaxCellEvent[
-        EvaluationCell[], "KeyDown"]}, CellDynamicExpression :> 
-    Dynamic[CurrentValue[
-         EvaluationCell[], {TaggingRules, "parent_cell_is_hovered"}] = If[
-         TrueQ[
-          CurrentValue["MouseOver"]], True, Inherited]; Null], CellFrameColor -> 
-    GrayLevel[0.8], CodeAssistOptions -> {"AutoDetectHyperlinks" -> False}, 
-    Hyphenation -> False, AutoQuoteCharacters -> {}, 
-    PasteAutoQuoteCharacters -> {}, LanguageCategory -> None, 
-    MenuSortingValue -> 2575, FontFamily -> Dynamic[
-      AbsoluteCurrentValue[
-       EvaluationCell[], {StyleHints, "CodeFont"}]], Background :> Dynamic[
-      ConnorGray`NotebookWebsiteTools`UI`HighlightSyntaxCellDefaultBackground[
-      
-       EvaluationCell[]]]], 
-   Cell[
-    StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"], 
-    TemplateBoxOptions -> {
-     DisplayFunction -> (
-       DynamicModuleBox[{
-        ConnorGray`NotebookWebsiteTools`Notebook`Private`state = "default"}, 
-        TagBox[
-         ButtonBox[
-          FrameBox[
-           GridBox[{{
-              StyleBox[#, GraphicsBoxOptions -> {BaseStyle -> Dynamic[
-                   Switch[
-                   ConnorGray`NotebookWebsiteTools`Notebook`Private`state, 
-                    "hovered", White, 
-                    Blank[], #7]]}], 
-              PaneBox[#2]}}, 
-            GridBoxAlignment -> {
-             "Columns" -> {{Left}}, "Rows" -> {{Center}}}], 
-           BaseStyle -> {
-            FontSize -> 10, FontWeight -> Automatic, FontColor -> Dynamic[
-               Switch[
-               ConnorGray`NotebookWebsiteTools`Notebook`Private`state, 
-                "hovered", White, 
-                Blank[], #7]]}, FrameMargins -> {{2, 2}, {2, 1}}, FrameStyle -> 
-           Directive[
-             Thickness[1], #7], Background -> Dynamic[
-             Switch[
-             ConnorGray`NotebookWebsiteTools`Notebook`Private`state, 
-              "default", #6, "hovered", 
-              RGBColor[1, 0.5, 0], "pressed", Gray]], RoundingRadius -> 3], 
-          Appearance -> None, ButtonFunction :> #4, Method -> #5, Evaluator -> 
-          Automatic], 
-         EventHandlerTag[{
-          "MouseEntered" :> (
-            ConnorGray`NotebookWebsiteTools`Notebook`Private`state = 
-            "hovered"), 
-           "MouseExited" :> (
-            ConnorGray`NotebookWebsiteTools`Notebook`Private`state = 
-            "default"), {"MouseDown", 1} :> (
-            ConnorGray`NotebookWebsiteTools`Notebook`Private`state = 
-            "pressed"), {"MouseUp", 1} :> (
-            ConnorGray`NotebookWebsiteTools`Notebook`Private`state = 
-            "hovered"), PassEventsDown -> True, PassEventsUp -> True, Method -> 
-           "Preemptive"}]], DynamicModuleValues :> {}]& )}]}, Visible -> 
-  False, FrontEndVersion -> 
+    StyleData[StyleDefinitions -> "ConnorGray/NotebookWebsiteTools.nb"]]}, 
+  Visible -> False, FrontEndVersion -> 
   "13.2 for Mac OS X ARM (64-bit) (November 18, 2022)", StyleDefinitions -> 
   "Default.nb"],
-ExpressionUUID->"947ec5c0-85a2-401d-b044-22b4f1b28db5"
+ExpressionUUID->"b75e8597-7b82-4619-ba5e-dd0027baae47"
 ]
 (* End of Notebook Content *)
 
@@ -4602,91 +4487,95 @@ Cell[779, 26, 308, 4, 46, "Input",ExpressionUUID->"0172ffcb-2dc8-44fe-b277-57f8d
 Cell[1090, 32, 591, 13, 35, "Text",ExpressionUUID->"8f825d87-0aa8-4d65-91e8-62141c43b7ab"],
 Cell[1684, 47, 569, 10, 52, "ComputedHTML",ExpressionUUID->"7c8e3754-3937-4ee4-a46d-56ed29161397"],
 Cell[CellGroupData[{
-Cell[2278, 61, 158, 3, 69, "Chapter",ExpressionUUID->"ee491715-3deb-4568-961a-3cc55e27e8a5"],
-Cell[CellGroupData[{
-Cell[2461, 68, 170, 3, 54, "Subsection",ExpressionUUID->"cef62482-0054-4548-88a6-d211a272b2ca"],
-Cell[CellGroupData[{
-Cell[2656, 75, 546, 16, 30, "Input",ExpressionUUID->"5cfc3e14-7e7e-4c50-9b8c-fd893dccf00a"],
-Cell[3205, 93, 643, 20, 56, "Output",ExpressionUUID->"269d03f0-fbaf-4868-a029-772eda9a5934"]
+Cell[2278, 61, 289, 6, 30, "Input",ExpressionUUID->"15135d07-fffb-4879-bf14-c26bf1f34967"],
+Cell[2570, 69, 757, 16, 77, "Output",ExpressionUUID->"c1bb57d8-348a-48e4-a8b0-489ccc896df2"]
 }, Open  ]],
-Cell[3863, 116, 150, 3, 35, "Text",ExpressionUUID->"28b037b6-d5b0-4081-869a-ebdba90bdb25"],
 Cell[CellGroupData[{
-Cell[4038, 123, 208, 3, 30, "Input",ExpressionUUID->"e8861fef-bda9-42b8-9d82-da967dfcf464"],
-Cell[4249, 128, 229437, 3768, 257, "Output",ExpressionUUID->"d2ae69be-8c89-4192-9ded-e92beb5f8aff"]
+Cell[3364, 90, 158, 3, 69, "Chapter",ExpressionUUID->"ee491715-3deb-4568-961a-3cc55e27e8a5"],
+Cell[CellGroupData[{
+Cell[3547, 97, 170, 3, 54, "Subsection",ExpressionUUID->"cef62482-0054-4548-88a6-d211a272b2ca"],
+Cell[CellGroupData[{
+Cell[3742, 104, 546, 16, 30, "Input",ExpressionUUID->"5cfc3e14-7e7e-4c50-9b8c-fd893dccf00a"],
+Cell[4291, 122, 643, 20, 56, "Output",ExpressionUUID->"269d03f0-fbaf-4868-a029-772eda9a5934"]
+}, Open  ]],
+Cell[4949, 145, 150, 3, 35, "Text",ExpressionUUID->"28b037b6-d5b0-4081-869a-ebdba90bdb25"],
+Cell[CellGroupData[{
+Cell[5124, 152, 208, 3, 30, "Input",ExpressionUUID->"e8861fef-bda9-42b8-9d82-da967dfcf464"],
+Cell[5335, 157, 229437, 3768, 257, "Output",ExpressionUUID->"d2ae69be-8c89-4192-9ded-e92beb5f8aff"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[233735, 3902, 161, 3, 54, "Subsection",ExpressionUUID->"f8dee6de-ceff-480c-9f7a-8b2ccf9c2f3b"],
-Cell[233899, 3907, 207, 7, 35, "Text",ExpressionUUID->"75435abf-8537-4586-8f18-506f24e71929"],
+Cell[234821, 3931, 161, 3, 54, "Subsection",ExpressionUUID->"f8dee6de-ceff-480c-9f7a-8b2ccf9c2f3b"],
+Cell[234985, 3936, 207, 7, 35, "Text",ExpressionUUID->"75435abf-8537-4586-8f18-506f24e71929"],
 Cell[CellGroupData[{
-Cell[234131, 3918, 208, 7, 32, "Item",ExpressionUUID->"b1deaf54-ad0e-4b96-844d-e518a84dd41c"],
-Cell[234342, 3927, 224, 7, 25, "ItemParagraph",ExpressionUUID->"6dbb482c-4630-4b2e-8ae8-2f33057f9de4"],
+Cell[235217, 3947, 208, 7, 32, "Item",ExpressionUUID->"b1deaf54-ad0e-4b96-844d-e518a84dd41c"],
+Cell[235428, 3956, 224, 7, 25, "ItemParagraph",ExpressionUUID->"6dbb482c-4630-4b2e-8ae8-2f33057f9de4"],
 Cell[CellGroupData[{
-Cell[234591, 3938, 211, 7, 27, "Subitem",ExpressionUUID->"bf0ecc94-d5db-4a1e-a61b-b715f93cecab"],
-Cell[234805, 3947, 230, 7, 23, "SubitemParagraph",ExpressionUUID->"dff09176-d1af-495b-b5cc-1ff03af12f94"],
+Cell[235677, 3967, 211, 7, 27, "Subitem",ExpressionUUID->"bf0ecc94-d5db-4a1e-a61b-b715f93cecab"],
+Cell[235891, 3976, 230, 7, 23, "SubitemParagraph",ExpressionUUID->"dff09176-d1af-495b-b5cc-1ff03af12f94"],
 Cell[CellGroupData[{
-Cell[235060, 3958, 266, 8, 25, "Subsubitem",ExpressionUUID->"778e1552-754c-4894-90e8-b62993746eb0"],
-Cell[235329, 3968, 285, 8, 22, "SubsubitemParagraph",ExpressionUUID->"aedb1645-2d94-4c63-912c-50650813e878"]
-}, Open  ]]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[235675, 3983, 320, 8, 32, "ItemNumbered",ExpressionUUID->"7ea550f9-9907-4fde-8c21-605c0dba9107"],
-Cell[CellGroupData[{
-Cell[236020, 3995, 280, 8, 26, "SubitemNumbered",ExpressionUUID->"c2e61c2b-7456-45e7-83bc-03d72d9ad331"],
-Cell[236303, 4005, 328, 8, 25, "SubsubitemNumbered",ExpressionUUID->"af8da621-3f9b-4b07-851b-d15b9ac4ef9f"],
-Cell[236634, 4015, 385, 9, 25, "SubsubitemNumbered",ExpressionUUID->"b4a0d59c-cbcc-4a21-97e1-666099d1272f"]
-}, Open  ]],
-Cell[237034, 4027, 334, 8, 26, "SubitemNumbered",ExpressionUUID->"2951ec1c-c53f-4aec-8f4e-c53e96b85e0c"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[237417, 4041, 163, 3, 54, "Subsection",ExpressionUUID->"f788e770-b2ae-4d84-aaeb-f807499c6eb0"],
-Cell[237583, 4046, 180, 7, 84, "Program",ExpressionUUID->"e3e7235b-daf5-414f-9878-6ed2342747ae"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[237812, 4059, 158, 3, 69, "Chapter",ExpressionUUID->"7b230c34-298f-4add-bf4f-c3ec5432283f"],
-Cell[CellGroupData[{
-Cell[237995, 4066, 173, 3, 70, "Subsection",ExpressionUUID->"ff1ac35e-1ebd-402e-a3f7-eef1b1e90bed"],
-Cell[238171, 4071, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[238556, 4081, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
-Cell[238721, 4086, 312, 8, 35, "Text",ExpressionUUID->"7c46da46-7f84-4b96-ae8a-c4e2670f40a7"],
-Cell[239036, 4096, 784, 15, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[239857, 4116, 236, 4, 54, "Subsection",ExpressionUUID->"c02d7087-3a6d-4f4e-8537-b63166142970"],
-Cell[240096, 4122, 394, 8, 35, "Text",ExpressionUUID->"8a64d2f3-02cc-407d-9e83-297df2fe5301"],
-Cell[240493, 4132, 564, 14, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
-Cell[241060, 4148, 1676, 34, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[242773, 4187, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
-Cell[242943, 4192, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
-Cell[243281, 4202, 2274, 62, 82, "HighlightSyntax",ExpressionUUID->"43d91c51-512d-41f8-89ef-cd63af2831ac"],
-Cell[CellGroupData[{
-Cell[245580, 4268, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
-Cell[245790, 4274, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
-Cell[246117, 4284, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
-Cell[246475, 4295, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
-Cell[246832, 4306, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
+Cell[236146, 3987, 266, 8, 25, "Subsubitem",ExpressionUUID->"778e1552-754c-4894-90e8-b62993746eb0"],
+Cell[236415, 3997, 285, 8, 22, "SubsubitemParagraph",ExpressionUUID->"aedb1645-2d94-4c63-912c-50650813e878"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[247337, 4325, 263, 4, 69, "Chapter",ExpressionUUID->"a8738d90-a06b-4578-b4d7-0a48f9768f3e"],
-Cell[247603, 4331, 404, 8, 58, "Text",ExpressionUUID->"ac64152f-de30-4a3b-9d5f-2e9d4c3ed91c"],
+Cell[236761, 4012, 320, 8, 32, "ItemNumbered",ExpressionUUID->"7ea550f9-9907-4fde-8c21-605c0dba9107"],
 Cell[CellGroupData[{
-Cell[248032, 4343, 218, 4, 54, "Subsection",ExpressionUUID->"88007771-535a-47eb-8392-befb916bd46a"],
-Cell[248253, 4349, 356, 8, 58, "Text",ExpressionUUID->"85429b5f-033c-4430-a5d2-427028401142"],
-Cell[248612, 4359, 569, 10, 52, "ComputedHTML",ExpressionUUID->"16e62a6d-6e3d-4f3e-b9bf-99aa834bb020"]
+Cell[237106, 4024, 280, 8, 26, "SubitemNumbered",ExpressionUUID->"c2e61c2b-7456-45e7-83bc-03d72d9ad331"],
+Cell[237389, 4034, 328, 8, 25, "SubsubitemNumbered",ExpressionUUID->"af8da621-3f9b-4b07-851b-d15b9ac4ef9f"],
+Cell[237720, 4044, 385, 9, 25, "SubsubitemNumbered",ExpressionUUID->"b4a0d59c-cbcc-4a21-97e1-666099d1272f"]
+}, Open  ]],
+Cell[238120, 4056, 334, 8, 26, "SubitemNumbered",ExpressionUUID->"2951ec1c-c53f-4aec-8f4e-c53e96b85e0c"]
+}, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[249218, 4374, 168, 3, 54, "Subsection",ExpressionUUID->"748711c2-a92d-4998-bb8d-98cbf4b2ff09"],
-Cell[249389, 4379, 366, 8, 58, "Text",ExpressionUUID->"5ff3067e-b62c-44cf-8896-34b994eb5193"],
-Cell[249758, 4389, 622, 11, 52, "ComputedHTML",ExpressionUUID->"0dd2c49e-fc2a-4836-897c-57957b23bac7"]
+Cell[238503, 4070, 163, 3, 54, "Subsection",ExpressionUUID->"f788e770-b2ae-4d84-aaeb-f807499c6eb0"],
+Cell[238669, 4075, 180, 7, 84, "Program",ExpressionUUID->"e3e7235b-daf5-414f-9878-6ed2342747ae"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[238898, 4088, 158, 3, 69, "Chapter",ExpressionUUID->"7b230c34-298f-4add-bf4f-c3ec5432283f"],
+Cell[CellGroupData[{
+Cell[239081, 4095, 173, 3, 70, "Subsection",ExpressionUUID->"ff1ac35e-1ebd-402e-a3f7-eef1b1e90bed"],
+Cell[239257, 4100, 348, 5, 74, "Text",ExpressionUUID->"64f04fc2-0b6e-4703-83e0-9154348530b3"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[239642, 4110, 162, 3, 54, "Subsection",ExpressionUUID->"70442410-ef27-4aa1-b040-9f8c28ce38e3"],
+Cell[239807, 4115, 312, 8, 35, "Text",ExpressionUUID->"7c46da46-7f84-4b96-ae8a-c4e2670f40a7"],
+Cell[240122, 4125, 784, 15, 82, "LiteralHTML",ExpressionUUID->"5528dc19-497c-4b5b-9646-30a951836bbf"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[240943, 4145, 236, 4, 54, "Subsection",ExpressionUUID->"c02d7087-3a6d-4f4e-8537-b63166142970"],
+Cell[241182, 4151, 394, 8, 58, "Text",ExpressionUUID->"8a64d2f3-02cc-407d-9e83-297df2fe5301"],
+Cell[241579, 4161, 564, 14, 58, "Text",ExpressionUUID->"6697fa46-1e86-4c1e-ab47-44094b78200b"],
+Cell[242146, 4177, 1676, 34, 136, "ComputedHTML",ExpressionUUID->"7b228d23-c167-41b2-83e0-6c0aa568e590"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[243859, 4216, 167, 3, 54, "Subsection",ExpressionUUID->"c9dd9044-901b-481b-9322-7a051f0bdded"],
+Cell[244029, 4221, 335, 8, 35, "Text",ExpressionUUID->"e162ba3e-9261-4a33-9a9a-9b93c6c0d30e"],
+Cell[244367, 4231, 2274, 62, 82, "HighlightSyntax",ExpressionUUID->"43d91c51-512d-41f8-89ef-cd63af2831ac"],
+Cell[CellGroupData[{
+Cell[246666, 4297, 207, 4, 45, "Subsubsection",ExpressionUUID->"8e0eabe0-0aa1-44f5-8436-8ecc1b7e7208"],
+Cell[246876, 4303, 324, 8, 35, "Text",ExpressionUUID->"4da4bb29-7929-44ce-ad6b-b9dd0e856245"],
+Cell[247203, 4313, 355, 9, 32, "Item",ExpressionUUID->"e0c6f308-16a1-4ad1-a506-fe236c52036e"],
+Cell[247561, 4324, 354, 9, 32, "Item",ExpressionUUID->"5cbc73e7-cf0f-42a2-a40d-e21a6c03cd7c"],
+Cell[247918, 4335, 444, 12, 32, "Item",ExpressionUUID->"d15ede70-55a5-4378-8081-4a775eb0f72d"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[248423, 4354, 263, 4, 69, "Chapter",ExpressionUUID->"a8738d90-a06b-4578-b4d7-0a48f9768f3e"],
+Cell[248689, 4360, 404, 8, 58, "Text",ExpressionUUID->"ac64152f-de30-4a3b-9d5f-2e9d4c3ed91c"],
+Cell[CellGroupData[{
+Cell[249118, 4372, 218, 4, 54, "Subsection",ExpressionUUID->"88007771-535a-47eb-8392-befb916bd46a"],
+Cell[249339, 4378, 356, 8, 58, "Text",ExpressionUUID->"85429b5f-033c-4430-a5d2-427028401142"],
+Cell[249698, 4388, 569, 10, 52, "ComputedHTML",ExpressionUUID->"16e62a6d-6e3d-4f3e-b9bf-99aa834bb020"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[250304, 4403, 168, 3, 54, "Subsection",ExpressionUUID->"748711c2-a92d-4998-bb8d-98cbf4b2ff09"],
+Cell[250475, 4408, 366, 8, 58, "Text",ExpressionUUID->"5ff3067e-b62c-44cf-8896-34b994eb5193"],
+Cell[250844, 4418, 622, 11, 52, "ComputedHTML",ExpressionUUID->"0dd2c49e-fc2a-4836-897c-57957b23bac7"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]

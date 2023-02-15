@@ -5,8 +5,8 @@ Notebook[{
 	Cell[StyleData["Notebook"],
 		DockedCells -> {
 			Cell[
-				BoxData[
-					GridBox[{{
+				BoxData @ GridBox[{{
+					ItemBox[
 						TemplateBox[
 							{
 								GraphicsBox[{
@@ -28,10 +28,36 @@ Notebook[{
 								RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
 							},
 							"NotebookWebsiteTools:IconAndLabelButtonTemplate"
-						]
-					}}]
+						],
+						(* Force this item to take up the maximum possible width. This
+						makes items that come after this appear aligned to the right
+						side of the notebook. *)
+						ItemSize -> Fit
+					],
+					StyleBox[
+						"Excluded: ",
+						"Text",
+						RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
+					],
+					CheckboxBox[
+						Dynamic[
+							CurrentValue[
+								EvaluationNotebook[],
+								{TaggingRules, "ConnorGray/NotebookWebsiteTools",  "DocumentStatus"}
+							]
+						],
+						{
+							Inherited,
+							"Excluded"
+						}
+					]
+				}},
+					GridBoxAlignment -> {
+						"Columns" -> {{Left}},
+						"ColumnsIndexed" -> {-1 -> Right},
+						"Rows" -> {{Center}}
+					}
 				],
-				Background -> GrayLevel[0.9],
 				CellFrameMargins -> {{Inherited, Inherited}, {0, 0}}
 			]
 		}

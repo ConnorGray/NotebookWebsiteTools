@@ -6,7 +6,7 @@ NotebookWebsiteTools to author a website do not need to read this document.
 
 ### Command quick reference
 
-**Build the main `NotebookWebsiteTools` paclet archive:**
+#### Build the main `NotebookWebsiteTools` paclet archive
 
 ```shell
 $ cargo make paclet
@@ -21,6 +21,23 @@ built paclet:
 ```shell
 $ wolfram-cli paclet install build/ConnorGray__NotebookWebsiteTools-X.X.X.paclet
 ```
+
+#### Build the `Examples` notebook website
+
+Using the CLI:
+
+```shell
+$ wolfram-cli notebook-website build ./Examples
+```
+
+#### Run the test suite
+
+Using the CLI:
+
+```shell
+$ wolfram-cli paclet test ./paclets/NotebookWebsiteTools Tests
+```
+
 
 
 ## Setup

@@ -18,6 +18,7 @@ Protect[{$DefaultSyntax, $DefaultTheme}]
 
 WebsiteNotebookTitle::usage = "WebsiteNotebookTitle[nb] returns the title of the specified website notebook.
 	The title is defined as the textual content of the first cell with style \"Title\"."
+WebsiteNotebookStatus::usage = "WebsiteNotebookStatus[nb] returns the value of the \"DocumentStatus\" metadata field for the specified notebook."
 WebsiteNotebookSnippet::usage = "WebsiteNotebookSnippet[nb] returns a snippet of text that is intended to be a teaser or summary of the notebook content."
 
 
@@ -76,6 +77,27 @@ WebsiteNotebookTitle[
 ]
 
 AddUnmatchedArgumentsHandler[WebsiteNotebookTitle]
+
+(*========================================================*)
+
+WebsiteNotebookStatus[
+	Notebook[_?ListQ, options0___?OptionQ]
+] := Replace[{options0}, {
+	KeyValuePattern[{TaggingRules -> KeyValuePattern[{
+		"DocumentStatus" -> status0_
+	}]}] :> Replace[status0, {
+		_?StringQ :> status0,
+		other_ :> RaiseError[
+			"Invalid website notebook \"DocumentStatus\" value: ``. Expected string.",
+			InputForm[other]
+		]
+	}],
+	(* No document status was set. Callers of this function should treat
+	   documents with this status as a "normal" document. *)
+	_ :> Missing["KeyAbsent", "DocumentStatus"]
+}]
+
+AddUnmatchedArgumentsHandler[WebsiteNotebookStatus]
 
 (*========================================================*)
 
