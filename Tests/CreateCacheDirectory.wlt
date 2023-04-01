@@ -86,6 +86,36 @@ VerificationTest[
 	$tagFileContents
 ]
 
+
+(*-------------------------------------------------------*)
+(* Test CreateCacheDirectory with DeleteContents -> True *)
+(*-------------------------------------------------------*)
+
+CreateFile[FileNameJoin[{$buildDir, "SomeCachedData.txt"}]]
+
+VerificationTest[
+	FileNames[All, $buildDir, Infinity]
+	,
+	FileNameJoin[{$buildDir, #}]& /@ {
+		"CACHEDIR.TAG",
+		"SomeCachedData.txt"
+	}
+]
+
+VerificationTest[
+	CreateCacheDirectory[$buildDir, DeleteContents -> True]
+	,
+	$buildDir
+]
+
+VerificationTest[
+	FileNames[All, $buildDir, Infinity]
+	,
+	FileNameJoin[{$buildDir, #}]& /@ {
+		"CACHEDIR.TAG"
+	}
+]
+
 (*-------------------------------------------------------------------------*)
 (* Test CreateCacheDirectory on a non-empty directory without CACHEDIR.TAG *)
 (*-------------------------------------------------------------------------*)

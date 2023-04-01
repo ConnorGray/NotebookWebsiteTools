@@ -38,6 +38,11 @@ path$ will be returned.
 
 If path$ is an existing file, or non-empty directory that does not contain a
 CACHEDIR.TAG value, an error will be returned.
+
+If DeleteContents \[Rule] True is set and path$ is a valid cache directory, all
+files other than CACHEDIR.TAG will be deleted. If path$ did not exist or was an
+empty directory, it will be initialized as valid cache directory containing
+only a CACHEDIR.TAG file.
 "]
 CreateCacheDirectory
 
@@ -49,19 +54,43 @@ Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 AddUnmatchedArgumentsHandler[CreateCacheDirectory]
 
+Options[CreateCacheDirectory] = {
+	DeleteContents -> False
+}
+
 (* TODO: Implement a scheme for locking cache directories to synchronize access
 	to them? *)
 CreateCacheDirectory[
-	path0 : _?StringQ | File[_?StringQ]
+	path0 : _?StringQ | File[_?StringQ],
+	OptionsPattern[]
 ] := CatchRaised @ WrapRaised[
 	"Unable to create cache directory at ``",
 	InputForm[path0]
 ] @ Module[{
 	path = RaiseConfirm @ ExpandFileName[Replace[path0, File[s_?StringQ] :> s]],
-	tagPath
+	result
 },
-	tagPath = FileNameJoin[{path, "CACHEDIR.TAG"}];
+	result = createCacheDirectory[path];
 
+	(* Should throw an error or return `path`. *)
+	RaiseAssert[result === path];
+
+	If[TrueQ[OptionValue[DeleteContents]],
+		deleteCacheDirectoryContentsUnchecked[path];
+	];
+
+	path
+]
+
+(*------------------------------------*)
+
+AddUnmatchedArgumentsHandler[createCacheDirectory]
+
+createCacheDirectory[
+	path_?StringQ
+] := Module[{
+	tagPath = FileNameJoin[{path, "CACHEDIR.TAG"}]
+},
 	Replace[FileType[path], {
 		None :> (
 			(* The specified directory doesn't exist, so initialize a new
@@ -126,6 +155,32 @@ CreateCacheDirectory[
 
 	path
 ]
+
+(*------------------------------------*)
+
+AddUnmatchedArgumentsHandler[deleteCacheDirectoryContentsUnchecked]
+
+deleteCacheDirectoryContentsUnchecked[path_?DirectoryQ] := Module[{
+	files = FileNames[All, path]
+},
+	files = Select[files, FileNameTake[#] =!= "CACHEDIR.TAG" &];
+
+	(*
+		Delete all existing contents of the cache directory, except the
+		CACHEDIR.TAG file.
+	*)
+	WrapRaised["Error deleting existing contents of cache directory"][
+		Scan[
+			entry |-> Replace[FileType[entry], {
+				File :> DeleteFile[entry],
+				Directory :> DeleteDirectory[entry, DeleteContents -> True]
+			}],
+			files
+		];
+	];
+]
+
+(*------------------------------------*)
 
 (* TODO: Option to override the function name in the 'created by' message below. *)
 $tagFileContents = "\
