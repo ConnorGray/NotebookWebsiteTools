@@ -473,11 +473,13 @@ convertToHtml[expr_] := Replace[expr, {
 
 				heldExpr = Replace[content, {
 					(* TODO: What if content is not StandardForm? *)
-					BoxData[boxes_] :> (
+					BoxData[boxes0_] :> Module[{
+						inputLines = Replace[boxes0, b:Except[_?ListQ] :> {b}]
+					},
 						Block[{$Context = context, $ContextPath = {"System`"}},
-							MakeExpression[boxes, StandardForm]
+							ToExpression[inputLines, StandardForm, HoldComplete]
 						]
-					),
+					],
 					(* TODO: What if content is not BoxData? *)
 					TextData[_] :> RaiseError[
 						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
