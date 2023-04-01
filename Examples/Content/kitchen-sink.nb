@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    259183,       4577]
+NotebookDataLength[    259184,       4577]
 NotebookOptionsPosition[    251506,       4434]
-NotebookOutlinePosition[    253163,       4481]
-CellTagsIndexPosition[    253120,       4478]
+NotebookOutlinePosition[    253164,       4481]
+CellTagsIndexPosition[    253121,       4478]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -4453,7 +4453,7 @@ resolve this error."}, FontFamily -> "Source Sans Pro", FontSize -> 15]}],
 TaggingRules->{
  "ConnorGray/NotebookWebsiteTools" -> {
    "DocumentType" -> "BlogPost", "CreatedByPacletVersion" -> "0.0.1", 
-    "DocumentStatus" -> "Excluded"}, "NotebookWebsiteToolsIsInstalled" -> 
+    "DocumentStatus" -> "Published"}, "NotebookWebsiteToolsIsInstalled" -> 
   True, "TryRealOnly" -> False},
 Initialization:>(CurrentValue[
     EvaluationNotebook[], {TaggingRules, "NotebookWebsiteToolsIsInstalled"}] = 
