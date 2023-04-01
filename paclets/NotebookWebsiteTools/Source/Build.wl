@@ -35,7 +35,10 @@ $CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSu
 
 (*====================================*)
 
-NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Module[{
+NotebookWebsiteBuild[
+	inputDir0 : _?StringQ | File[_?StringQ],
+	buildDir0 : _?StringQ | Automatic : Automatic
+] := CatchRaised @ Module[{
 	(* Note: Make sure inputDir is always StringQ, so that FileNameJoin works. *)
 	inputDir = Replace[
 		RaiseConfirm @ ExpandFileName[inputDir0],
@@ -49,7 +52,18 @@ NotebookWebsiteBuild[inputDir0: _?StringQ | File[_?StringQ]] := CatchRaised @ Mo
 Block[{
 	$CurrentNotebookWebsiteDirectory = Replace[inputDir, _?StringQ :> File[inputDir]]
 },
-	buildDir = FileNameJoin[{inputDir, "build"}];
+	buildDir = Replace[buildDir0, {
+		s_?StringQ :> RaiseConfirm @ ExpandFileName[s],
+		Automatic :> FileNameJoin[{inputDir, "build"}]
+	}];
+
+	(* TODO(cleanup): Use RaiseConfirm/RaiseConfirmMatch here. *)
+	buildDir = Replace[CreateCacheDirectory[buildDir, DeleteContents -> True], {
+		path_?StringQ :> path,
+		err_Failure :> Return[err, Module],
+		other_ :> RaiseError["Unexpected cache directory result: ``", InputForm[other]]
+	}];
+
 	contentDir = FileNameJoin[{inputDir, "Content"}];
 
 	RaiseAssert[StringQ[inputDir]];
@@ -59,19 +73,6 @@ Block[{
 	];
 
 	notebooks = FileNames["*.nb", contentDir, Infinity];
-
-	(* TODO: Remove this check, clear the contents of the build directory if it
-	         exists. (Note: clear the contents, don't delete the directory, as
-			 a subtle UX choice )*)
-	If[FileExistsQ[buildDir],
-		If[DirectoryQ[buildDir],
-			RaiseConfirm @ DeleteDirectory[buildDir, DeleteContents -> True];
-			,
-			RaiseError["File at build location is not a directory: ``", buildDir];
-		];
-	];
-
-	RaiseConfirm @ CreateDirectory[buildDir];
 
 	(*----------------------------*)
 	(* Copy the common web assets *)
