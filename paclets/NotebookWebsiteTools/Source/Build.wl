@@ -778,8 +778,8 @@ makeAnchorLinkHtml[content_, html_] := Module[{
 	RaiseAssert[StringQ[contentSlug]];
 
 	RaiseAssert[
-		MatchQ[html, _XMLElement | _?StringQ],
-		"expected anchor link with label `` html value to be an XMLElement or string: ``",
+		MatchQ[html, _XMLElement | _?StringQ | {RepeatedNull[_XMLElement | _?StringQ]}],
+		"expected anchor link with label `` html value to be an XMLElement, string, or list: ``",
 		InputForm[contentString],
 		InputForm[html]
 	];
