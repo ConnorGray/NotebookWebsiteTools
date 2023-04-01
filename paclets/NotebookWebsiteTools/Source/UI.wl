@@ -40,7 +40,7 @@ ToggleExcluded[nb_NotebookObject] := Module[{
 },
 	RaiseAssert[MatchQ[cells, {___CellObject}]];
 
-	Scan[cell |-> toggleCellStyle[cell, "Excluded"], cells];
+	Scan[cell |-> toggleCellStyle[cell, "ConnorGray/Excluded"], cells];
 
 	(* Return the cells that we modified. *)
 	cells
@@ -197,13 +197,15 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 
 		For example, given a cell with the structure:
 
-			Cell["Some content", "Title", "Excluded"]
+			Cell["Some content", "Title", "ConnorGray/Excluded"]
 
 		The the primary style is the first style, `"Title"` in this case, and
-		the secondary styles are `{"Excluded"}`.
+		the secondary styles are `{"ConnorGray/Excluded"}`.
 	*)
 	currentStyles = RaiseConfirm @ Lookup[Options[cell, StyleNames], StyleNames]
 },
+	currentStyles = Replace[currentStyles, s_?StringQ :> {s}];
+
 	RaiseAssert[MatchQ[currentStyles, {___?StringQ}], "currentStyles: ``", InputForm @ currentStyles];
 
 	If[MemberQ[currentStyles, style],
@@ -219,9 +221,9 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 		(* Note:
 			Place the newly added style at the end, to ensure it always
 			gets the last say on what the styling of the cell is. E.g. if
-			the style being added is "Excluded", then the cell will always
-			have a red background, even if it is also e.g. a "Program" cell
-			(which normally have gray backgrounds).
+			the style being added is "ConnorGray/Excluded", then the cell will
+			always have a red background, even if it is also e.g. a "Program"
+			cell (which normally have gray backgrounds).
 		*)
 		SetOptions[cell, StyleNames -> Append[currentStyles, style]];
 	];

@@ -70,11 +70,47 @@ Notebook[{
 		}
 	],
 
+	(*================================*)
+	(* Deprecated cell styles         *)
+	(*================================*)
+
+	Cell[
+		StyleData[
+			"Excluded",
+			StyleDefinitions -> StyleData["ConnorGray/Excluded"]
+		],
+		MenuSortingValue -> None
+	],
+
+	Cell[
+		StyleData[
+			"LiteralHTML",
+			StyleDefinitions -> StyleData["ConnorGray/LiteralHTML"]
+		],
+		MenuSortingValue -> None
+	],
+
+	Cell[
+		StyleData[
+			"ComputedHTML",
+			StyleDefinitions -> StyleData["ConnorGray/ComputedHTML"]
+		],
+		MenuSortingValue -> None
+	],
+
+	Cell[
+		StyleData[
+			"HighlightSyntax",
+			StyleDefinitions -> StyleData["ConnorGray/HighlightSyntax"]
+		],
+		MenuSortingValue -> None
+	],
+
 	(*====================*)
 	(* Content Processing *)
 	(*====================*)
 
-	Cell[StyleData["Excluded"],
+	Cell[StyleData["ConnorGray/Excluded"],
 		MenuSortingValue -> 2500,
 		Background -> RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
 		CellFrame -> {{3, False}, {False, False}},
@@ -85,7 +121,7 @@ Notebook[{
 	(* Special Cells *)
 	(*===============*)
 
-	Cell[StyleData["LiteralHTML"],
+	Cell[StyleData["ConnorGray/LiteralHTML"],
 		MenuSortingValue -> 2500 + 25,
 		CellMargins->{{66, 10}, {8, 8}},
 		Background -> GrayLevel[0.95],
@@ -108,12 +144,12 @@ Notebook[{
 	],
 
 	(* TODO: Better name for this style. Template, plugin, etc? *)
-	Cell[StyleData["ComputedHTML", StyleDefinitions -> StyleData["Input"]],
+	Cell[StyleData["ConnorGray/ComputedHTML", StyleDefinitions -> StyleData["Input"]],
 		MenuSortingValue -> 2500 + 50,
 		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False]
 	],
 
-	Cell[StyleData["HighlightSyntax"],
+	Cell[StyleData["ConnorGray/HighlightSyntax"],
 		MenuSortingValue -> 2500 + 75,
 		CellMargins->{{66, 10}, {8, 8}},
 		(* FIXME: Don't make the display of this cell depend on

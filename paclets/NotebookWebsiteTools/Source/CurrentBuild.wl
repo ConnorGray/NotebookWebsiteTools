@@ -44,7 +44,7 @@ makeTableOfContentsHtml[
 	listItems = Map[
 		Replace[{
 			(* Remove "Excluded" cells. *)
-			Rule[Cell[_, ___, "Excluded", ___], _] -> Nothing,
+			Rule[Cell[_, ___, "Excluded" | "ConnorGray/Excluded", ___], _] -> Nothing,
 
 			(* Prevent Item cells from showing up in the table of contents. *)
 			Rule[Cell[

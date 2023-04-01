@@ -418,12 +418,19 @@ convertToHtml[expr_] := Replace[expr, {
 		options = {options0},
 		element
 	},
-		If[MemberQ[styles, "Excluded"],
+		If[IntersectingQ[styles, {"Excluded", "HighlightSyntax", "LiteralHTML", "ComputedHTML"}],
+			RaiseError[
+				"Cell has deprecated style: ``. Use cell style name prefixed with \"ConnorGray/\" instead.",
+				InputForm[styles]
+			];
+		];
+
+		If[MemberQ[styles, "ConnorGray/Excluded"],
 			(* TODO: Better sentinel value for 'nothing' HTML? *)
 			Return[{}, Module];
 		];
 
-		If[MemberQ[styles, "ComputedHTML"],
+		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
 			Module[{context, heldExpr, xml},
 				(*---------------------------------------------------------------*)
 				(* Parse the typeset content of the cell into a held expression. *)
@@ -465,11 +472,11 @@ convertToHtml[expr_] := Replace[expr, {
 				Replace[xml, {
 					XMLElement[_?StringQ, _?ListQ, _?ListQ] :> Null,
 					_XMLElement :> RaiseError[
-						"Malformed XMLElement returned from \"ComputedHTML\" cell: ``",
+						"Malformed XMLElement returned from \"ConnorGray/ComputedHTML\" cell: ``",
 						InputForm[xml]
 					],
 					other_ :> RaiseError[
-						"Expected evaluation of \"ComputedHTML\" to return XMLElement; got: ``",
+						"Expected evaluation of \"ConnorGray/ComputedHTML\" to return XMLElement; got: ``",
 						InputForm[other]
 					]
 				}];
@@ -614,7 +621,7 @@ wrapHtmlForStyle[
 		(* Special cells *)
 		(*===============*)
 
-		"LiteralHTML" :> Module[{
+		"ConnorGray/LiteralHTML" :> Module[{
 			literalHTMLString,
 			literalHTML
 		},
@@ -632,7 +639,7 @@ wrapHtmlForStyle[
 			literalHTML
 		],
 
-		"HighlightSyntax" :> Module[{
+		"ConnorGray/HighlightSyntax" :> Module[{
 			syntaxString,
 			highlightOptions,
 			syntaxName,
