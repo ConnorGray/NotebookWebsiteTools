@@ -84,7 +84,9 @@ WebsiteNotebookStatus[
 	Notebook[_?ListQ, options0___?OptionQ]
 ] := Replace[{options0}, {
 	KeyValuePattern[{TaggingRules -> KeyValuePattern[{
-		"DocumentStatus" -> status0_
+		"ConnorGray/NotebookWebsiteTools" -> KeyValuePattern[{
+			"DocumentStatus" -> status0_
+		}]
 	}]}] :> Replace[status0, {
 		_?StringQ :> status0,
 		other_ :> RaiseError[

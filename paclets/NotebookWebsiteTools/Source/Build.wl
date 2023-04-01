@@ -15,6 +15,8 @@ $CurrentNotebookSupportFiles::usage = "$CurrentNotebookSupportFiles returns an A
 
 GeneralUtilities`SetUsage[AddSupportFile, "AddSupportFile[filename$, content$] adds content for a 'support' file that is used by the HTML for the current notebook being built."]
 
+DetermineStatusAction
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
@@ -100,9 +102,9 @@ Block[{
 		notebooks
 	];
 
-	RaiseAssert[MatchQ[htmlFiles, {(File[_?StringQ] | Missing["Excluded"])...}]];
+	RaiseAssert[MatchQ[htmlFiles, {(File[_?StringQ] | Missing["Skipped", _])...}]];
 
-	htmlFiles = DeleteCases[htmlFiles, Missing["Excluded"]];
+	htmlFiles = DeleteCases[htmlFiles, Missing["Skipped", _]];
 
 	Success["NotebookWebsiteBuild", <|
 		"ProcessedNotebooks" -> notebooks,
@@ -156,10 +158,17 @@ Block[{
 	}];
 
 	Replace[WebsiteNotebookStatus[nb], {
-		(* Proceed normally. *)
-		Missing["KeyAbsent", "DocumentStatus"] :> {},
-		(* This document is marked as excluded from the build, so skip it. *)
-		"Excluded" :> Return[Missing["Excluded"], Module],
+		status_?StringQ :> Replace[DetermineStatusAction[status], {
+			(* Proceed normally. *)
+			"Build" -> Null,
+			(* Documents with this status should be skipped, so skip it. *)
+			"Skip" :> Return[Missing["Skipped", status], Module],
+			other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+		}],
+		(* All website notebooks should have their status set by their author. *)
+		Missing["KeyAbsent", "DocumentStatus"] :> (
+			RaiseError["Website notebook is missing a value for the DocumentStatus tagging rule."];
+		),
 		other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
@@ -837,6 +846,25 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 
 AddUnmatchedArgumentsHandler[importHTMLFragment]
 
+(*====================================*)
+
+AddUnmatchedArgumentsHandler[DetermineStatusAction]
+
+(*
+	Determine the action to take for a given notebook "DocumentStatus" tagging
+	rule value.
+
+	This function returns one of a set of possible actions:
+
+	* "Build"
+	* "Skip"
+*)
+DetermineStatusAction[status_?StringQ] :=
+	Replace[status, {
+		"Published" -> "Build",
+		"Draft" | "Excluded" -> "Skip",
+		other_ :> RaiseError["Unknown document status: ``", InputForm[other]]
+	}]
 
 (*========================================================*)
 (* URL Processing                                         *)

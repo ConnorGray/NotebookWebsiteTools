@@ -145,7 +145,21 @@ PagesSummaryListHtml[
 			url
 		},
 			nb = RaiseConfirm @ Get[nbFile];
+
 			RaiseAssert[MatchQ[nb, _Notebook]];
+
+			(* Don't include non-built files in the summary list. *)
+			Replace[WebsiteNotebookStatus[nb], {
+				status_?StringQ :> Replace[DetermineStatusAction[status], {
+					"Build" -> Null,
+					(* Documents with this status should be skipped, so skip it. *)
+					"Skip" :> Return[Nothing, Module],
+					other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+				}],
+				(* Don't list non-website notebooks in the page list. *)
+				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
+				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+			}];
 
 			url = notebookRelativeFileToURL[nbFileRelative];
 

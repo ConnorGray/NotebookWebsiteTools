@@ -35,21 +35,28 @@ Notebook[{
 						ItemSize -> Fit
 					],
 					StyleBox[
-						"Excluded: ",
+						"Status: ",
 						"Text",
-						RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
+						GrayLevel[0.5]
 					],
-					CheckboxBox[
+					PopupMenuBox[
 						Dynamic[
 							CurrentValue[
 								EvaluationNotebook[],
-								{TaggingRules, "ConnorGray/NotebookWebsiteTools",  "DocumentStatus"}
+								{TaggingRules, "ConnorGray/NotebookWebsiteTools", "DocumentStatus"}
 							]
 						],
 						{
-							Inherited,
-							"Excluded"
-						}
+							"Draft" -> StyleBox["\"Draft\"", Bold, RGBColor[0.6, 0.4, 0.2]], (* Brown *)
+							"Published" -> StyleBox["\"Published\"", Bold, RGBColor[0, Rational[2, 3], 0]], (* Darker[Green] *)
+							"Excluded" -> StyleBox["\"Excluded\"", Bold, RGBColor[Rational[2, 3], 0, 0]] (* Darker[Red] *)
+						},
+						(* If no known document status value is selected, show
+							a long dash to indicate that this value is missing. *)
+						ItemBox[
+							StyleBox["\[LongDash]", Bold, GrayLevel[0.4], Alignment -> Center],
+							Alignment -> Center
+						]
 					]
 				}},
 					GridBoxAlignment -> {
