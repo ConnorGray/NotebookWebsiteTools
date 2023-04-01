@@ -208,14 +208,15 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 
 	RaiseAssert[MatchQ[currentStyles, {___?StringQ}], "currentStyles: ``", InputForm @ currentStyles];
 
+	(* Note: This requires two SetOptions calls because setting this property
+		to any value other than Inherited can only *add* styles to the cell,
+		not remove them. So we first clear the secondary styles by setting
+		this to Inherited, and then we add back only the styles we want to
+		keep. *)
+	SetOptions[cell, StyleNames -> Inherited];
+
 	If[MemberQ[currentStyles, style],
 		(* Remove all occurences of `style` from `currentStyles`. *)
-		(* Note: This requires two SetOptions calls because setting this property
-			to any value other than Inherited can only *add* styles to the cell,
-			not remove them. So we first clear the secondary styles by setting
-			this to Inherited, and then we add back only the styles we want to
-			keep. *)
-		SetOptions[cell, StyleNames -> Inherited];
 		SetOptions[cell, StyleNames -> DeleteCases[currentStyles, style]];
 	,
 		(* Note:
