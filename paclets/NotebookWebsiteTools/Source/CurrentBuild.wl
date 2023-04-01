@@ -80,7 +80,11 @@ makeTableOfContentsHtml[
 		headings
 	];
 
-	XMLElement["ul", {}, listItems]
+	If[listItems === {},
+		Nothing
+		,
+		XMLElement["ul", {}, listItems]
+	]
 ]
 
 AddUnmatchedArgumentsHandler[makeTableOfContentsHtml]

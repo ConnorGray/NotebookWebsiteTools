@@ -132,9 +132,14 @@ buildWebNotebook[
 	webAssetsLocation = "web_assets/",
 	relativeWebAssetsLocation,
 	nbFileRelative = RelativePath[contentDir, nbFile],
+	nb,
+	metadata,
+	documentType,
+	nbHtml,
 	nbUrl,
-	htmlFile,
-	metadata
+	html,
+	htmlString,
+	htmlFile
 },
 Block[{
 	$CurrentNotebook,
@@ -197,17 +202,17 @@ Block[{
 	(* Convert the cells to HTML      *)
 	(*--------------------------------*)
 
-	elements = Flatten[convertToHtml[nb]];
+	nbHtml = convertToHtml[nb];
 
 	RaiseAssert[
-		MatchQ[elements, {XMLElement[__]...}],
-		"Unexpected elements structure: ``",
-		InputForm[elements]
+		MatchQ[nbHtml, XMLElement["article", {"class" -> "Notebook"}, _List]],
+		"Unexpected notebook HTML structure: ``",
+		InputForm[nbHtml]
 	];
 
-	(*---------------------------------*)
-	(* Generate the HTML output string *)
-	(*---------------------------------*)
+	(*-----------------------------------*)
+	(* Generate the symbolic HTML output *)
+	(*-----------------------------------*)
 
 	nbUrl = notebookRelativeFileToURL[nbFileRelative];
 
@@ -232,12 +237,36 @@ Block[{
 				"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
 			}, {}]
 		}],
-		XMLElement["body", {}, {
-			XMLElement["article", {"class" -> "Notebook"}, elements]
-		}]
+		XMLElement["body", {}, {nbHtml}]
 	}];
 
-	htmlString = ExportString[html, "HTMLFragment"];
+	(*-------------------------------------------------------*)
+	(* Verify that the symbolic XML structure is well-formed *)
+	(*-------------------------------------------------------*)
+
+	xmlErrors = XML`SymbolicXMLErrors[html];
+
+	If[xmlErrors =!= {},
+		(* TODO: Indicate this error in a better way. *)
+		Scan[
+			errorPos |-> (
+				Print[
+					"\tMalformed symbolic XML: ",
+					InputForm[Extract[html, Drop[errorPos, -1]]]
+				]
+			),
+			xmlErrors
+		];
+
+		(* TODO: Include XML object and error positions in failure metadata. *)
+		RaiseError["Symbolic HTML contains errors."];
+	];
+
+	(*-----------------------------------------------*)
+	(* Export the symbolic XML structure to a String *)
+	(*-----------------------------------------------*)
+
+	htmlString = ExportString[html, "XML"];
 
 	htmlFile = FileNameJoin[{
 		buildDir,
@@ -317,7 +346,11 @@ Block[{
 convertToHtml[expr_] := Replace[expr, {
 	Notebook[cells_?ListQ, options0___?OptionQ] :> (
 		(* TODO: Handle relevant `options0`. *)
-		Map[convertToHtml, cells]
+		XMLElement[
+			"article",
+			{"class" -> "Notebook"},
+			Map[convertToHtml, cells]
+		]
 	),
 
 	(*================================*)
@@ -327,7 +360,7 @@ convertToHtml[expr_] := Replace[expr, {
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
-	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Map[convertToHtml, cells],
+	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Splice @ Map[convertToHtml, cells],
 
 	(*--------------------------------*)
 	(* Rasterized cell types          *)
@@ -403,8 +436,8 @@ convertToHtml[expr_] := Replace[expr, {
 
 		XMLElement["img", {
 			"src" -> imageRelativeUrl,
-			"width" -> imageCSSPixelDimensions[[1]],
-			"height" -> imageCSSPixelDimensions[[2]],
+			"width" -> ToString @ imageCSSPixelDimensions[[1]],
+			"height" -> ToString @ imageCSSPixelDimensions[[2]],
 			"style" -> "display: block; padding: 4pt 0 4pt 0;"
 		}, {}]
 	],
@@ -427,7 +460,7 @@ convertToHtml[expr_] := Replace[expr, {
 
 		If[MemberQ[styles, "ConnorGray/Excluded"],
 			(* TODO: Better sentinel value for 'nothing' HTML? *)
-			Return[{}, Module];
+			Return[Nothing, Module];
 		];
 
 		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
@@ -507,9 +540,9 @@ convertToHtml[expr_] := Replace[expr, {
 	(* Text                           *)
 	(*--------------------------------*)
 
-	plainText_?StringQ :> HTMLEscape[plainText],
+	plainText_?StringQ :> plainText,
 
-	TextData[inline_?ListQ] :> Map[convertToHtml, inline],
+	TextData[inline_?ListQ] :> Splice @ Map[convertToHtml, inline],
 	TextData[content_] :> convertToHtml[content],
 
 	StyleBox[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
