@@ -38,7 +38,7 @@ body {
 
     font-family: \"Helvetica\", \"Arial\", sans-serif;
 
-    line-height: 1.5;
+    line-height: 1.6;
     padding: 4em 1em;
 
     color: #555;
@@ -72,8 +72,14 @@ a.anchor:target {
 /* Standard Wolfram Styles                                */
 /*========================================================*/
 
-p.nb-Subtitle {
+article.Notebook p {
+    font-size: 12pt;
+}
+
+article.Notebook p.nb-Subtitle {
     font-style: oblique;
+    font-size: 14pt;
+    color: #777
 }
 
 code {
@@ -88,6 +94,38 @@ pre.nb-Program {
     margin: 1em auto;
 
     background: #e5e5e5;
+}
+
+/*====================================*/
+/* Textual Styles                     */
+/*====================================*/
+
+.nb-Title {
+    font-size: 45pt;
+}
+
+.nb-Chapter {
+    font-size: 34pt;
+}
+
+.nb-Section {
+    font-size: 28pt;
+}
+
+.nb-Subsection {
+    font-size: 20pt;
+}
+
+.nb-Subsubsection {
+    font-size: 19pt;
+}
+
+.nb-Subsubsubsection {
+    font-size: 15pt;
+}
+
+.nb-Subsubsubsubsection {
+    font-size: 14pt;
 }
 
 /*====================================*/
