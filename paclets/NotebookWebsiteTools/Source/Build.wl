@@ -449,7 +449,7 @@ convertToHtml[expr_] := Replace[expr, {
 
 	Cell[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
-		options = {options0},
+		cellOptions = {options0},
 		element
 	},
 		If[IntersectingQ[styles, {"Excluded", "HighlightSyntax", "LiteralHTML", "ComputedHTML"}],
@@ -526,7 +526,7 @@ convertToHtml[expr_] := Replace[expr, {
 		(*------------------------------------------------------------------------*)
 
 		element = Fold[
-			{html, style} |-> wrapHtmlForStyle[content, html, style],
+			{html, style} |-> wrapHtmlForStyle[content, cellOptions, html, style],
 			convertToHtml[content],
 			styles
 		];
@@ -615,6 +615,7 @@ AddUnmatchedArgumentsHandler[convertToHtml]
 
 wrapHtmlForStyle[
 	cellData_?CellDataQ,
+	cellOptions:{___?OptionQ},
 	html_,
 	style_?StringQ
 ] := Module[{},
@@ -689,7 +690,7 @@ wrapHtmlForStyle[
 
 			RaiseAssert[StringQ[syntaxString]];
 
-			highlightOptions = Replace[options, {
+			highlightOptions = Replace[cellOptions, {
 				KeyValuePattern[
 					TaggingRules -> KeyValuePattern[
 						"HighlightSyntaxOptions" -> value:(_?AssociationQ | {___?OptionQ})
