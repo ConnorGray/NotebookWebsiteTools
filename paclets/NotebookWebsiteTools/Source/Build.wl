@@ -625,7 +625,7 @@ wrapHtmlForStyle[
 		(*===================================*)
 
 		"Title" :> XMLElement["h1", {"class" -> "nb-Title"}, {makeAnchorLinkHtml[cellData, html]}],
-		"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {html}],
 		"Chapter" :> XMLElement["h2", {"class" -> "nb-Chapter"}, {makeAnchorLinkHtml[cellData, html]}],
 		"Section" :> XMLElement["h3", {"class" -> "nb-Section"}, {makeAnchorLinkHtml[cellData, html]}],
 		"Subsection" :> XMLElement["h4", {"class" -> "nb-Subsection"}, {makeAnchorLinkHtml[cellData, html]}],
