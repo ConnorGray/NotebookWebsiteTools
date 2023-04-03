@@ -42,6 +42,8 @@ body {
     padding: 4em 1em;
 
     color: #555;
+
+    background-color: var(--nwt--body-background-color);
 }
 
 h2 {
@@ -68,12 +70,15 @@ a.anchor:target {
     text-decoration: underline;
 }
 
+/* TODO: Make these colors controllable through a website theming mechanism. */
 :root {
     --nwt--h1-color: #5f0f40;
     --nwt--h2-color: #9a031e;
     --nwt--h3-color: #e36414;
     --nwt--h4-color: #fb8b24;
     --nwt--h5-color: #0f4c5c;
+
+    --nwt--body-background-color: #FEFCEC;
 }
 
 /*========================================================*/
