@@ -68,6 +68,14 @@ a.anchor:target {
     text-decoration: underline;
 }
 
+:root {
+    --nwt--h1-color: #5f0f40;
+    --nwt--h2-color: #9a031e;
+    --nwt--h3-color: #e36414;
+    --nwt--h4-color: #fb8b24;
+    --nwt--h5-color: #0f4c5c;
+}
+
 /*========================================================*/
 /* Standard Wolfram Styles                                */
 /*========================================================*/
@@ -100,6 +108,26 @@ pre.nb-Program {
 /* Textual Styles                     */
 /*====================================*/
 
+h1.nb-Title {
+    color: var(--nwt--h1-color)
+}
+
+h2.nb-Chapter {
+    color: var(--nwt--h2-color)
+}
+
+h3.nb-Section {
+    color: var(--nwt--h3-color)
+}
+
+h4.nb-Subsection {
+    color: var(--nwt--h4-color)
+}
+
+h5.nb-Subsubsection {
+    color: var(--nwt--h5-color)
+}
+
 .nb-Title {
     font-size: 45pt;
 }
@@ -113,19 +141,25 @@ pre.nb-Program {
 }
 
 .nb-Subsection {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
     font-size: 20pt;
 }
 
 .nb-Subsubsection {
-    font-size: 19pt;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    font-size: 17pt;
 }
 
 .nb-Subsubsubsection {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
     font-size: 15pt;
 }
 
 .nb-Subsubsubsubsection {
-    font-size: 14pt;
+    font-size: 13pt;
 }
 
 /*====================================*/
