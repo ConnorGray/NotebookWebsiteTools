@@ -167,6 +167,14 @@ h5.nb-Subsubsection {
     font-size: 13pt;
 }
 
+/*-----------*/
+/* Subtitles */
+/*-----------*/
+
+h1.nb-Title + p.nb-Subtitle {
+    margin-block-start: -2em;
+}
+
 /*====================================*/
 /* Item styles                        */
 /*====================================*/
