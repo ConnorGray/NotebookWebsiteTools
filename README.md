@@ -41,6 +41,12 @@ installed, then a notebook website can be built using:
 $ wolfram-cli notebook-website build [WEBSITE_DIR]
 ```
 
+Include documents with the `Draft` status flag:
+
+```shell
+$ wolfram-cli notebook-website build [WEBSITE_DIR] --drafts
+```
+
 ### Contributing
 
 See [**Development.md**](./docs/Development.md) for instructions on how to

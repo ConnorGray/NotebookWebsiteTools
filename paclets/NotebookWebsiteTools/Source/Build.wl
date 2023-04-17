@@ -35,15 +35,22 @@ $CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSu
 
 (*====================================*)
 
+Options[NotebookWebsiteBuild] = {
+	"IncludeDrafts" -> False
+}
+
 NotebookWebsiteBuild[
 	inputDir0 : _?StringQ | File[_?StringQ],
-	buildDir0 : _?StringQ | Automatic : Automatic
+	buildDir0 : _?StringQ | Automatic : Automatic,
+	OptionsPattern[]
 ] := CatchRaised @ Module[{
 	(* Note: Make sure inputDir is always StringQ, so that FileNameJoin works. *)
 	inputDir = Replace[
 		RaiseConfirm @ ExpandFileName[inputDir0],
 		File[dir_?StringQ] :> dir
 	],
+	(* TODO: RaiseConfirmMatch[.., _?BooleanQ] this. *)
+	includeDrafts = OptionValue["IncludeDrafts"],
 	buildDir,
 	contentDir,
 	notebooks,
@@ -97,7 +104,10 @@ Block[{
 	htmlFiles = Map[
 		nbFile |-> Module[{},
 			WrapRaised["Error building notebook ``", nbFile][
-				buildWebNotebook[nbFile, contentDir, buildDir]
+				buildWebNotebook[
+					nbFile, contentDir, buildDir,
+					includeDrafts
+				]
 			]
 		],
 		notebooks
@@ -123,10 +133,13 @@ Block[{
 
 (*======================================*)
 
+AddUnmatchedArgumentsHandler[buildWebNotebook]
+
 buildWebNotebook[
 	nbFile: _?StringQ,
 	contentDir: _?StringQ,
-	buildDir: _?StringQ
+	buildDir: _?StringQ,
+	includeDrafts: _?BooleanQ
 ] := Module[{
 	(* Relative path to the web_assets directory. *)
 	(* TODO: Adjust this based on the URL of the notebook being processed. *)
@@ -164,6 +177,10 @@ Block[{
 	}];
 
 	Replace[WebsiteNotebookStatus[nb], {
+		(* If the document status is "Draft" and `"IncludeDrafts" -> True` option
+			was set, then include this file. *)
+		"Draft" /; includeDrafts -> Null,
+
 		status_?StringQ :> Replace[DetermineStatusAction[status], {
 			(* Proceed normally. *)
 			"Build" -> Null,

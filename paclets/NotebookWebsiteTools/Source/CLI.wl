@@ -13,20 +13,24 @@ HandleNotebookWebsiteSubcommand[
 	cliArgs: {___?StringQ}
 ] := CatchRaised @ Module[{
 	inputDir,
-	openFlag
+	openFlag,
+	draftFlag
 },
 	(* TODO: Provide a helper function in WolframCLI` for this? *)
 	Replace[cliArgs, {
 		{_, "notebook-website", "build",
 			inputDir0 : _?ArgQ : Automatic,
 			OrderlessPatternSequence[
-				openFlag0 : "--open" : False
+				openFlag0 : "--open" : False,
+				draftFlag0 : "--drafts" : False
 			]
 		} :> (
-			openFlag = StringQ[openFlag0];
 			inputDir = Replace[inputDir0, Automatic :> Directory[]];
 
-			handleBuild[inputDir, openFlag]
+			openFlag = StringQ[openFlag0];
+			draftFlag = StringQ[draftFlag0];
+
+			handleBuild[inputDir, openFlag, draftFlag]
 		),
 		{_, "notebook-website", "new",
 			fileName : _?ArgQ : Automatic,
@@ -48,11 +52,15 @@ AddUnmatchedArgumentsHandler[HandleNotebookWebsiteSubcommand]
 
 handleBuild[
 	inputDir: _?StringQ,
-	openFlag: _?BooleanQ
+	openFlag: _?BooleanQ,
+	includeDrafts: _?BooleanQ
 ] := Module[{
 	result
 },
-	result = NotebookWebsiteBuild[inputDir];
+	result = NotebookWebsiteBuild[
+		inputDir,
+		"IncludeDrafts" -> includeDrafts
+	];
 
 	Replace[result, {
 		success_Success :> (
