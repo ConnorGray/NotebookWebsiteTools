@@ -236,7 +236,11 @@ Block[{
 			XMLElement["link", {
 				"rel" -> "stylesheet",
 				"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
-			}, {}]
+			}, {}],
+			(* Make scaling work on mobile correctly. *)
+			XML`RawXML["
+				<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+			"]
 		}],
 		XMLElement["body", {}, {nbHtml}]
 	}];
