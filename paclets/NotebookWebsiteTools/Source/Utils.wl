@@ -44,7 +44,9 @@ files other than CACHEDIR.TAG will be deleted. If path$ did not exist or was an
 empty directory, it will be initialized as valid cache directory containing
 only a CACHEDIR.TAG file.
 "]
-CreateCacheDirectory
+
+GU`SetUsage[HTMLFragmentQ, "
+HTMLFragmentQ[expr$] returns True if expr$ can validlty appear as an element in a list that is a 3rd argument of XMLElement."]
 
 Begin["`Private`"]
 
@@ -304,6 +306,12 @@ CellDataQ[expr_] :=
 	]]
 
 AddUnmatchedArgumentsHandler[CellDataQ]
+
+(*========================================================*)
+
+(* TODO: Include XML`RawXML["..."] here? *)
+HTMLFragmentQ[expr_] :=
+	MatchQ[expr, _?StringQ | _XMLElement | Nothing | Splice[{___?HTMLFragmentQ}]]
 
 (*========================================================*)
 
