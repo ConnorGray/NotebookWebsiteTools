@@ -124,7 +124,8 @@ AddUnmatchedArgumentsHandler[extractCellGroupHeadings]
 (*========================================================*)
 
 PagesSummaryListHtml[
-	websiteDir0 : _?StringQ : Automatic
+	websiteDir0 : _?StringQ | Automatic : Automatic,
+	filterFunc : _ : Automatic
 ] := Module[{
 	websiteDir = Replace[
 		Replace[websiteDir0, Automatic :> $CurrentNotebookWebsiteDirectory],
@@ -152,6 +153,10 @@ PagesSummaryListHtml[
 
 			RaiseAssert[MatchQ[nb, _Notebook]];
 
+			(*--------------------------------------------------------*)
+			(* Determine whether to include this notebook in the list *)
+			(*--------------------------------------------------------*)
+
 			(* Don't include non-built files in the summary list. *)
 			Replace[WebsiteNotebookStatus[nb], {
 				status_?StringQ :> Replace[DetermineStatusAction[status], {
@@ -164,6 +169,16 @@ PagesSummaryListHtml[
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
 				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 			}];
+
+			If[filterFunc =!= Automatic,
+				If[!TrueQ[filterFunc[nbFileRelative]],
+					Return[Nothing, Module];
+				];
+			];
+
+			(*------------------------------*)
+			(* Construct the HTML list item *)
+			(*------------------------------*)
 
 			url = notebookRelativeFileToURL[nbFileRelative];
 
