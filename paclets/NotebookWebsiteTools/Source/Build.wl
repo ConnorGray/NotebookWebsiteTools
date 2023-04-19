@@ -10,6 +10,7 @@ notebookRelativeFileToURL
 
 $CurrentNotebook::usage = "$CurrentNotebook returns the Notebook expression of the notebook that is currently being processed."
 $CurrentNotebookFile::usage = "$CurrentNotebookFile returns the absolute file path to the source notebook that is currently being built."
+$CurrentNotebookRelativeURL::usage = "$CurrentNotebookRelativeURL returns the destination URL of the current source notebook relative to the destination URL of the notebook website content root."
 $CurrentNotebookWebsiteDirectory::usage = "$CurrentNotebookWebsiteDirectory returns the file path of the root directory of the notebook website that is currently being built."
 $CurrentNotebookSupportFiles::usage = "$CurrentNotebookSupportFiles returns an Association containing the 'support files' that are used in the HTML generated for the notebook currently being built."
 
@@ -30,6 +31,7 @@ Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
 $CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
 $CurrentNotebookFile := RaiseError["Unexpected use of $CurrentNotebookFile: no notebook is currently being built."]
+$CurrentNotebookRelativeURL := RaiseError["Unexpected use of $CurrentNotebookRelativeURL: no notebook is currently being built."]
 $CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
 $CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
 
@@ -147,7 +149,6 @@ buildWebNotebook[
 	metadata,
 	documentType,
 	nbHtml,
-	nbUrl,
 	html,
 	htmlString,
 	htmlFile
@@ -157,6 +158,7 @@ Block[{
 	(* Absolute file path to the source file of the notebook currently being
 	   built. *)
 	$CurrentNotebookFile = nbFile,
+	$CurrentNotebookRelativeURL = notebookRelativeFileToURL[nbFileRelative],
 	(*
 		An association of:
 
@@ -167,6 +169,7 @@ Block[{
 	$CurrentNotebookSupportFiles = <||>
 },
 	RaiseAssert[StringQ[nbFileRelative]];
+	RaiseAssert[MatchQ[$CurrentNotebookRelativeURL, URL[_?StringQ]]];
 
 	nb = Replace[Get[File[nbFile]], {
 		nb_Notebook :> nb,
@@ -229,13 +232,9 @@ Block[{
 	(* Generate the symbolic HTML output *)
 	(*-----------------------------------*)
 
-	nbUrl = notebookRelativeFileToURL[nbFileRelative];
-
-	RaiseAssert[MatchQ[nbUrl, URL[_?StringQ]]];
-
 	(* Determine the appropriate relative URL to point to the
 	   web_assets directory. *)
-	relativeWebAssetsLocation = notebookRelativeWebAssetsURL[nbUrl];
+	relativeWebAssetsLocation = notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL];
 
 	html = XMLElement["html", {}, {
 		XMLElement["head", {}, {
