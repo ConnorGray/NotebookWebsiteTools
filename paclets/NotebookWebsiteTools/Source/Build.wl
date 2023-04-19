@@ -234,7 +234,7 @@ Block[{
 
 	nbUrl = notebookRelativeFileToURL[nbFileRelative];
 
-	RaiseAssert[StringQ[nbUrl]];
+	RaiseAssert[MatchQ[nbUrl, URL[_?StringQ]]];
 
 	(* Determine the appropriate relative URL to point to the
 	   web_assets directory. *)
@@ -936,7 +936,7 @@ DetermineStatusAction[status_?StringQ] :=
 (*========================================================*)
 
 notebookRelativeFileToURL[path_?StringQ] :=
-	StringReplace[
+	URL @ StringReplace[
 		URLBuild[FileNameSplit[path]],
 		".nb" ~~ EndOfString -> ".html"
 	]
