@@ -141,9 +141,6 @@ buildWebNotebook[
 	buildDir: _?StringQ,
 	includeDrafts: _?BooleanQ
 ] := Module[{
-	(* Relative path to the web_assets directory. *)
-	(* TODO: Adjust this based on the URL of the notebook being processed. *)
-	webAssetsLocation = "web_assets/",
 	relativeWebAssetsLocation,
 	nbFileRelative = RelativePath[contentDir, nbFile],
 	nb,
@@ -238,15 +235,7 @@ Block[{
 
 	(* Determine the appropriate relative URL to point to the
 	   web_assets directory. *)
-	relativeWebAssetsLocation = URLBuild[{
-		Replace[Length[URLParse[nbUrl, "Path"]], {
-			(* The only component of the URL is the .nb file name itself, so
-			   a relative path to web_assets doesn't need to go up any levels. *)
-			1 -> Nothing,
-			components_Integer :> StringRepeat["../", components - 1]
-		}],
-		webAssetsLocation
-	}];
+	relativeWebAssetsLocation = notebookRelativeWebAssetsURL[nbUrl];
 
 	html = XMLElement["html", {}, {
 		XMLElement["head", {}, {
@@ -942,6 +931,22 @@ notebookRelativeFileToURL[path_?StringQ] :=
 	]
 
 AddUnmatchedArgumentsHandler[notebookRelativeFileToURL]
+
+(*====================================*)
+
+AddUnmatchedArgumentsHandler[notebookRelativeWebAssetsURL]
+
+notebookRelativeWebAssetsURL[nbUrl:URL[_?StringQ]] := Module[{},
+	URL @ URLBuild[{
+		Replace[Length[URLParse[nbUrl, "Path"]], {
+			(* The only component of the URL is the .nb file name itself, so
+			   a relative path to web_assets doesn't need to go up any levels. *)
+			1 -> Nothing,
+			components_Integer :> StringRepeat["../", components - 1]
+		}],
+		"web_assets"
+	}]
+]
 
 (*========================================================*)
 

@@ -190,12 +190,12 @@ PagesSummaryListHtml[
 
 			RaiseAssert[StringQ[title], "bad title: ``", InputForm[title]];
 			RaiseAssert[MatchQ[snippet, _?StringQ | None], "bad snippet: ``", InputForm[snippet]];
-			RaiseAssert[StringQ[url]];
+			RaiseAssert[MatchQ[url, URL[_?StringQ]]];
 
 			XMLElement["li", {}, {
 				XMLElement[
 					"a",
-					{"href" -> url},
+					{"href" -> url[[1]]},
 					{XMLElement["h4", {}, {title}]}
 				],
 				If[StringQ[snippet],
