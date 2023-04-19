@@ -374,5 +374,58 @@ Notebook[{
 				]
 			]
 		}
+	],
+
+	(*================================*)
+	(* Icon Link TemplateBox styles   *)
+	(*================================*)
+
+	Cell[
+		StyleData["ConnorGray/GitHubLink"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {label, URL}
+
+				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
+				very basic evaluator doesn't not support named Function parameters.)
+			*)
+			DisplayFunction -> Function[
+				Cell[
+					BoxData @ TemplateBox[
+						{
+							GridBox[{{
+								DynamicBox[
+									ToBoxes[
+										Refresh[
+											Image[
+												Import[
+													PacletObject["ConnorGray/NotebookWebsiteTools"][
+														"AssetLocation", "GitHubIcon"
+													]
+												],
+												ImageSize -> 18,
+												BaselinePosition -> Scaled[0.15]
+											],
+											None
+										],
+										StandardForm
+									]
+								],
+								#1
+							}},
+								GridBoxSpacings -> {"Columns" -> {{0.15}}}
+							],
+							{URL[#2], None},
+							#2,
+							"Hyperlink",
+							{"HyperlinkActive"},
+							BaseStyle -> {"Text"}
+						},
+						"HyperlinkTemplate"
+					],
+					Editable -> False
+				]
+			]
+		}
 	]
 }]

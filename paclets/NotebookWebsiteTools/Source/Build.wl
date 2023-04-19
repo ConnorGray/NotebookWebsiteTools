@@ -453,6 +453,33 @@ convertToHtml[expr_] := Replace[expr, {
 	],
 
 	(*--------------------------------*)
+	(* Inline GitHub link cells       *)
+	(*--------------------------------*)
+
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/GitHubLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"github-mark.svg"
+					}],
+					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+				}, {}],
+				convertToHtml[label]
+			}
+		]
+	],
+
+	(*--------------------------------*)
 	(* Converted cell types           *)
 	(*--------------------------------*)
 

@@ -7,7 +7,8 @@ PacletObject[<|
 		{"Kernel", "Root" -> "Source", "Context" -> "ConnorGray`NotebookWebsiteTools`"},
 		{"LibraryLink"},
 		{"Asset", "Assets" -> {
-			{"web_assets", "Assets/web_assets"}
+			{"web_assets", "Assets/web_assets"},
+			{"GitHubIcon", "Assets/Icons/github-mark.png"}
 		}},
 		{"FrontEnd"},
 		{"Documentation", "Language" -> "English"},

@@ -18,6 +18,11 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`UI`"]
 
 ToggleExcluded::usage = "ToggleExcluded toggles the Excluded status of selected cells."
 
+$GitHubIcon :=
+	$GitHubIcon = Import[
+		PacletObject["ConnorGray/NotebookWebsiteTools"]["AssetLocation", "GitHubIcon"]
+	]
+
 (*------------------------------------*)
 (* Used in Cell style implementations *)
 (*------------------------------------*)
