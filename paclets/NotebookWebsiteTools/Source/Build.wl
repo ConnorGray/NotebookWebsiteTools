@@ -192,7 +192,7 @@ Block[{
 		Missing["KeyAbsent", "DocumentStatus"] :> (
 			RaiseError["Website notebook is missing a value for the DocumentStatus tagging rule."];
 		),
-		other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+		other_ :> RaiseError["Unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	$CurrentNotebook = nb;
@@ -407,7 +407,7 @@ convertToHtml[expr_] := Replace[expr, {
 				___
 			} :> {resolution, scale},
 			other_ :> RaiseError[
-				"unexpected \"ConnectedDisplays\" value: ``",
+				"Unexpected \"ConnectedDisplays\" value: ``",
 				InputForm[other]
 			]
 		}];
@@ -416,7 +416,7 @@ convertToHtml[expr_] := Replace[expr, {
 
 		RaiseAssert[
 			$frontEndResolution == 144 || $frontEndResolution == 72,
-			"unexpected FrontEnd resolution: ``", $frontEndResolution
+			"Unexpected FrontEnd resolution: ``", $frontEndResolution
 		];
 
 		image = Rasterize[
@@ -577,7 +577,7 @@ convertToHtml[expr_] := Replace[expr, {
 		element = Fold[
 			{elem, style} |-> Replace[style, {
 				"Code" :> XMLElement["code", {}, {elem}],
-				other_ :> RaiseError["unhandled StyleBox style: ``", InputForm[other]]
+				other_ :> RaiseError["Unhandled StyleBox style: ``", InputForm[other]]
 			}],
 			convertToHtml[content],
 			styles
@@ -587,11 +587,11 @@ convertToHtml[expr_] := Replace[expr, {
 			{elem, option} |-> Replace[option, {
 				(FontWeight -> weight_) :> Replace[weight, {
 					"Bold" | Bold :> XMLElement["b", {}, {elem}],
-					other_ :> RaiseError["unhandled FontWeight option value: ``", InputForm[weight]]
+					other_ :> RaiseError["Unhandled FontWeight option value: ``", InputForm[weight]]
 				}],
 				(FontSlant -> slant_) :> Replace[slant, {
 					"Italic" | Italic :> XMLElement["i", {}, {elem}],
-					other_ :> RaiseError["unhandled FontSlant option value: ``", InputForm[slant]]
+					other_ :> RaiseError["Unhandled FontSlant option value: ``", InputForm[slant]]
 				}],
 				(FontColor -> color_) :> Replace[color, {
 					RGBColor[r_, g_, b_] :> XMLElement[
@@ -599,14 +599,14 @@ convertToHtml[expr_] := Replace[expr, {
 						{"style" -> TemplateApply["color: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
 						{elem}
 					],
-					other_ :> RaiseError["unhandled FontColor option value: ``", InputForm[other]]
+					other_ :> RaiseError["Unhandled FontColor option value: ``", InputForm[other]]
 				}],
 				(FontVariations -> {"StrikeThrough" -> True}) :> XMLElement[
 					"span",
 					{"style" -> "text-decoration: line-through"},
 					{elem}
 				],
-				other_ :> RaiseError["unhandled StyleBox option value: ``", InputForm[other]]
+				other_ :> RaiseError["Unhandled StyleBox option value: ``", InputForm[other]]
 			}],
 			element,
 			options
@@ -627,7 +627,7 @@ convertToHtml[expr_] := Replace[expr, {
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
 
-	other_ :> RaiseError["unhandled cell content: ``", InputForm[other]]
+	other_ :> RaiseError["Unhandled cell content: ``", InputForm[other]]
 }]
 
 AddUnmatchedArgumentsHandler[convertToHtml]
@@ -742,7 +742,7 @@ wrapHtmlForStyle[
 			syntaxHTML
 		],
 
-		other_ :> RaiseError["unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
+		other_ :> RaiseError["Unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
 	}]
 ]
 
@@ -782,12 +782,12 @@ AddSupportFile[
 	RaiseAssert[AssociationQ[$CurrentNotebookSupportFiles]];
 
 	If[KeyMemberQ[$CurrentNotebookSupportFiles, name],
-		RaiseError["support file with name `` has already been added.", InputForm[name]];
+		RaiseError["Support file with name `` has already been added.", InputForm[name]];
 	];
 
 	ext = Replace[content, {
 		_?ImageQ :> ".png",
-		other_ :> RaiseError["unsupported support file data: ``", other]
+		other_ :> RaiseError["Unsupported support file data: ``", other]
 	}];
 
 	(* FIXME: Validate name or encode so that `filePath` only contains URL-safe
