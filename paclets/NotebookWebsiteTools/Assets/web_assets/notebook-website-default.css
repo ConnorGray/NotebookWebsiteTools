@@ -98,6 +98,7 @@ article.Notebook p.nb-Subtitle {
 code {
     padding: 0.25em;
     background: #ddd;
+    border-radius: 0.25em;
 }
 
 pre.nb-Program {
