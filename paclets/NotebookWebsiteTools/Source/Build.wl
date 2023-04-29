@@ -16,6 +16,10 @@ $CurrentNotebookSupportFiles::usage = "$CurrentNotebookSupportFiles returns an A
 
 GeneralUtilities`SetUsage[AddSupportFile, "AddSupportFile[filename$, content$] adds content for a 'support' file that is used by the HTML for the current notebook being built."]
 
+GeneralUtilities`SetUsage[$BuildSettings, "
+$BuildSettings is an association containing settings for the current build.
+"]
+
 DetermineStatusAction
 
 Begin["`Private`"]
@@ -34,6 +38,8 @@ $CurrentNotebookFile := RaiseError["Unexpected use of $CurrentNotebookFile: no n
 $CurrentNotebookRelativeURL := RaiseError["Unexpected use of $CurrentNotebookRelativeURL: no notebook is currently being built."]
 $CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
 $CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
+
+$BuildSettings = <||>
 
 (*====================================*)
 
@@ -59,6 +65,9 @@ NotebookWebsiteBuild[
 	htmlFiles
 },
 Block[{
+	$BuildSettings = <|
+		"IncludeDrafts" -> TrueQ[includeDrafts]
+	|>,
 	$CurrentNotebookWebsiteDirectory = Replace[inputDir, _?StringQ :> File[inputDir]]
 },
 	buildDir = Replace[buildDir0, {
@@ -107,8 +116,7 @@ Block[{
 		nbFile |-> Module[{},
 			WrapRaised["Error building notebook ``", nbFile][
 				buildWebNotebook[
-					nbFile, contentDir, buildDir,
-					includeDrafts
+					nbFile, contentDir, buildDir
 				]
 			]
 		],
@@ -140,8 +148,7 @@ AddUnmatchedArgumentsHandler[buildWebNotebook]
 buildWebNotebook[
 	nbFile: _?StringQ,
 	contentDir: _?StringQ,
-	buildDir: _?StringQ,
-	includeDrafts: _?BooleanQ
+	buildDir: _?StringQ
 ] := Module[{
 	relativeWebAssetsLocation,
 	nbFileRelative = RelativePath[contentDir, nbFile],
@@ -177,10 +184,6 @@ Block[{
 	}];
 
 	Replace[WebsiteNotebookStatus[nb], {
-		(* If the document status is "Draft" and `"IncludeDrafts" -> True` option
-			was set, then include this file. *)
-		"Draft" /; includeDrafts -> Null,
-
 		status_?StringQ :> Replace[DetermineStatusAction[status], {
 			(* Proceed normally. *)
 			"Build" -> Null,
@@ -928,20 +931,33 @@ AddUnmatchedArgumentsHandler[importHTMLFragment]
 
 (*====================================*)
 
-AddUnmatchedArgumentsHandler[DetermineStatusAction]
-
-(*
-	Determine the action to take for a given notebook "DocumentStatus" tagging
-	rule value.
+GeneralUtilities`SetUsage[DetermineStatusAction, "
+	DetermineStatusAction[status$] returns the action to take for a given notebook
+	'DocumentStatus' tagging rule value.
 
 	This function returns one of a set of possible actions:
 
-	* "Build"
-	* "Skip"
-*)
-DetermineStatusAction[status_?StringQ] :=
+	* 'Build'
+	* 'Skip'
+
+	If the 'IncludeDrafts' option is set to True in $BuildSettings, then 'Draft'
+	statuses will result in 'Build' instead of 'Skip'.
+"]
+
+AddUnmatchedArgumentsHandler[DetermineStatusAction]
+
+Options[DetermineStatusAction] = {
+	"IncludeDrafts" :> TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
+}
+
+DetermineStatusAction[status_?StringQ, OptionsPattern[]] :=
 	Replace[status, {
 		"Published" -> "Build",
+
+		(* If the document status is "Draft" and `"IncludeDrafts" -> True` option
+			was set, then include this file. *)
+		"Draft" /; TrueQ[OptionValue["IncludeDrafts"]] -> "Build",
+
 		"Draft" | "Excluded" -> "Skip",
 		other_ :> RaiseError["Unknown document status: ``", InputForm[other]]
 	}]
