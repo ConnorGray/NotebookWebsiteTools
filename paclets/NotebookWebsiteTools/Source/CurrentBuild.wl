@@ -146,6 +146,8 @@ PagesSummaryListHtml[
 			nbFileRelative = RelativePath[contentDir, nbFile],
 			nb,
 			title,
+			status,
+			statusBadge,
 			snippet,
 			url
 		},
@@ -157,17 +159,19 @@ PagesSummaryListHtml[
 			(* Determine whether to include this notebook in the list *)
 			(*--------------------------------------------------------*)
 
-			(* Don't include non-built files in the summary list. *)
-			Replace[WebsiteNotebookStatus[nb], {
-				status_?StringQ :> Replace[DetermineStatusAction[status], {
-					"Build" -> Null,
-					(* Documents with this status should be skipped, so skip it. *)
-					"Skip" :> Return[Nothing, Module],
-					other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
-				}],
+			status = Replace[WebsiteNotebookStatus[nb], {
+				status_?StringQ :> status,
 				(* Don't list non-website notebooks in the page list. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
 				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+			}];
+
+			(* Don't include non-built files in the summary list. *)
+			Replace[DetermineStatusAction[status], {
+				"Build" -> Null,
+				(* Documents with this status should be skipped, so skip it. *)
+				"Skip" :> Return[Nothing, Module],
+				other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
 			}];
 
 			If[filterFunc =!= Automatic,
@@ -188,16 +192,29 @@ PagesSummaryListHtml[
 				_?MissingQ -> None
 			];
 
+			(* If this is a Draft page, show a pill-shaped badge next to the
+				title so it is easy for the website author to know which pages
+				are just drafts. *)
+			statusBadge = Replace[status, {
+				"Draft" -> XMLElement["span", {
+					"class" -> "StatusBadge Status-Draft"
+				}, {"DRAFT"}],
+				_ -> Nothing
+			}];
+
 			RaiseAssert[StringQ[title], "bad title: ``", InputForm[title]];
 			RaiseAssert[MatchQ[snippet, _?StringQ | None], "bad snippet: ``", InputForm[snippet]];
 			RaiseAssert[MatchQ[url, URL[_?StringQ]]];
 
 			XMLElement["li", {}, {
-				XMLElement[
-					"a",
-					{"href" -> url[[1]]},
-					{XMLElement["h4", {}, {title}]}
-				],
+				XMLElement["h4", {}, {
+					XMLElement[
+						"a",
+						{"href" -> url[[1]]},
+						{title}
+					],
+					statusBadge
+				}],
 				If[StringQ[snippet],
 					XMLElement["p", {}, {snippet}]
 					,

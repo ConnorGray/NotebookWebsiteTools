@@ -367,6 +367,28 @@ pre.nb-HighlightSyntax.line-numbers span.ln:before {
     color: #888;
 }
 
+/*------------------------------------*/
+/* Document Status Badges             */
+/*------------------------------------*/
+
+.StatusBadge {
+    font-size: 8pt;
+    border-radius: 8pt;
+    padding: 3pt;
+    user-select: none;
+}
+
+/* Prevent underline shown on status badges that appear inline in
+   PagesSummaryListHtml[..] entries */
+.StatusBadge:hover {
+    text-decoration: none !important;
+}
+
+.StatusBadge.Status-Draft {
+    color: #996633;
+    background: #DEBD9D;
+}
+
 /*========================================================*/
 /* Built-In Widgets                                       */
 /*========================================================*/
