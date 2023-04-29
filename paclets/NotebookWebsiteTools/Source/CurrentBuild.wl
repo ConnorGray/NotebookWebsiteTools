@@ -1,7 +1,7 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 
-TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLObject containing a table of contents for $CurrentNotebook."
-PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLObject containing a site map table of contents for the current notebook website."
+TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLElement containing a table of contents for $CurrentNotebook."
+PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLElement containing a site map table of contents for the current notebook website."
 
 Begin["`Private`"]
 
