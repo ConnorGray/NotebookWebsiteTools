@@ -4,7 +4,13 @@ PacletObject[<|
 	"Version" -> "0.0.1",
 	"WolframVersion" -> "13.1+",
 	"Extensions" -> {
-		{"Kernel", "Root" -> "Source", "Context" -> "ConnorGray`NotebookWebsiteTools`"},
+		{"Kernel",
+			"Root" -> "Source",
+			"Context" -> {
+				"ConnorGray`NotebookWebsiteTools`",
+				"ConnorGray`CacheUtils`"
+			}
+		},
 		{"LibraryLink"},
 		{"Asset", "Assets" -> {
 			{"web_assets", "Assets/web_assets"},

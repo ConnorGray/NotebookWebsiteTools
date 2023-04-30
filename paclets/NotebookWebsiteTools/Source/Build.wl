@@ -20,6 +20,9 @@ GeneralUtilities`SetUsage[$BuildSettings, "
 $BuildSettings is an association containing settings for the current build.
 "]
 
+$BuildCache
+GetBuildValue
+
 DetermineStatusAction
 
 Begin["`Private`"]
@@ -31,6 +34,8 @@ Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
 
+Needs["ConnorGray`CacheUtils`"]
+
 (*====================================*)
 
 $CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
@@ -40,6 +45,8 @@ $CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebo
 $CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
 
 $BuildSettings = <||>
+
+$BuildCache := RaiseError["Unexpected use of $BuildCache: no build is currently in progress."]
 
 (*====================================*)
 
@@ -68,8 +75,18 @@ Block[{
 	$BuildSettings = <|
 		"IncludeDrafts" -> TrueQ[includeDrafts]
 	|>,
+	$BuildCache = CreateCache[],
 	$CurrentNotebookWebsiteDirectory = Replace[inputDir, _?StringQ :> File[inputDir]]
 },
+	(* Build settings should not be mutable once the build has started. This
+		ensures that cached values that depend on a particular setting don't
+		become invalidated. *)
+	Protect[$BuildSettings];
+
+	populateBuildCacheHandlers[$BuildCache];
+
+	(*--------------------------------*)
+
 	buildDir = Replace[buildDir0, {
 		s_?StringQ :> RaiseConfirm @ ExpandFileName[s],
 		Automatic :> FileNameJoin[{inputDir, "build"}]
@@ -143,6 +160,45 @@ Block[{
 
 (*======================================*)
 
+AddUnmatchedArgumentsHandler[populateBuildCacheHandlers]
+
+populateBuildCacheHandlers[cache_CacheSpecifier] := Module[{},
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], Notebook}] :> CatchRaised @ Module[{
+		result
+	},
+		result = Get[file];
+		If[!MatchQ[result, _Notebook],
+			RaiseError[
+				"Unexpected result getting Notebook from file ``: ``",
+				InputForm[file],
+				InputForm[result]
+			]
+		];
+
+		result
+	]];
+
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookStatus}] :> CatchRaised @ Module[{
+		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
+	},
+		WebsiteNotebookStatus[nb]
+	]];
+
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookTitle}] :> CatchRaised @ Module[{
+		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
+	},
+		WebsiteNotebookTitle[nb]
+	]];
+
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookSnippet}] :> CatchRaised @ Module[{
+		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
+	},
+		WebsiteNotebookSnippet[nb]
+	]];
+]
+
+(*======================================*)
+
 AddUnmatchedArgumentsHandler[buildWebNotebook]
 
 buildWebNotebook[
@@ -178,12 +234,12 @@ Block[{
 	RaiseAssert[StringQ[nbFileRelative]];
 	RaiseAssert[MatchQ[$CurrentNotebookRelativeURL, URL[_?StringQ]]];
 
-	nb = Replace[Get[File[nbFile]], {
+	nb = Replace[GetBuildValue[{File[nbFile], Notebook}], {
 		nb_Notebook :> nb,
 		other_ :> RaiseError["Error importing notebook at ``: ``", nbFile, InputForm[other]]
 	}];
 
-	Replace[WebsiteNotebookStatus[nb], {
+	Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
 		status_?StringQ :> Replace[DetermineStatusAction[status], {
 			(* Proceed normally. *)
 			"Build" -> Null,
@@ -961,6 +1017,13 @@ DetermineStatusAction[status_?StringQ, OptionsPattern[]] :=
 		"Draft" | "Excluded" -> "Skip",
 		other_ :> RaiseError["Unknown document status: ``", InputForm[other]]
 	}]
+
+(*========================================================*)
+
+AddUnmatchedArgumentsHandler[GetBuildValue]
+
+GetBuildValue[keyPath_List] := GetCacheValue[$BuildCache, KeyPath[keyPath]]
+
 
 (*========================================================*)
 (* URL Processing                                         *)

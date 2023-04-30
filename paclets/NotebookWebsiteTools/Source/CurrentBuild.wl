@@ -152,7 +152,7 @@ PagesSummaryListHtml[
 			snippet,
 			url
 		},
-			nb = RaiseConfirm @ Get[nbFile];
+			nb = RaiseConfirm @ GetBuildValue[{File[nbFile], Notebook}];
 
 			RaiseAssert[MatchQ[nb, _Notebook]];
 
@@ -160,7 +160,7 @@ PagesSummaryListHtml[
 			(* Determine whether to include this notebook in the list *)
 			(*--------------------------------------------------------*)
 
-			status = Replace[WebsiteNotebookStatus[nb], {
+			status = Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
 				status_?StringQ :> status,
 				(* Don't list non-website notebooks in the page list. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
@@ -187,9 +187,10 @@ PagesSummaryListHtml[
 
 			url = notebookRelativeFileToURL[nbFileRelative];
 
-			title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+			title = RaiseConfirm @ GetBuildValue[{File[nbFile], WebsiteNotebookTitle}];
+
 			snippet = RaiseConfirm @ Replace[
-				WebsiteNotebookSnippet[nb],
+				GetBuildValue[{File[nbFile], WebsiteNotebookSnippet}],
 				_?MissingQ -> None
 			];
 
@@ -208,7 +209,7 @@ PagesSummaryListHtml[
 			RaiseAssert[MatchQ[url, URL[_?StringQ]]];
 
 			XMLElement["li", {}, {
-				createDocumentTitleLinkHtml[nb, url],
+				createDocumentTitleLinkHtml[File[nbFile], url],
 				If[StringQ[snippet],
 					XMLElement["p", {}, {snippet}]
 					,
@@ -249,21 +250,16 @@ VisualSiteMapHtml[
 	notebooks = Map[
 		nbFile |-> Module[{
 			nbFileRelative = RelativePath[contentDir, nbFile],
-			nb,
 			status,
 			statusBadge,
 			title,
 			url
 		},
-			nb = RaiseConfirm @ Get[nbFile];
-
-			RaiseAssert[MatchQ[nb, _Notebook]];
-
 			(*--------------------------------------------------------*)
 			(* Determine whether to include this notebook in the list *)
 			(*--------------------------------------------------------*)
 
-			status = Replace[WebsiteNotebookStatus[nb], {
+			status = Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
 				status_?StringQ :> status,
 				(* Don't list non-website notebooks. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
@@ -282,13 +278,13 @@ VisualSiteMapHtml[
 			(* Build association of useful metainformation about this notebook. *)
 			(*------------------------------------------------------------------*)
 
-			title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+			title = RaiseConfirm @ GetBuildValue[{File[nbFile], WebsiteNotebookTitle}];
 
 			url = notebookRelativeFileToURL[nbFileRelative];
 
 			<|
 				"RelativePath" -> nbFileRelative,
-				"Notebook" -> nb,
+				"NotebookFile" -> File[nbFile],
 				"DocumentStatus" -> status,
 				"Title" -> title,
 				"URL" -> url
@@ -321,7 +317,7 @@ AddUnmatchedArgumentsHandler[makeSiteMapHtml]
 makeSiteMapHtml[node_] := Replace[node, {
 	Tree[
 		KeyValuePattern[{
-			"Notebook" -> nb_Notebook,
+			"NotebookFile" -> nbFile_File,
 			"DocumentStatus" -> status_?StringQ,
 			"Title" -> title_?StringQ,
 			"URL" -> url_URL
@@ -329,7 +325,7 @@ makeSiteMapHtml[node_] := Replace[node, {
 		None
 	] :> Module[{},
 		XMLElement["li", {}, {
-			createDocumentTitleLinkHtml[nb, url]
+			createDocumentTitleLinkHtml[nbFile, url]
 		}]
 	],
 	Tree[component_?StringQ, children:{___Tree}] :> (
@@ -350,11 +346,11 @@ makeSiteMapHtml[node_] := Replace[node, {
 
 AddUnmatchedArgumentsHandler[createDocumentTitleLinkHtml]
 
-createDocumentTitleLinkHtml[nb_Notebook, URL[url_?StringQ]] := Module[{
+createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
 	status,
 	statusBadge
 },
-	status = Replace[WebsiteNotebookStatus[nb], {
+	status = Replace[GetBuildValue[{nbFile, WebsiteNotebookStatus}], {
 		status_?StringQ :> status,
 		(* Don't list non-website notebooks in the page list. *)
 		missing:Missing["KeyAbsent", "DocumentStatus"] :> Return[missing, Module],
@@ -373,7 +369,7 @@ createDocumentTitleLinkHtml[nb_Notebook, URL[url_?StringQ]] := Module[{
 		_ -> Nothing
 	}];
 
-	title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+	title = RaiseConfirm @ GetBuildValue[{nbFile, WebsiteNotebookTitle}];
 
 	XMLElement["h4", {"class" -> "DocumentLink"}, {
 		XMLElement[
