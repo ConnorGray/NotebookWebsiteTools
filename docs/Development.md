@@ -69,19 +69,18 @@ installed:
 Delete the existing kitchen-sink.html page:
 
 ```wolfram
-DeleteFile[CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html"]]
+DeleteDirectory[
+    CloudObject["Examples/NotebookWebsiteTools"],
+    DeleteContents -> True
+]
 ```
 
 Publish the updated kitchen-sink.html page:
 
 ```wolfram
-CopyFile[
-    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/kitchen-sink.html",
-    CloudObject["Examples/NotebookWebsiteTools/kitchen-sink.html", Permissions -> "Public"]
-]
-CopyFile[
-    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/build/web_assets/notebook-website-default.css",
-    CloudObject["Examples/NotebookWebsiteTools/web_assets/notebook-website-default.css", Permissions -> "Public"]
+CopyDirectory[
+    "~/Dev/Github/ConnorGray/NotebookWebsiteTools/Examples/build",
+    CloudObject["Examples/NotebookWebsiteTools", Permissions -> "Public"]
 ]
 ```
 

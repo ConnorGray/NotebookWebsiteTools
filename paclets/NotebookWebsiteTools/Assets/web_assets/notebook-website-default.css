@@ -452,3 +452,12 @@ nav.PagesSummaryList a {
 nav.PagesSummaryList a:hover {
     text-decoration: underline;
 }
+
+h4.DocumentLink a {
+    text-decoration: none;
+    color: cornflowerblue
+}
+
+h4.DocumentLink a:hover {
+    text-decoration: underline;
+}

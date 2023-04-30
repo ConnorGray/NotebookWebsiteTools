@@ -48,6 +48,10 @@ only a CACHEDIR.TAG file.
 GU`SetUsage[HTMLFragmentQ, "
 HTMLFragmentQ[expr$] returns True if expr$ can validlty appear as an element in a list that is a 3rd argument of XMLElement."]
 
+GU`SetUsage[PrefixListsToRules, "
+PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitable for use with RulesTree.
+"]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
@@ -312,6 +316,19 @@ AddUnmatchedArgumentsHandler[CellDataQ]
 (* TODO: Include XML`RawXML["..."] here? *)
 HTMLFragmentQ[expr_] :=
 	MatchQ[expr, _?StringQ | _XMLElement | Nothing | Splice[{___?HTMLFragmentQ}]]
+
+(*========================================================*)
+
+PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
+	rules = Normal @ Map[
+		inner |-> PrefixListsToRules[DeleteCases[inner, {}]],
+		GroupBy[prefixes, First -> Rest]
+	];
+
+	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
+]
+
+AddUnmatchedArgumentsHandler[PrefixListsToRules]
 
 (*========================================================*)
 

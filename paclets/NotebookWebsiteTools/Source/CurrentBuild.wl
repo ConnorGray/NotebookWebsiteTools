@@ -1,7 +1,8 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 
 TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLElement containing a table of contents for $CurrentNotebook."
-PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLElement containing a site map table of contents for the current notebook website."
+PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLElement containing a table of contents for the current notebook website."
+VisualSiteMapHtml::usage = "VisualSiteMapHtml[] generates an XMLElement containing a heirarchical listing of all documents in the current notebook website."
 
 Begin["`Private`"]
 
@@ -207,14 +208,7 @@ PagesSummaryListHtml[
 			RaiseAssert[MatchQ[url, URL[_?StringQ]]];
 
 			XMLElement["li", {}, {
-				XMLElement["h4", {}, {
-					XMLElement[
-						"a",
-						{"href" -> url[[1]]},
-						{title}
-					],
-					statusBadge
-				}],
+				createDocumentTitleLinkHtml[nb, url],
 				If[StringQ[snippet],
 					XMLElement["p", {}, {snippet}]
 					,
@@ -232,6 +226,166 @@ PagesSummaryListHtml[
 
 (*========================================================*)
 
+AddUnmatchedArgumentsHandler[VisualSiteMapHtml]
+
+VisualSiteMapHtml[
+	websiteDir0 : _?StringQ | Automatic : Automatic,
+	filterFunc : _ : Automatic
+] := Module[{
+	websiteDir = Replace[
+		Replace[websiteDir0, Automatic :> $CurrentNotebookWebsiteDirectory],
+		File[dir_?StringQ] :> dir
+	],
+	contentDir,
+	notebooks,
+	listItems
+},
+	contentDir = FileNameJoin[{websiteDir, "Content"}];
+
+	RaiseAssert[DirectoryQ[contentDir], "bad contentDir: ``", contentDir];
+
+	notebooks = FileNames["*.nb", contentDir, Infinity];
+
+	notebooks = Map[
+		nbFile |-> Module[{
+			nbFileRelative = RelativePath[contentDir, nbFile],
+			nb,
+			status,
+			statusBadge,
+			title,
+			url
+		},
+			nb = RaiseConfirm @ Get[nbFile];
+
+			RaiseAssert[MatchQ[nb, _Notebook]];
+
+			(*--------------------------------------------------------*)
+			(* Determine whether to include this notebook in the list *)
+			(*--------------------------------------------------------*)
+
+			status = Replace[WebsiteNotebookStatus[nb], {
+				status_?StringQ :> status,
+				(* Don't list non-website notebooks. *)
+				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
+				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+			}];
+
+			(* Don't include non-built files in the list. *)
+			Replace[DetermineStatusAction[status], {
+				"Build" -> Null,
+				(* Documents with this status should be skipped, so skip it. *)
+				"Skip" :> Return[Nothing, Module],
+				other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+			}];
+
+			(*------------------------------------------------------------------*)
+			(* Build association of useful metainformation about this notebook. *)
+			(*------------------------------------------------------------------*)
+
+			title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+
+			url = notebookRelativeFileToURL[nbFileRelative];
+
+			<|
+				"RelativePath" -> nbFileRelative,
+				"Notebook" -> nb,
+				"DocumentStatus" -> status,
+				"Title" -> title,
+				"URL" -> url
+			|>
+		],
+		notebooks
+	];
+
+	notebooks = PrefixListsToRules[
+		Map[Append[Most[FileNameSplit[#"RelativePath"]], #] &, notebooks]
+	];
+
+	notebooks = Sort[notebooks];
+
+	RaiseAssert[MatchQ[notebooks, {(_?AssociationQ | (_?StringQ -> {___}))...}]];
+
+	notebooks = RulesTree["Root" -> notebooks];
+
+	RaiseAssert[TreeQ[notebooks]];
+
+	XMLElement["nav", {"class" -> "VisualSiteMap"}, {
+		XMLElement["ul", {}, Map[makeSiteMapHtml, TreeChildren[notebooks]]]
+	}]
+]
+
+(*------------------------------------*)
+
+AddUnmatchedArgumentsHandler[makeSiteMapHtml]
+
+makeSiteMapHtml[node_] := Replace[node, {
+	Tree[
+		KeyValuePattern[{
+			"Notebook" -> nb_Notebook,
+			"DocumentStatus" -> status_?StringQ,
+			"Title" -> title_?StringQ,
+			"URL" -> url_URL
+		}],
+		None
+	] :> Module[{},
+		XMLElement["li", {}, {
+			createDocumentTitleLinkHtml[nb, url]
+		}]
+	],
+	Tree[component_?StringQ, children:{___Tree}] :> (
+		XMLElement["li", {}, {
+			component,
+			XMLElement["ul", {}, Map[makeSiteMapHtml, children]]
+		}]
+	),
+	other_ :> (
+		RaiseError[
+			"Unexpected site map HTML Tree[..] content: ``",
+			InputForm[node]
+		]
+	)
+}]
+
+(*========================================================*)
+
+AddUnmatchedArgumentsHandler[createDocumentTitleLinkHtml]
+
+createDocumentTitleLinkHtml[nb_Notebook, URL[url_?StringQ]] := Module[{
+	status,
+	statusBadge
+},
+	status = Replace[WebsiteNotebookStatus[nb], {
+		status_?StringQ :> status,
+		(* Don't list non-website notebooks in the page list. *)
+		missing:Missing["KeyAbsent", "DocumentStatus"] :> Return[missing, Module],
+		other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+	}];
+
+	(* If this is a Draft page, show a pill-shaped badge next to the
+		title so it is easy for the website author to know which pages
+		are just drafts. *)
+	statusBadge = Replace[status, {
+		"Draft" -> XMLElement[
+			"span",
+			{"class" -> "StatusBadge Status-Draft"},
+			{"DRAFT"}
+		],
+		_ -> Nothing
+	}];
+
+	title = RaiseConfirm @ WebsiteNotebookTitle[nb];
+
+	XMLElement["h4", {"class" -> "DocumentLink"}, {
+		XMLElement[
+			"a",
+			{"href" -> url},
+			{title}
+		],
+		statusBadge
+	}]
+]
+
+(*========================================================*)
 
 End[]
 
