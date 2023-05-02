@@ -390,6 +390,13 @@ pre.nb-HighlightSyntax.line-numbers span.ln:before {
     background: #DEBD9D;
 }
 
+/* Style draft cells that were included in the built page. */
+div.nb-Draft {
+    background: #ffcc99;
+    padding-left: 0.75em;
+    border-left: 2px solid #996633;
+}
+
 /*========================================================*/
 /* Built-In Widgets                                       */
 /*========================================================*/

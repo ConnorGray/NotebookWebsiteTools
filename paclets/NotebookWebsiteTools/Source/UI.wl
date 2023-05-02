@@ -17,6 +17,7 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`UI`"]
 
 ToggleExcluded::usage = "ToggleExcluded toggles the Excluded status of selected cells."
+ToggleDraft::usage = "ToggleDraft toggles the Draft status of selected cells."
 
 $GitHubIcon :=
 	$GitHubIcon = Import[
@@ -52,6 +53,23 @@ ToggleExcluded[nb_NotebookObject] := Module[{
 ]
 
 AddUnmatchedArgumentsHandler[ToggleExcluded]
+
+(*====================================*)
+
+AddUnmatchedArgumentsHandler[ToggleDraft]
+
+ToggleDraft[nb_NotebookObject] := Module[{
+	cells = SelectedCells[nb]
+},
+	RaiseAssert[MatchQ[cells, {___CellObject}]];
+
+	(* FIXME: Setting the 'Draft' style should remove the 'Excluded' style,
+		and vice versa. *)
+	Scan[cell |-> toggleCellStyle[cell, "ConnorGray/Draft"], cells];
+
+	(* Return the cells that we modified. *)
+	cells
+]
 
 (*========================================================*)
 (* Syntax Highlighting                                    *)

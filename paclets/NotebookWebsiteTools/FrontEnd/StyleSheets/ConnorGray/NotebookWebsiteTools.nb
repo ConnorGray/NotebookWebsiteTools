@@ -7,28 +7,52 @@ Notebook[{
 			Cell[
 				BoxData @ GridBox[{{
 					ItemBox[
-						TemplateBox[
-							{
-								GraphicsBox[{
-									InsetBox[
-										FormBox["\"TD\"", TraditionalForm],
-										{0, 0}
-									]
-								}, {
-									ImageSize -> 15,
-									BaselinePosition -> Center
-								}],
-								"Exclude",
-								"Toggle whether the selected cells are marked as Excluded.",
-								Function[
-									ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
-								],
-								"Queued",
-								RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
-								RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
-							},
-							"NotebookWebsiteTools:IconAndLabelButtonTemplate"
-						],
+						GridBox[{{
+							TemplateBox[
+								{
+									GraphicsBox[{
+										InsetBox[
+											FormBox["\"TD\"", TraditionalForm],
+											{0, 0}
+										]
+									}, {
+										ImageSize -> 15,
+										BaselinePosition -> Center
+									}],
+									"Exclude",
+									"Toggle whether the selected cells are marked as Excluded.",
+									Function[
+										ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
+									],
+									"Queued",
+									RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
+									RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
+								},
+								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+							],
+							TemplateBox[
+								{
+									GraphicsBox[{
+										InsetBox[
+											FormBox["\"\"", TraditionalForm],
+											{0, 0}
+										]
+									}, {
+										ImageSize -> 15,
+										BaselinePosition -> Center
+									}],
+									"Draft",
+									"Toggle whether the selected cells are marked as Draft.",
+									Function[
+										ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[ButtonNotebook[]]
+									],
+									"Queued",
+									RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
+									RGBColor[0.6, 0.4, 0.2] (* Draft color *)
+								},
+								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+							]
+						}}],
 						(* Force this item to take up the maximum possible width. This
 						makes items that come after this appear aligned to the right
 						side of the notebook. *)
@@ -115,6 +139,13 @@ Notebook[{
 		Background -> RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
 		CellFrame -> {{3, False}, {False, False}},
 		CellFrameColor -> RGBColor[0.8, 0, 0] (* Darker[Red, 0.2] *)
+	],
+
+	Cell[StyleData["ConnorGray/Draft"],
+		MenuSortingValue -> 2500,
+		Background -> RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
+		CellFrame -> {{3, False}, {False, False}},
+		CellFrameColor -> RGBColor[0.6, 0.4, 0.2] (* Draft color *)
 	],
 
 	(*===============*)

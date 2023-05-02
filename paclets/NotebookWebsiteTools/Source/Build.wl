@@ -582,6 +582,11 @@ convertToHtml[expr_] := Replace[expr, {
 			Return[Nothing, Module];
 		];
 
+		If[MemberQ[styles, "ConnorGray/Draft"] && !TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
+			(* TODO: Better sentinel value for 'nothing' HTML? *)
+			Return[Nothing, Module];
+		];
+
 		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
 			Module[{inputLines, xml},
 				(*---------------------------------------------------------------*)
@@ -833,6 +838,17 @@ wrapHtmlForStyle[
 			syntaxHTML = importHTMLFragment[syntaxHTMLString];
 
 			syntaxHTML
+		],
+
+		"ConnorGray/Draft" :> Module[{},
+			If[!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
+				RaiseError[
+					"Uexpected attempt to convert cell marked as Draft: ``",
+					cellData
+				];
+			];
+
+			XMLElement["div", {"class" -> "nb-Draft"}, {html}]
 		],
 
 		other_ :> RaiseError["Unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
