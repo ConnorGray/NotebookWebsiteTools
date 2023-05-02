@@ -381,10 +381,10 @@ Notebook[{
 	(*================================*)
 
 	Cell[
-		StyleData["ConnorGray/GitHubLink"],
+		StyleData["ConnorGray/DynamicIconLink"],
 		TemplateBoxOptions -> {
 			(*
-				Parameters: {label, URL}
+				Parameters: {icon, label, URL}
 
 				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
 				very basic evaluator doesn't not support named Function parameters.)
@@ -397,26 +397,18 @@ Notebook[{
 								DynamicBox[
 									ToBoxes[
 										Refresh[
-											Image[
-												Import[
-													PacletObject["ConnorGray/NotebookWebsiteTools"][
-														"AssetLocation", "GitHubIcon"
-													]
-												],
-												ImageSize -> 18,
-												BaselinePosition -> Scaled[0.15]
-											],
+											#1,
 											None
 										],
 										StandardForm
 									]
 								],
-								#1
+								#2
 							}},
 								GridBoxSpacings -> {"Columns" -> {{0.15}}}
 							],
-							{URL[#2], None},
-							#2,
+							{URL[#3], None},
+							#3,
 							"Hyperlink",
 							{"HyperlinkActive"},
 							BaseStyle -> {"Text"}
@@ -425,6 +417,60 @@ Notebook[{
 					],
 					Editable -> False
 				]
+			]
+		}
+	],
+
+	Cell[
+		StyleData["ConnorGray/GitHubLink"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {label, URL}
+
+				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
+				very basic evaluator doesn't not support named Function parameters.)
+			*)
+			DisplayFunction -> Function[
+				Cell @ BoxData @ TemplateBox[{
+					Image[
+						Import[
+							PacletObject["ConnorGray/NotebookWebsiteTools"][
+								"AssetLocation", "GitHubIcon"
+							]
+						],
+						ImageSize -> 18,
+						BaselinePosition -> Scaled[0.15]
+					],
+					#1,
+					#2
+				}, "ConnorGray/DynamicIconLink"]
+			]
+		}
+	],
+
+	Cell[
+		StyleData["ConnorGray/PacletLink"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {label, URL}
+
+				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
+				very basic evaluator doesn't not support named Function parameters.)
+			*)
+			DisplayFunction -> Function[
+				Cell @ BoxData @ TemplateBox[{
+					Show[
+						Import[
+							PacletObject["ConnorGray/NotebookWebsiteTools"][
+								"AssetLocation", "PacletIcon"
+							]
+						],
+						ImageSize -> 18,
+						BaselinePosition -> Scaled[0.18]
+					],
+					#1,
+					#2
+				}, "ConnorGray/DynamicIconLink"]
 			]
 		}
 	]

@@ -14,7 +14,8 @@ PacletObject[<|
 		{"LibraryLink"},
 		{"Asset", "Assets" -> {
 			{"web_assets", "Assets/web_assets"},
-			{"GitHubIcon", "Assets/Icons/github-mark.png"}
+			{"GitHubIcon", "Assets/Icons/github-mark.png"},
+			{"PacletIcon", "Assets/Icons/paclet-icon.wl"}
 		}},
 		{"FrontEnd"},
 		{"Documentation", "Language" -> "English"},

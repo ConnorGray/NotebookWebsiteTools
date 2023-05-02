@@ -512,7 +512,7 @@ convertToHtml[expr_] := Replace[expr, {
 	],
 
 	(*--------------------------------*)
-	(* Inline GitHub link cells       *)
+	(* Inline special link cells      *)
 	(*--------------------------------*)
 
 	Cell[
@@ -530,6 +530,29 @@ convertToHtml[expr_] := Replace[expr, {
 					"src" -> URLBuild[{
 						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
 						"github-mark.svg"
+					}],
+					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+				}, {}],
+				convertToHtml[label]
+			}
+		]
+	],
+
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/PacletLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"paclet-icon.svg"
 					}],
 					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
 				}, {}],
