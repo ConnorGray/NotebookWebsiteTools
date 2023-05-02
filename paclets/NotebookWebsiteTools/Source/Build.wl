@@ -560,22 +560,13 @@ convertToHtml[expr_] := Replace[expr, {
 		];
 
 		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
-			Module[{context, heldExpr, xml},
+			Module[{inputLines, xml},
 				(*---------------------------------------------------------------*)
 				(* Parse the typeset content of the cell into a held expression. *)
 				(*---------------------------------------------------------------*)
 
-				context = UniqueContext["NotebookWebsiteBuild"];
-
-				heldExpr = Replace[content, {
-					(* TODO: What if content is not StandardForm? *)
-					BoxData[boxes0_] :> Module[{
-						inputLines = Replace[boxes0, b:Except[_?ListQ] :> {b}]
-					},
-						Block[{$Context = context, $ContextPath = {"System`"}},
-							ToExpression[inputLines, StandardForm, HoldComplete]
-						]
-					],
+				inputLines = Replace[content, {
+					BoxData[boxes0_] :> Replace[boxes0, b:Except[_?ListQ] :> {b}],
 					(* TODO: What if content is not BoxData? *)
 					TextData[_] :> RaiseError[
 						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
@@ -587,13 +578,18 @@ convertToHtml[expr_] := Replace[expr, {
 					]
 				}];
 
-				xml = Block[{$Context = context, $ContextPath = {"System`"}},
-					Replace[heldExpr, {
-						(* The cell has multiple input expressions. Return the
-							result of the last one. *)
-						{__HoldComplete} :> Last[ReleaseHold[heldExpr]],
-						_ :> ReleaseHold[heldExpr]
-					}]
+				RaiseAssert[ListQ[inputLines]];
+
+				(* FIXME: Catch any raised exceptions from these ToExpression
+					evaluation. *)
+				xml = Block[{
+					$Context = UniqueContext["NotebookWebsiteBuild"],
+					$ContextPath = {"System`"}
+				},
+					Last @ Map[
+						inputLine |-> ToExpression[inputLine],
+						inputLines
+					]
 				];
 
 				(*------------------------------------------------------------*)
