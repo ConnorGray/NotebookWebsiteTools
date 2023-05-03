@@ -88,7 +88,9 @@ $MenuSortingValueOffset = 2500;
 MakeNotebookStyleDefinitions[] := Module[{},
 	Notebook[{
 		Cell[StyleData[StyleDefinitions -> "ConnorGray/NotebookWebsiteTools.nb"]]
-	}]
+	},
+		StyleDefinitions -> "PrivateStylesheetFormatting.nb"
+	]
 ]
 
 AddUnmatchedArgumentsHandler[MakeNotebookStyleDefinitions]
