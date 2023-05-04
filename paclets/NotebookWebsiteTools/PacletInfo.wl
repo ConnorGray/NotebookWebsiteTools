@@ -15,7 +15,8 @@ PacletObject[<|
 		{"Asset", "Assets" -> {
 			{"web_assets", "Assets/web_assets"},
 			{"GitHubIcon", "Assets/Icons/github-mark.png"},
-			{"PacletIcon", "Assets/Icons/paclet-icon.wl"}
+			{"PacletIcon", "Assets/Icons/paclet-icon.wl"},
+			{"RustIcon", "Assets/Icons/rust-logo-32x32-blk.png"}
 		}},
 		{"FrontEnd"},
 		{"Documentation", "Language" -> "English"},

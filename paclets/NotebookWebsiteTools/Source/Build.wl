@@ -561,6 +561,29 @@ convertToHtml[expr_] := Replace[expr, {
 		]
 	],
 
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/RustCrateLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"rust-logo-blk.svg"
+					}],
+					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+				}, {}],
+				convertToHtml[label]
+			}
+		]
+	],
+
 	(*--------------------------------*)
 	(* Converted cell types           *)
 	(*--------------------------------*)

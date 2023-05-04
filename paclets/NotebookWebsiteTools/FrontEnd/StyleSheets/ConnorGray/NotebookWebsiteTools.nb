@@ -506,5 +506,32 @@ Notebook[{
 				}, "ConnorGray/DynamicIconLink"]
 			]
 		}
-	]
+	],
+
+	Cell[
+		StyleData["ConnorGray/RustCrateLink"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {label, URL}
+
+				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
+				very basic evaluator doesn't not support named Function parameters.)
+			*)
+			DisplayFunction -> Function[
+				Cell @ BoxData @ TemplateBox[{
+					Image[
+						Import[
+							PacletObject["ConnorGray/NotebookWebsiteTools"][
+								"AssetLocation", "RustIcon"
+							]
+						],
+						ImageSize -> 18,
+						BaselinePosition -> Scaled[0.15]
+					],
+					#1,
+					#2
+				}, "ConnorGray/DynamicIconLink"]
+			]
+		}
+	],
 }]

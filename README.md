@@ -47,7 +47,14 @@ Include documents with the `Draft` status flag:
 $ wolfram-cli notebook-website build [WEBSITE_DIR] --drafts
 ```
 
-### Contributing
+## Contributing
 
 See [**Development.md**](./docs/Development.md) for instructions on how to
 develop NotebookWebsiteTools.
+
+## Credits
+
+* [rust-logo-blk.svg](./paclets/NotebookWebsiteTools/Assets/web_assets/rust-logo-blk.svg)
+  and [rust-logo-32x32-blk.png](./paclets/NotebookWebsiteTools/Assets/Icons/rust-logo-32x32-blk.png)
+  were sourced unchanged from the rust-lang/rust-artwork GitHub repository, and are licensed
+  under the [Creative Commons Attribution license (CC-BY)](https://creativecommons.org/licenses/by/4.0/).
