@@ -22,6 +22,7 @@ Notebook[{
 									"Exclude",
 									"Toggle whether the selected cells are marked as Excluded.",
 									Function[
+										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
 										ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
 									],
 									"Queued",
@@ -44,6 +45,7 @@ Notebook[{
 									"Draft",
 									"Toggle whether the selected cells are marked as Draft.",
 									Function[
+										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
 										ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[ButtonNotebook[]]
 									],
 									"Queued",
