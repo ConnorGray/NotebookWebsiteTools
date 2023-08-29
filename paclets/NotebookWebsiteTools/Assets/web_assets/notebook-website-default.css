@@ -136,37 +136,37 @@ h5.nb-Subsubsection {
 }
 
 .nb-Title {
-    font-size: 45pt;
+    font-size: 36pt;
 }
 
 .nb-Chapter {
-    font-size: 34pt;
+    font-size: 27pt;
 }
 
 .nb-Section {
-    font-size: 28pt;
+    font-size: 22pt;
 }
 
 .nb-Subsection {
     margin-block-start: 1em;
     margin-block-end: 1em;
-    font-size: 20pt;
+    font-size: 16pt;
 }
 
 .nb-Subsubsection {
     margin-block-start: 1em;
     margin-block-end: 1em;
-    font-size: 17pt;
+    font-size: 14pt;
 }
 
 .nb-Subsubsubsection {
     margin-block-start: 1em;
     margin-block-end: 1em;
-    font-size: 15pt;
+    font-size: 12pt;
 }
 
 .nb-Subsubsubsubsection {
-    font-size: 13pt;
+    font-size: 10.5pt;
 }
 
 /*-----------*/
