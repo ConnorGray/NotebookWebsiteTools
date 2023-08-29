@@ -71,12 +71,22 @@ a.anchor:target {
 }
 
 /* TODO: Make these colors controllable through a website theming mechanism. */
-:root {
+/* :root {
     --nwt--h1-color: #5f0f40;
     --nwt--h2-color: #9a031e;
     --nwt--h3-color: #e36414;
     --nwt--h4-color: #fb8b24;
     --nwt--h5-color: #0f4c5c;
+
+    --nwt--body-background-color: #FAF9F6;
+} */
+
+:root {
+    --nwt--h1-color: #471CA8;
+    --nwt--h2-color: #884AB2;
+    --nwt--h3-color: #FF930A;
+    --nwt--h4-color: #F24B04;
+    --nwt--h5-color: #D1105A;
 
     --nwt--body-background-color: #FAF9F6;
 }
@@ -453,7 +463,7 @@ nav.PagesSummaryList > ul > li p {
 
 nav.PagesSummaryList a {
     text-decoration: none;
-    color: cornflowerblue;
+    color: var(--nwt--h1-color)
 }
 
 nav.PagesSummaryList a:hover {
@@ -462,7 +472,7 @@ nav.PagesSummaryList a:hover {
 
 h4.DocumentLink a {
     text-decoration: none;
-    color: cornflowerblue
+    color: var(--nwt--h1-color)
 }
 
 h4.DocumentLink a:hover {
