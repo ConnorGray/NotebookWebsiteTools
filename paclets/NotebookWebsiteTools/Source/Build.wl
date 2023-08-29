@@ -524,14 +524,13 @@ convertToHtml[expr_] := Replace[expr, {
 	] :> Module[{},
 		XMLElement[
 			"a",
-			{"href" -> url},
+			{"href" -> url, "class" -> "IconLink"},
 			{
 				XMLElement["img", {
 					"src" -> URLBuild[{
 						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
 						"github-mark.svg"
-					}],
-					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+					}]
 				}, {}],
 				convertToHtml[label]
 			}
@@ -547,14 +546,13 @@ convertToHtml[expr_] := Replace[expr, {
 	] :> Module[{},
 		XMLElement[
 			"a",
-			{"href" -> url},
+			{"href" -> url, "class" -> "IconLink"},
 			{
 				XMLElement["img", {
 					"src" -> URLBuild[{
 						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
 						"paclet-icon.svg"
-					}],
-					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+					}]
 				}, {}],
 				convertToHtml[label]
 			}
@@ -570,14 +568,13 @@ convertToHtml[expr_] := Replace[expr, {
 	] :> Module[{},
 		XMLElement[
 			"a",
-			{"href" -> url},
+			{"href" -> url, "class" -> "IconLink"},
 			{
 				XMLElement["img", {
 					"src" -> URLBuild[{
 						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
 						"rust-logo-blk.svg"
-					}],
-					"style" -> "width: 14pt; height: 14pt; vertical-align: text-bottom; padding-right: 2pt;"
+					}]
 				}, {}],
 				convertToHtml[label]
 			}

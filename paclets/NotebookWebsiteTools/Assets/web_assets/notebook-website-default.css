@@ -407,6 +407,21 @@ div.nb-Draft {
     border-left: 2px solid #996633;
 }
 
+/*------------------------------------*/
+/* Icon link styles                   */
+/*------------------------------------*/
+
+a.IconLink {
+    color: #4A51B0;
+}
+
+a.IconLink img {
+    width: 14pt;
+    height: 14pt;
+    vertical-align: text-bottom;
+    padding-right: 2pt;
+}
+
 /*========================================================*/
 /* Built-In Widgets                                       */
 /*========================================================*/
