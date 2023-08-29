@@ -34,7 +34,7 @@ VerificationTest[
 			},
 			Visible -> False,
 			FrontEndVersion -> _,
-			StyleDefinitions -> "Default.nb"
+			StyleDefinitions -> "PrivateStylesheetFormatting.nb"
 		]
 	]
 	,
