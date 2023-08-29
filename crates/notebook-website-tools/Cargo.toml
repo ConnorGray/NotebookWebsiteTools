@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 
 [dependencies]
-wolfram-library-link = "0.2.7"
+wolfram-library-link = "0.2.10"
 
 once_cell = "1.16.0"
 
