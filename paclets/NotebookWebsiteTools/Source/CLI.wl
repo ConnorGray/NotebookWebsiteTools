@@ -5,13 +5,13 @@ HandleNotebookWebsiteSubcommand::usage = "Handle the command `$ wolfram notebook
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["ConnorGray`WolframCLI`" -> "CLI`"]
 
 HandleNotebookWebsiteSubcommand[
 	cliArgs: {___?StringQ}
-] := CatchRaised @ Module[{
+] := Handle[_Failure] @ Module[{
 	inputDir,
 	openFlag,
 	draftFlag
@@ -42,11 +42,11 @@ HandleNotebookWebsiteSubcommand[
 
 			handleNew[fileName, openFlag]
 		),
-		other_ :> RaiseError["Unexpected command line arguments: ``", other]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected command line arguments: ``", other]
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[HandleNotebookWebsiteSubcommand]
+SetFallthroughError[HandleNotebookWebsiteSubcommand]
 
 (*======================================*)
 
@@ -78,12 +78,12 @@ handleBuild[
 			Print[Format[failure, CLI`TerminalForm]];
 		),
 		other_ :> (
-			RaiseError["Unexpected NotebookWebsiteBuild result: ``", InputForm[other]]
+			Raise[NotebookWebsiteError, "Unexpected NotebookWebsiteBuild result: ``", InputForm[other]]
 		)
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[handleBuild]
+SetFallthroughError[handleBuild]
 
 (*======================================*)
 
@@ -99,7 +99,8 @@ handleNew[
 		"" :> (
 			fileName = fileName <> ".nb";
 		),
-		other_?StringQ :> RaiseError[
+		other_?StringQ :> Raise[
+			NotebookWebsiteError,
 			"unsupported file extension specified for new website notebook file path: ``",
 			fileName
 		]
@@ -111,7 +112,7 @@ handleNew[
 		RaiseAssert[MatchQ[nb, _NotebookObject], "unexpected CreateWebsiteNotebook result: ``", nb];
 
 		If[FileExistsQ[fileName],
-			RaiseError["file already exists at path: ``", fileName];
+			Raise[NotebookWebsiteError, "file already exists at path: ``", fileName];
 		];
 
 		RaiseConfirm @ NotebookSave[nb, fileName];
@@ -122,7 +123,7 @@ handleNew[
 	];
 ]
 
-AddUnmatchedArgumentsHandler[handleNew]
+SetFallthroughError[handleNew]
 
 (*======================================*)
 

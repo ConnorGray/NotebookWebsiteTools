@@ -6,7 +6,7 @@ $LibraryFunctions
 
 Begin["`Private`"]
 
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 (*====================================*)
 
@@ -18,7 +18,7 @@ $LibraryFunctions := Module[{
 	loader = LibraryFunctionLoad["libnotebook_website_tools", "load_library_functions", LinkObject, LinkObject];
 
 	If[FailureQ[loader],
-		RaiseError["Error loading Wolfram LibraryLink loader function: ", loader];
+		Raise[NotebookWebsiteError, "Error loading Wolfram LibraryLink loader function: ", loader];
 	];
 
 	result = loader[];
@@ -28,7 +28,7 @@ $LibraryFunctions := Module[{
 			$LibraryFunctions = functions;
 		),
 		other_ :> (
-			$LibraryFunctions := RaiseError["Library loader function returned unexpected result: ", other];
+			$LibraryFunctions := Raise[NotebookWebsiteError, "Library loader function returned unexpected result: ", other];
 		)
 	}];
 
@@ -40,13 +40,14 @@ $LibraryFunctions := Module[{
 GetLibraryFunction[name: _?StringQ] := Lookup[
 	$LibraryFunctions,
 	name,
-	RaiseError[
+	Raise[
+		NotebookWebsiteError,
 		"libnotebook_website_tools has no automatically exported function named ``",
 		InputForm[name]
 	]
 ]
 
-AddUnmatchedArgumentsHandler[GetLibraryFunction]
+SetFallthroughError[GetLibraryFunction]
 
 
 End[]

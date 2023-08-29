@@ -2,7 +2,7 @@ PacletObject[<|
 	"Name" -> "ConnorGray/NotebookWebsiteTools",
 	"PublisherID" -> "ConnorGray",
 	"Version" -> "0.0.1",
-	"WolframVersion" -> "13.1+",
+	"WolframVersion" -> "13.2+",
 	"Extensions" -> {
 		{"Kernel",
 			"Root" -> "Source",
@@ -24,5 +24,8 @@ PacletObject[<|
 			"Subcommand" -> "notebook-website",
 			"HandlerFunction" -> "ConnorGray`NotebookWebsiteTools`CLI`HandleNotebookWebsiteSubcommand"
 		}
+	},
+	"Dependencies" -> {
+		"Wolfram/ErrorTools"
 	}
 |>]

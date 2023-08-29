@@ -6,7 +6,7 @@ MakeBlogPostDockedCells
 
 Begin["`Private`"]
 
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`"]
 Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
 
@@ -36,13 +36,13 @@ CreateBlogPostNotebook[title: _?StringQ] := Module[{nb},
 	nb
 ]
 
-AddUnmatchedArgumentsHandler[CreateBlogPostNotebook]
+SetFallthroughError[CreateBlogPostNotebook]
 
 (*====================================*)
 
 MakeBlogPostDockedCells[] := MakeStandardWebsiteNotebookToolbar[]
 
-AddUnmatchedArgumentsHandler[MakeBlogPostDockedCells]
+SetFallthroughError[MakeBlogPostDockedCells]
 
 End[]
 

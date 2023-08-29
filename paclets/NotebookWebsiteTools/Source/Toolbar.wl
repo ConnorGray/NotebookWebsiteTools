@@ -7,7 +7,7 @@ MakeToolbarButtonBoxes
 
 Begin["`Private`"]
 
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`UI`"]
 
@@ -76,7 +76,7 @@ MakeToolbarButtonBoxes[
 	]
 ]
 
-AddUnmatchedArgumentsHandler[MakeToolbarButtonBoxes]
+SetFallthroughError[MakeToolbarButtonBoxes]
 
 (*====================================*)
 

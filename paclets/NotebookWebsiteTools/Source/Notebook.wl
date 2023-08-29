@@ -13,7 +13,7 @@ UpdateNotebook::usage = "UpdateNotebook[obj] updates the website notebook specif
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`UI`"]
@@ -29,7 +29,8 @@ UpdateNotebook[nb_NotebookObject] := Module[{
 },
 	metadata = Replace[Options[nb, TaggingRules], {
 		{TaggingRules -> KeyValuePattern["ConnorGray/NotebookWebsiteTools" -> metadata_]} :> metadata,
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Notebook does not have expected \"ConnorGray/NotebookWebsiteTools\" TaggingRules value"
 		]
 	}];
@@ -39,7 +40,8 @@ UpdateNotebook[nb_NotebookObject] := Module[{
 			"DocumentType" -> type_?StringQ,
 			"CreatedByPacletVersion" -> createdBy_?StringQ
 		}] :> {type, createdBy},
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Notebook metadata does not have expected fields: ``",
 			InputForm[other]
 		]
@@ -55,7 +57,7 @@ UpdateNotebook[nb_NotebookObject] := Module[{
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[UpdateNotebook]
+SetFallthroughError[UpdateNotebook]
 
 (*====================================*)
 
@@ -79,7 +81,7 @@ MakeNotebookTaggingRules[documentType: _?StringQ] := Module[{
 	}
 ]
 
-AddUnmatchedArgumentsHandler[MakeNotebookTaggingRules]
+SetFallthroughError[MakeNotebookTaggingRules]
 
 (*====================================*)
 
@@ -93,7 +95,7 @@ MakeNotebookStyleDefinitions[] := Module[{},
 	]
 ]
 
-AddUnmatchedArgumentsHandler[MakeNotebookStyleDefinitions]
+SetFallthroughError[MakeNotebookStyleDefinitions]
 
 (*------------------------------------*)
 
@@ -101,10 +103,10 @@ AddUnmatchedArgumentsHandler[MakeNotebookStyleDefinitions]
 
 MakeNotebookDockedCells[documentType: _?StringQ] := Replace[documentType, {
 	"BlogPost" :> MakeBlogPostDockedCells[],
-	other_ :> RaiseError["Unhandled document type in MakeNotebookDockedCells: ``", other]
+	other_ :> Raise[NotebookWebsiteError, "Unhandled document type in MakeNotebookDockedCells: ``", other]
 }]
 
-AddUnmatchedArgumentsHandler[MakeNotebookDockedCells]
+SetFallthroughError[MakeNotebookDockedCells]
 
 (*====================================*)
 

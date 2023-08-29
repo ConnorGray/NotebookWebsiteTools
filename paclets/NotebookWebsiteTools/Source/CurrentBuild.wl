@@ -8,7 +8,7 @@ Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 
@@ -33,7 +33,7 @@ TableOfContentsHtml[nb_Notebook] := Module[{
 	XMLElement["nav", {"class" -> "TableOfContents"}, {makeTableOfContentsHtml[headings]}]
 ]
 
-AddUnmatchedArgumentsHandler[TableOfContentsHtml]
+SetFallthroughError[TableOfContentsHtml]
 
 (*------------------------------------*)
 
@@ -76,7 +76,7 @@ makeTableOfContentsHtml[
 					makeTableOfContentsHtml[children]
 				}]
 			],
-			other_ :> RaiseError["Unexpected cell headings structure: ``", other]
+			other_ :> Raise[NotebookWebsiteError, "Unexpected cell headings structure: ``", other]
 		}],
 		headings
 	];
@@ -88,7 +88,7 @@ makeTableOfContentsHtml[
 	]
 ]
 
-AddUnmatchedArgumentsHandler[makeTableOfContentsHtml]
+SetFallthroughError[makeTableOfContentsHtml]
 
 (*====================================*)
 
@@ -111,7 +111,8 @@ extractCellGroupHeadings[cells:{___Cell}] := Module[{},
 			(* TODO: What about Chapter/Section/Subsection/etc. cell sections
 				that are empty? *)
 			Cell[Except[_CellGroupData], ___] -> Nothing,
-			other_ :> RaiseError[
+			other_ :> Raise[
+				NotebookWebsiteError,
 				"Error constructing table of contents: Unexpected Notebook cell structure: ``",
 				InputForm[other]
 			]
@@ -120,7 +121,7 @@ extractCellGroupHeadings[cells:{___Cell}] := Module[{},
 	]
 ]
 
-AddUnmatchedArgumentsHandler[extractCellGroupHeadings]
+SetFallthroughError[extractCellGroupHeadings]
 
 (*========================================================*)
 
@@ -164,7 +165,7 @@ PagesSummaryListHtml[
 				status_?StringQ :> status,
 				(* Don't list non-website notebooks in the page list. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
-				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 			}];
 
 			(* Don't include non-built files in the summary list. *)
@@ -172,7 +173,7 @@ PagesSummaryListHtml[
 				"Build" -> Null,
 				(* Documents with this status should be skipped, so skip it. *)
 				"Skip" :> Return[Nothing, Module],
-				other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 			}];
 
 			If[filterFunc =!= Automatic,
@@ -227,7 +228,7 @@ PagesSummaryListHtml[
 
 (*========================================================*)
 
-AddUnmatchedArgumentsHandler[VisualSiteMapHtml]
+SetFallthroughError[VisualSiteMapHtml]
 
 VisualSiteMapHtml[
 	websiteDir0 : _?StringQ | Automatic : Automatic,
@@ -263,7 +264,7 @@ VisualSiteMapHtml[
 				status_?StringQ :> status,
 				(* Don't list non-website notebooks. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
-				other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 			}];
 
 			(* Don't include non-built files in the list. *)
@@ -271,7 +272,7 @@ VisualSiteMapHtml[
 				"Build" -> Null,
 				(* Documents with this status should be skipped, so skip it. *)
 				"Skip" :> Return[Nothing, Module],
-				other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 			}];
 
 			(*------------------------------------------------------------------*)
@@ -312,7 +313,7 @@ VisualSiteMapHtml[
 
 (*------------------------------------*)
 
-AddUnmatchedArgumentsHandler[makeSiteMapHtml]
+SetFallthroughError[makeSiteMapHtml]
 
 makeSiteMapHtml[node_] := Replace[node, {
 	Tree[
@@ -335,7 +336,8 @@ makeSiteMapHtml[node_] := Replace[node, {
 		}]
 	),
 	other_ :> (
-		RaiseError[
+		Raise[
+			NotebookWebsiteError,
 			"Unexpected site map HTML Tree[..] content: ``",
 			InputForm[node]
 		]
@@ -344,7 +346,7 @@ makeSiteMapHtml[node_] := Replace[node, {
 
 (*========================================================*)
 
-AddUnmatchedArgumentsHandler[createDocumentTitleLinkHtml]
+SetFallthroughError[createDocumentTitleLinkHtml]
 
 createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
 	status,
@@ -354,7 +356,7 @@ createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
 		status_?StringQ :> status,
 		(* Don't list non-website notebooks in the page list. *)
 		missing:Missing["KeyAbsent", "DocumentStatus"] :> Return[missing, Module],
-		other_ :> RaiseError["unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	(* If this is a Draft page, show a pill-shaped badge next to the

@@ -35,7 +35,7 @@ KnownHighlightChoices
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 
@@ -52,11 +52,11 @@ ToggleExcluded[nb_NotebookObject] := Module[{
 	cells
 ]
 
-AddUnmatchedArgumentsHandler[ToggleExcluded]
+SetFallthroughError[ToggleExcluded]
 
 (*====================================*)
 
-AddUnmatchedArgumentsHandler[ToggleDraft]
+SetFallthroughError[ToggleDraft]
 
 ToggleDraft[nb_NotebookObject] := Module[{
 	cells = SelectedCells[nb]
@@ -102,7 +102,7 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 
 	position = Replace[Developer`CellInformation[cellObj], {
 		KeyValuePattern[{"CursorPosition" -> {c_, c_}}] :> c,
-		other_ :> RaiseError["Unexpected cell information: ``", InputForm@other]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected cell information: ``", InputForm@other]
 	}];
 
 	{syntax, theme} = getHighlightSyntaxCellSyntaxAndTheme[cellObj];
@@ -110,7 +110,7 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	originalCell = NotebookRead[cellObj];
 	plainTextContent = Replace[originalCell, {
 		Cell[content_, ___] :> ConvertToString[content],
-		other_ :> RaiseError["Unexpected NotebookRead result: ``", InputForm@other]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected NotebookRead result: ``", InputForm@other]
 	}];
 
 	RaiseAssert[StringQ[plainTextContent]];
@@ -139,7 +139,8 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 				args
 			]
 		),
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Unexpected HighlightSyntax cell structure: ``",
 			InputForm[originalCell]
 		]
@@ -167,7 +168,7 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	SelectionMove[EvaluationNotebook[], After, Character, AutoScroll -> True]
 ]
 
-AddUnmatchedArgumentsHandler[HandleHighlightSyntaxCellEvent]
+SetFallthroughError[HandleHighlightSyntaxCellEvent]
 
 (*====================================*)
 
@@ -185,7 +186,7 @@ HighlightSyntaxCellDefaultBackground[cellObj_CellObject] := Module[{
 	color
 ]
 
-AddUnmatchedArgumentsHandler[HighlightSyntaxCellDefaultBackground]
+SetFallthroughError[HighlightSyntaxCellDefaultBackground]
 
 (*====================================*)
 
@@ -198,7 +199,8 @@ getHighlightSyntaxCellSyntaxAndTheme[cellObj_CellObject] := Module[{},
 		Inherited -> <||>,
 		opts_?ListQ :> Association[opts],
 		assoc_?AssociationQ :> assoc,
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"HighlightSyntax cell has invalid non-Association value for \"HighlightSyntaxOptions\": ``",
 			InputForm[other]
 		]
@@ -253,7 +255,7 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 	];
 ]
 
-AddUnmatchedArgumentsHandler[toggleCellStyle]
+SetFallthroughError[toggleCellStyle]
 
 (*====================================*)
 

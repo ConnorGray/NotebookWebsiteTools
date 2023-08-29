@@ -1,5 +1,7 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`"]
 
+PacletInstall /@ PacletObject["ConnorGray/NotebookWebsiteTools"]["Dependencies"]
+
 CreateWebsiteNotebook::usage = "CreateWebsiteNotebook[type, title] creates a new web page source notebook of the specified type."
 
 NotebookWebsiteBuild::usage = "NotebookWebsiteBuild[dir] builds the notebook website in dir."
@@ -25,7 +27,7 @@ WebsiteNotebookSnippet::usage = "WebsiteNotebookSnippet[nb] returns a snippet of
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`"]
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]
@@ -34,10 +36,10 @@ Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 
 (*======================================*)
 
-CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := CatchRaised @ Module[{nb},
+CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := Handle[_Failure] @ Module[{nb},
 	nb = Replace[type, {
 		"BlogPost" :> CreateBlogPostNotebook[title],
-		_ :> RaiseError["Unknown website notebook type: ``", type]
+		_ :> Raise[NotebookWebsiteError, "Unknown website notebook type: ``", type]
 	}];
 
 	RaiseAssert[MatchQ[nb, Notebook[{___}, ___?OptionQ]]];
@@ -45,7 +47,7 @@ CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := CatchRaised @ Module
 	NotebookPut[nb]
 ]
 
-AddUnmatchedArgumentsHandler[CreateWebsiteNotebook]
+SetFallthroughError[CreateWebsiteNotebook]
 
 (*========================================================*)
 
@@ -65,7 +67,8 @@ WebsiteNotebookTitle[
 	title = Replace[cellData, {
 		Missing["NotFound"] :> Return[cellData, Module],
 		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Error getting website notebook title: unexpected \"Title\" cell data: ``",
 			InputForm[other]
 		]
@@ -76,7 +79,7 @@ WebsiteNotebookTitle[
 	title
 ]
 
-AddUnmatchedArgumentsHandler[WebsiteNotebookTitle]
+SetFallthroughError[WebsiteNotebookTitle]
 
 (*========================================================*)
 
@@ -89,7 +92,8 @@ WebsiteNotebookStatus[
 		}]
 	}]}] :> Replace[status0, {
 		_?StringQ :> status0,
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Invalid website notebook \"DocumentStatus\" value: ``. Expected string.",
 			InputForm[other]
 		]
@@ -99,7 +103,7 @@ WebsiteNotebookStatus[
 	_ :> Missing["KeyAbsent", "DocumentStatus"]
 }]
 
-AddUnmatchedArgumentsHandler[WebsiteNotebookStatus]
+SetFallthroughError[WebsiteNotebookStatus]
 
 (*========================================================*)
 
@@ -117,7 +121,8 @@ WebsiteNotebookSnippet[
 	firstText = Replace[cellData, {
 		Missing["NotFound"] :> Return[cellData, Module],
 		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Error getting website notebook snippet: unexpected \"Text\" cell data: ``",
 			InputForm[other]
 		]

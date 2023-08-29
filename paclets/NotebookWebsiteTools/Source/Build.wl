@@ -32,21 +32,21 @@ Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["ConnorGray`CacheUtils`"]
 
 (*====================================*)
 
-$CurrentNotebook := RaiseError["Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
-$CurrentNotebookFile := RaiseError["Unexpected use of $CurrentNotebookFile: no notebook is currently being built."]
-$CurrentNotebookRelativeURL := RaiseError["Unexpected use of $CurrentNotebookRelativeURL: no notebook is currently being built."]
-$CurrentNotebookWebsiteDirectory := RaiseError["Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
-$CurrentNotebookSupportFiles := RaiseError["Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
+$CurrentNotebook := Raise[NotebookWebsiteError, "Unexpected use of $CurrentNotebook: no notebook is currently being processed."]
+$CurrentNotebookFile := Raise[NotebookWebsiteError, "Unexpected use of $CurrentNotebookFile: no notebook is currently being built."]
+$CurrentNotebookRelativeURL := Raise[NotebookWebsiteError, "Unexpected use of $CurrentNotebookRelativeURL: no notebook is currently being built."]
+$CurrentNotebookWebsiteDirectory := Raise[NotebookWebsiteError, "Unexpected use of $CurrentNotebookWebsiteDirectory: no notebook website is currently being built."]
+$CurrentNotebookSupportFiles := Raise[NotebookWebsiteError, "Unexpected use of $CurrentNotebookSupportFiles: no notebook is currently being built."]
 
 $BuildSettings = <||>
 
-$BuildCache := RaiseError["Unexpected use of $BuildCache: no build is currently in progress."]
+$BuildCache := Raise[NotebookWebsiteError, "Unexpected use of $BuildCache: no build is currently in progress."]
 
 (*====================================*)
 
@@ -58,7 +58,7 @@ NotebookWebsiteBuild[
 	inputDir0 : _?StringQ | File[_?StringQ],
 	buildDir0 : _?StringQ | Automatic : Automatic,
 	OptionsPattern[]
-] := CatchRaised @ Module[{
+] := Handle[_Failure] @ Module[{
 	(* Note: Make sure inputDir is always StringQ, so that FileNameJoin works. *)
 	inputDir = Replace[
 		RaiseConfirm @ ExpandFileName[inputDir0],
@@ -96,7 +96,7 @@ Block[{
 	buildDir = Replace[CreateCacheDirectory[buildDir, DeleteContents -> True], {
 		path_?StringQ :> path,
 		err_Failure :> Return[err, Module],
-		other_ :> RaiseError["Unexpected cache directory result: ``", InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected cache directory result: ``", InputForm[other]]
 	}];
 
 	contentDir = FileNameJoin[{inputDir, "Content"}];
@@ -104,7 +104,7 @@ Block[{
 	RaiseAssert[StringQ[inputDir]];
 
 	If[!DirectoryQ[contentDir],
-		RaiseError["'Content' directory does not exist at expected location: ``",contentDir];
+		Raise[NotebookWebsiteError, "'Content' directory does not exist at expected location: ``",contentDir];
 	];
 
 	notebooks = FileNames["*.nb", contentDir, Infinity];
@@ -131,7 +131,7 @@ Block[{
 
 	htmlFiles = Map[
 		nbFile |-> Module[{},
-			WrapRaised["Error building notebook ``", nbFile][
+			WrapRaised[NotebookWebsiteError, "Error building notebook ``", nbFile][
 				buildWebNotebook[
 					nbFile, contentDir, buildDir
 				]
@@ -160,15 +160,16 @@ Block[{
 
 (*======================================*)
 
-AddUnmatchedArgumentsHandler[populateBuildCacheHandlers]
+SetFallthroughError[populateBuildCacheHandlers]
 
 populateBuildCacheHandlers[cache_CacheSpecifier] := Module[{},
-	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], Notebook}] :> CatchRaised @ Module[{
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], Notebook}] :> Handle[_Failure] @ Module[{
 		result
 	},
 		result = Get[file];
 		If[!MatchQ[result, _Notebook],
-			RaiseError[
+			Raise[
+				NotebookWebsiteError,
 				"Unexpected result getting Notebook from file ``: ``",
 				InputForm[file],
 				InputForm[result]
@@ -178,19 +179,19 @@ populateBuildCacheHandlers[cache_CacheSpecifier] := Module[{},
 		result
 	]];
 
-	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookStatus}] :> CatchRaised @ Module[{
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookStatus}] :> Handle[_Failure] @ Module[{
 		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
 	},
 		WebsiteNotebookStatus[nb]
 	]];
 
-	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookTitle}] :> CatchRaised @ Module[{
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookTitle}] :> Handle[_Failure] @ Module[{
 		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
 	},
 		WebsiteNotebookTitle[nb]
 	]];
 
-	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookSnippet}] :> CatchRaised @ Module[{
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookSnippet}] :> Handle[_Failure] @ Module[{
 		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
 	},
 		WebsiteNotebookSnippet[nb]
@@ -199,7 +200,7 @@ populateBuildCacheHandlers[cache_CacheSpecifier] := Module[{},
 
 (*======================================*)
 
-AddUnmatchedArgumentsHandler[buildWebNotebook]
+SetFallthroughError[buildWebNotebook]
 
 buildWebNotebook[
 	nbFile: _?StringQ,
@@ -236,7 +237,7 @@ Block[{
 
 	nb = Replace[GetBuildValue[{File[nbFile], Notebook}], {
 		nb_Notebook :> nb,
-		other_ :> RaiseError["Error importing notebook at ``: ``", nbFile, InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "Error importing notebook at ``: ``", nbFile, InputForm[other]]
 	}];
 
 	Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
@@ -245,20 +246,21 @@ Block[{
 			"Build" -> Null,
 			(* Documents with this status should be skipped, so skip it. *)
 			"Skip" :> Return[Missing["Skipped", status], Module],
-			other_ :> RaiseError["Unhandled status action value: ``", InputForm[other]]
+			other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 		}],
 		(* All website notebooks should have their status set by their author. *)
 		Missing["KeyAbsent", "DocumentStatus"] :> (
-			RaiseError["Website notebook is missing a value for the DocumentStatus tagging rule."];
+			Raise[NotebookWebsiteError, "Website notebook is missing a value for the DocumentStatus tagging rule."];
 		),
-		other_ :> RaiseError["Unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	$CurrentNotebook = nb;
 
 	metadata = Replace[Options[nb, TaggingRules], {
 		KeyValuePattern[TaggingRules -> KeyValuePattern["ConnorGray/NotebookWebsiteTools" -> value_]] :> value,
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Notebook at `` does not have the expected TaggingRules needed to process web page notebook: ``",
 			nbFileRelative,
 			InputForm[other]
@@ -268,7 +270,8 @@ Block[{
 	(* TODO: Use documentType? *)
 	documentType = Replace[metadata, {
 		KeyValuePattern["DocumentType" -> type_?StringQ] :> type,
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Notebook at `` does not have the expected metadata \"DocumentType\" field: ``",
 			nbFileRelative,
 			InputForm[other]
@@ -328,7 +331,7 @@ Block[{
 		];
 
 		(* TODO: Include XML object and error positions in failure metadata. *)
-		RaiseError["Symbolic HTML contains errors."];
+		Raise[NotebookWebsiteError, "Symbolic HTML contains errors."];
 	];
 
 	(*-----------------------------------------------*)
@@ -356,12 +359,14 @@ Block[{
 					CreateIntermediateDirectories -> True
 				];
 			),
-			type:File :> RaiseError[
+			type:File :> Raise[
+				NotebookWebsiteError,
 				"Unable to export HTML file: path to parent directory of HTML file export file path is a non-directory type file: ``: type: ``",
 				parentDir,
 				type
 			],
-			other_ :> RaiseError[
+			other_ :> Raise[
+				NotebookWebsiteError,
 				"Unexpected FileType during for expected HTML file parent directory: ``: ``",
 				parentDir,
 				other
@@ -453,7 +458,8 @@ convertToHtml[expr_] := Replace[expr, {
 				}],
 				___
 			} :> {resolution, scale},
-			other_ :> RaiseError[
+			other_ :> Raise[
+				NotebookWebsiteError,
 				"Unexpected \"ConnectedDisplays\" value: ``",
 				InputForm[other]
 			]
@@ -591,7 +597,8 @@ convertToHtml[expr_] := Replace[expr, {
 		element
 	},
 		If[IntersectingQ[styles, {"Excluded", "HighlightSyntax", "LiteralHTML", "ComputedHTML"}],
-			RaiseError[
+			Raise[
+				NotebookWebsiteError,
 				"Cell has deprecated style: ``. Use cell style name prefixed with \"ConnorGray/\" instead.",
 				InputForm[styles]
 			];
@@ -616,11 +623,13 @@ convertToHtml[expr_] := Replace[expr, {
 				inputLines = Replace[content, {
 					BoxData[boxes0_] :> Replace[boxes0, b:Except[_?ListQ] :> {b}],
 					(* TODO: What if content is not BoxData? *)
-					TextData[_] :> RaiseError[
+					TextData[_] :> Raise[
+						NotebookWebsiteError,
 						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
 						content
 					],
-					other_ :> RaiseError[
+					other_ :> Raise[
+						NotebookWebsiteError,
 						"Malformed ComputedHTML cell: expected BoxData: ",
 						InputForm[other]
 					]
@@ -646,11 +655,13 @@ convertToHtml[expr_] := Replace[expr, {
 
 				Replace[xml, {
 					XMLElement[_?StringQ, _?ListQ, _?ListQ] :> Null,
-					_XMLElement :> RaiseError[
+					_XMLElement :> Raise[
+						NotebookWebsiteError,
 						"Malformed XMLElement returned from \"ConnorGray/ComputedHTML\" cell: ``",
 						InputForm[xml]
 					],
-					other_ :> RaiseError[
+					other_ :> Raise[
+						NotebookWebsiteError,
 						"Expected evaluation of \"ConnorGray/ComputedHTML\" to return XMLElement; got: ``",
 						InputForm[other]
 					]
@@ -695,7 +706,7 @@ convertToHtml[expr_] := Replace[expr, {
 		element = Fold[
 			{elem, style} |-> Replace[style, {
 				"Code" :> XMLElement["code", {}, {elem}],
-				other_ :> RaiseError["Unhandled StyleBox style: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],
 			convertToHtml[content],
 			styles
@@ -705,11 +716,11 @@ convertToHtml[expr_] := Replace[expr, {
 			{elem, option} |-> Replace[option, {
 				(FontWeight -> weight_) :> Replace[weight, {
 					"Bold" | Bold :> XMLElement["b", {}, {elem}],
-					other_ :> RaiseError["Unhandled FontWeight option value: ``", InputForm[weight]]
+					other_ :> Raise[NotebookWebsiteError, "Unhandled FontWeight option value: ``", InputForm[weight]]
 				}],
 				(FontSlant -> slant_) :> Replace[slant, {
 					"Italic" | Italic :> XMLElement["i", {}, {elem}],
-					other_ :> RaiseError["Unhandled FontSlant option value: ``", InputForm[slant]]
+					other_ :> Raise[NotebookWebsiteError, "Unhandled FontSlant option value: ``", InputForm[slant]]
 				}],
 				(FontColor -> color_) :> Replace[color, {
 					RGBColor[r_, g_, b_] :> XMLElement[
@@ -717,14 +728,14 @@ convertToHtml[expr_] := Replace[expr, {
 						{"style" -> TemplateApply["color: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
 						{elem}
 					],
-					other_ :> RaiseError["Unhandled FontColor option value: ``", InputForm[other]]
+					other_ :> Raise[NotebookWebsiteError, "Unhandled FontColor option value: ``", InputForm[other]]
 				}],
 				(FontVariations -> {"StrikeThrough" -> True}) :> XMLElement[
 					"span",
 					{"style" -> "text-decoration: line-through"},
 					{elem}
 				],
-				other_ :> RaiseError["Unhandled StyleBox option value: ``", InputForm[other]]
+				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox option value: ``", InputForm[other]]
 			}],
 			element,
 			options
@@ -745,10 +756,10 @@ convertToHtml[expr_] := Replace[expr, {
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
 
-	other_ :> RaiseError["Unhandled cell content: ``", InputForm[other]]
+	other_ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
 }]
 
-AddUnmatchedArgumentsHandler[convertToHtml]
+SetFallthroughError[convertToHtml]
 
 (*======================================*)
 
@@ -850,8 +861,8 @@ wrapHtmlForStyle[
 				$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
 				{
 					highlightedHtml_?StringQ :> highlightedHtml,
-					error_?FailureQ :> RaiseError[error],
-					other_ :> RaiseError["Syntax highlighting returned unexpected result: ``", other]
+					error_?FailureQ :> Raise[error],
+					other_ :> Raise[NotebookWebsiteError, "Syntax highlighting returned unexpected result: ``", other]
 				}
 			];
 
@@ -862,7 +873,8 @@ wrapHtmlForStyle[
 
 		"ConnorGray/Draft" :> Module[{},
 			If[!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
-				RaiseError[
+				Raise[
+					NotebookWebsiteError,
 					"Uexpected attempt to convert cell marked as Draft: ``",
 					cellData
 				];
@@ -871,11 +883,11 @@ wrapHtmlForStyle[
 			XMLElement["div", {"class" -> "nb-Draft"}, {html}]
 		],
 
-		other_ :> RaiseError["Unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
+		other_ :> Raise[NotebookWebsiteError, "Unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[wrapHtmlForStyle]
+SetFallthroughError[wrapHtmlForStyle]
 
 (*======================================*)
 
@@ -911,12 +923,12 @@ AddSupportFile[
 	RaiseAssert[AssociationQ[$CurrentNotebookSupportFiles]];
 
 	If[KeyMemberQ[$CurrentNotebookSupportFiles, name],
-		RaiseError["Support file with name `` has already been added.", InputForm[name]];
+		Raise[NotebookWebsiteError, "Support file with name `` has already been added.", InputForm[name]];
 	];
 
 	ext = Replace[content, {
 		_?ImageQ :> ".png",
-		other_ :> RaiseError["Unsupported support file data: ``", other]
+		other_ :> Raise[NotebookWebsiteError, "Unsupported support file data: ``", other]
 	}];
 
 	(* FIXME: Validate name or encode so that `filePath` only contains URL-safe
@@ -941,7 +953,7 @@ AddSupportFile[
 	urlPath
 ]
 
-AddUnmatchedArgumentsHandler[AddSupportFile]
+SetFallthroughError[AddSupportFile]
 
 (*======================================*)
 
@@ -957,7 +969,7 @@ makeAnchorContentSlug[content_] := Module[{
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[makeAnchorContentSlug]
+SetFallthroughError[makeAnchorContentSlug]
 
 (*======================================*)
 
@@ -999,7 +1011,7 @@ makeAnchorLinkHtml[content_, html_] := Module[{
 	]
 ]
 
-AddUnmatchedArgumentsHandler[makeAnchorLinkHtml]
+SetFallthroughError[makeAnchorLinkHtml]
 
 (*======================================*)
 
@@ -1026,11 +1038,12 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 			{}
 		] :> Replace[elements, {
 			(* TODO(polish): Support empty LiteralHTML cells. *)
-			{} :> RaiseError["Unsupported empty LiteralHTML content: ``", InputForm[htmlString]],
+			{} :> Raise[NotebookWebsiteError, "Unsupported empty LiteralHTML content: ``", InputForm[htmlString]],
 			{one_} :> one,
-			many:{__} :> RaiseError["Unsupported LiteralHTML cell with multiple top-level tags: ``", many]
+			many:{__} :> Raise[NotebookWebsiteError, "Unsupported LiteralHTML cell with multiple top-level tags: ``", many]
 		}],
-		other_ :> RaiseError[
+		other_ :> Raise[
+			NotebookWebsiteError,
 			"Imported HTML had unexpected format: ``: ``",
 			InputForm @ Snippet[htmlString, 3],
 			InputForm @ other
@@ -1038,7 +1051,7 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 	}]
 ]
 
-AddUnmatchedArgumentsHandler[importHTMLFragment]
+SetFallthroughError[importHTMLFragment]
 
 (*====================================*)
 
@@ -1055,7 +1068,7 @@ GeneralUtilities`SetUsage[DetermineStatusAction, "
 	statuses will result in 'Build' instead of 'Skip'.
 "]
 
-AddUnmatchedArgumentsHandler[DetermineStatusAction]
+SetFallthroughError[DetermineStatusAction]
 
 Options[DetermineStatusAction] = {
 	"IncludeDrafts" :> TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
@@ -1070,12 +1083,12 @@ DetermineStatusAction[status_?StringQ, OptionsPattern[]] :=
 		"Draft" /; TrueQ[OptionValue["IncludeDrafts"]] -> "Build",
 
 		"Draft" | "Excluded" -> "Skip",
-		other_ :> RaiseError["Unknown document status: ``", InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "Unknown document status: ``", InputForm[other]]
 	}]
 
 (*========================================================*)
 
-AddUnmatchedArgumentsHandler[GetBuildValue]
+SetFallthroughError[GetBuildValue]
 
 GetBuildValue[keyPath_List] := GetCacheValue[$BuildCache, KeyPath[keyPath]]
 
@@ -1090,11 +1103,11 @@ notebookRelativeFileToURL[path_?StringQ] :=
 		".nb" ~~ EndOfString -> ".html"
 	]
 
-AddUnmatchedArgumentsHandler[notebookRelativeFileToURL]
+SetFallthroughError[notebookRelativeFileToURL]
 
 (*====================================*)
 
-AddUnmatchedArgumentsHandler[notebookRelativeWebAssetsURL]
+SetFallthroughError[notebookRelativeWebAssetsURL]
 
 notebookRelativeWebAssetsURL[nbUrl:URL[_?StringQ]] := Module[{},
 	URL @ URLBuild[{

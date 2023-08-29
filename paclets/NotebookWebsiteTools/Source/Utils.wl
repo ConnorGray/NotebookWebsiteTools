@@ -54,11 +54,11 @@ PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitab
 
 Begin["`Private`"]
 
-Needs["ConnorGray`NotebookWebsiteTools`ErrorUtils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 (*========================================================*)
 
-AddUnmatchedArgumentsHandler[CreateCacheDirectory]
+SetFallthroughError[CreateCacheDirectory]
 
 Options[CreateCacheDirectory] = {
 	DeleteContents -> False
@@ -69,7 +69,8 @@ Options[CreateCacheDirectory] = {
 CreateCacheDirectory[
 	path0 : _?StringQ | File[_?StringQ],
 	OptionsPattern[]
-] := CatchRaised @ WrapRaised[
+] := Handle[_Failure] @ WrapRaised[
+	NotebookWebsiteError,
 	"Unable to create cache directory at ``",
 	InputForm[path0]
 ] @ Module[{
@@ -90,7 +91,7 @@ CreateCacheDirectory[
 
 (*------------------------------------*)
 
-AddUnmatchedArgumentsHandler[createCacheDirectory]
+SetFallthroughError[createCacheDirectory]
 
 createCacheDirectory[
 	path_?StringQ
@@ -106,9 +107,9 @@ createCacheDirectory[
 
 			Return[path, Module];
 		),
-		File :> RaiseError["Specified path is a non-directory file."],
+		File :> Raise[NotebookWebsiteError, "Specified path is a non-directory file."],
 		Directory :> Null,
-		other_ :> RaiseError["Unexpected file type: ``", InputForm[other]]
+		other_ :> Raise[NotebookWebsiteError, "Unexpected file type: ``", InputForm[other]]
 	}];
 
 	(*--------------------------------------*)
@@ -122,14 +123,14 @@ createCacheDirectory[
 		Replace[ReadString[tagPath], {
 			contents_?StringQ :> (
 				If[!validTagFileContentsQ[contents],
-					RaiseError["Existing CACHEDIR.TAG file contains invalid header."]
+					Raise[NotebookWebsiteError, "Existing CACHEDIR.TAG file contains invalid header."]
 				];
 
 				(* The tag file exists and is valid, so this is a valid cache
 					directory. *)
 				Return[path, Module];
 			),
-			other_ :> RaiseError["Error reading existing CACHEDIR.TAG file contents: ``", other]
+			other_ :> Raise[NotebookWebsiteError, "Error reading existing CACHEDIR.TAG file contents: ``", other]
 		}];
 	];
 
@@ -144,7 +145,7 @@ createCacheDirectory[
 		(* NOTE:
 			This is the key user-facing error message of CreateCacheDirectory
 			and a big part of the utility of this function. *)
-		RaiseError[StringJoin[
+		Raise[NotebookWebsiteError, StringJoin[
 			"Specified path is an existing non-empty directory without a CACHEDIR.TAG file. ",
 			"This operation may succeed if the existing directory contents are moved or deleted manually.",
 			"\n\nNOTE: This file path is being used as a location to store cached data or generated files. ",
@@ -164,7 +165,7 @@ createCacheDirectory[
 
 (*------------------------------------*)
 
-AddUnmatchedArgumentsHandler[deleteCacheDirectoryContentsUnchecked]
+SetFallthroughError[deleteCacheDirectoryContentsUnchecked]
 
 deleteCacheDirectoryContentsUnchecked[path_?DirectoryQ] := Module[{
 	files = FileNames[All, path]
@@ -175,7 +176,7 @@ deleteCacheDirectoryContentsUnchecked[path_?DirectoryQ] := Module[{
 		Delete all existing contents of the cache directory, except the
 		CACHEDIR.TAG file.
 	*)
-	WrapRaised["Error deleting existing contents of cache directory"][
+	WrapRaised[NotebookWebsiteError, "Error deleting existing contents of cache directory"][
 		Scan[
 			entry |-> Replace[FileType[entry], {
 				File :> DeleteFile[entry],
@@ -198,7 +199,7 @@ Signature: 8a477f597d28d172789f06886806bc55
 
 (*====================================*)
 
-AddUnmatchedArgumentsHandler[validTagFileContentsQ]
+SetFallthroughError[validTagFileContentsQ]
 
 validTagFileContentsQ[contents_?StringQ] :=
 	StringStartsQ[contents, "Signature: 8a477f597d28d172789f06886806bc55"]
@@ -238,10 +239,10 @@ ConvertToString[expr_] := Replace[expr, {
 	RowBox[items_?ListQ] :> StringJoin[ConvertToString /@ items],
 	TemplateBox[items_?ListQ, "RowDefault"] :> StringJoin[ConvertToString /@ items],
 	ButtonBox[content_, ___] :> ConvertToString[content],
-	other_ :> RaiseError["no rule to convert form to string: ``", InputForm[other]]
+	other_ :> Raise[NotebookWebsiteError, "no rule to convert form to string: ``", InputForm[other]]
 }]
 
-AddUnmatchedArgumentsHandler[ConvertToString]
+SetFallthroughError[ConvertToString]
 
 (*========================================================*)
 
@@ -277,15 +278,15 @@ flattenCellGroups[cells: {___Cell}] :=
 				flattenCellGroups[groupCells]
 			),
 			Cell[group_CellGroupData, ___] :> (
-				RaiseError["Unexpected CellGroupData structure: ``", group]
+				Raise[NotebookWebsiteError, "Unexpected CellGroupData structure: ``", group]
 			),
 			normalCell_Cell :> normalCell,
-			other_ :> RaiseError["Unexpected notebook structure: ``", InputForm[other]]
+			other_ :> Raise[NotebookWebsiteError, "Unexpected notebook structure: ``", InputForm[other]]
 		}],
 		cells
 	]
 
-AddUnmatchedArgumentsHandler[NotebookCells]
+SetFallthroughError[NotebookCells]
 
 (*========================================================*)
 
@@ -297,7 +298,7 @@ HTMLEscape[text_?StringQ] := StringReplace[
 	StartOfString ~~ "<Text>" ~~ content___ ~~ "</Text>" ~~ EndOfString :> content
 ]
 
-AddUnmatchedArgumentsHandler[HTMLEscape]
+SetFallthroughError[HTMLEscape]
 
 (*========================================================*)
 
@@ -309,7 +310,7 @@ CellDataQ[expr_] :=
 		BoxData[_]
 	]]
 
-AddUnmatchedArgumentsHandler[CellDataQ]
+SetFallthroughError[CellDataQ]
 
 (*========================================================*)
 
@@ -328,7 +329,7 @@ PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
 	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
 ]
 
-AddUnmatchedArgumentsHandler[PrefixListsToRules]
+SetFallthroughError[PrefixListsToRules]
 
 (*========================================================*)
 

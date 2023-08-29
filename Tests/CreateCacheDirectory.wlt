@@ -1,4 +1,5 @@
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 $workDir = CreateDirectory[];
 $buildDir = FileNameJoin[{$workDir, "build"}]
@@ -127,18 +128,16 @@ CreateFile[FileNameJoin[{$buildDir, "ImportantData.txt"}]]
 VerificationTest[
 	CreateCacheDirectory[$buildDir]
 	,
-	Failure["NotebookWebsiteError", <|
-		"MessageTemplate" -> "Unable to create cache directory at ``",
-		"MessageParameters" -> {InputForm[$buildDir]},
+	Failure[NotebookWebsiteError, <|
 		"CausedBy" -> Failure[
-			"NotebookWebsiteError", <|
+			NotebookWebsiteError, <|
 				"MessageTemplate" -> "Specified path is an existing non-empty directory without a CACHEDIR.TAG file. This operation may succeed if the existing directory contents are moved or deleted manually.\n\nNOTE: This file path is being used as a location to store cached data or generated files. Data loss WILL occur if you store non-recoverable files in this location.",
 				"MessageParameters" -> {}
 			|>
-		]
+		],
+		"MessageTemplate" -> "Unable to create cache directory at ``",
+		"MessageParameters" -> {InputForm[$buildDir]}
 	|>]
-	,
-	{ConnorGray`NotebookWebsiteTools`ErrorUtils`RaiseError::error}
 ]
 
 (*---------------------------------------------------------------*)
@@ -152,14 +151,12 @@ Put["Invalid", FileNameJoin[{$buildDir, "CACHEDIR.TAG"}]]
 VerificationTest[
 	CreateCacheDirectory[$buildDir]
 	,
-	Failure["NotebookWebsiteError", <|
-		"MessageTemplate" -> "Unable to create cache directory at ``",
-		"MessageParameters" -> {InputForm[$buildDir]},
-		"CausedBy" -> Failure["NotebookWebsiteError", <|
+	Failure[NotebookWebsiteError, <|
+		"CausedBy" -> Failure[NotebookWebsiteError, <|
 			"MessageTemplate" -> "Existing CACHEDIR.TAG file contains invalid header.",
 			"MessageParameters" -> {}
-		|>]
+		|>],
+		"MessageTemplate" -> "Unable to create cache directory at ``",
+		"MessageParameters" -> {InputForm[$buildDir]}
 	|>]
-	,
-	{ConnorGray`NotebookWebsiteTools`ErrorUtils`RaiseError::error}
 ]
