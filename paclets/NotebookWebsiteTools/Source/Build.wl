@@ -25,6 +25,30 @@ GetBuildValue
 
 DetermineStatusAction
 
+GeneralUtilities`SetUsage[ConvertToHtml, "\
+ConvertToHtml[expr] converts a Notebook, Cell, or box expression into HTML.
+
+The returned HTML expression will always be in one of the following forms:
+
+	* XMLElement[...]
+	* Splice[{___XMLElement}]
+	* String
+	* Nothing
+
+such that the result of calling ConvertToHtml will always produce a
+well-formed XMLElement when called in the 3rd argument list of XMLElement.
+
+	VALID:
+
+		XMLElement["p", {}, {ConvertToHtml[expr]}]
+
+	INVALID:
+
+		XMLElement["p", {}, ConvertToHtml[expr]]
+
+	The latter is not a valid XMLElement.
+"]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
@@ -282,7 +306,7 @@ Block[{
 	(* Convert the cells to HTML      *)
 	(*--------------------------------*)
 
-	nbHtml = convertToHtml[nb];
+	nbHtml = ConvertToHtml[nb];
 
 	RaiseAssert[
 		MatchQ[nbHtml, XMLElement["article", {"class" -> "Notebook"}, _List]],
@@ -417,13 +441,17 @@ Block[{
 	Subsubsubsubsection = ???
 *)
 
-convertToHtml[expr_] := Replace[expr, {
+SetFallthroughError[ConvertToHtml]
+
+(*
+*)
+ConvertToHtml[expr_] := Replace[expr, {
 	Notebook[cells_?ListQ, options0___?OptionQ] :> (
 		(* TODO: Handle relevant `options0`. *)
 		XMLElement[
 			"article",
 			{"class" -> "Notebook"},
-			Map[convertToHtml, cells]
+			Map[ConvertToHtml, cells]
 		]
 	),
 
@@ -434,7 +462,7 @@ convertToHtml[expr_] := Replace[expr, {
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
-	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Splice @ Map[convertToHtml, cells],
+	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Splice @ Map[ConvertToHtml, cells],
 
 	(*--------------------------------*)
 	(* Rasterized cell types          *)
@@ -538,7 +566,7 @@ convertToHtml[expr_] := Replace[expr, {
 						"github-mark.svg"
 					}]
 				}, {}],
-				convertToHtml[label]
+				ConvertToHtml[label]
 			}
 		]
 	],
@@ -560,7 +588,7 @@ convertToHtml[expr_] := Replace[expr, {
 						"paclet-icon.svg"
 					}]
 				}, {}],
-				convertToHtml[label]
+				ConvertToHtml[label]
 			}
 		]
 	],
@@ -582,7 +610,7 @@ convertToHtml[expr_] := Replace[expr, {
 						"rust-logo-blk.svg"
 					}]
 				}, {}],
-				convertToHtml[label]
+				ConvertToHtml[label]
 			}
 		]
 	],
@@ -680,7 +708,7 @@ convertToHtml[expr_] := Replace[expr, {
 
 		element = Fold[
 			{html, style} |-> wrapHtmlForStyle[content, cellOptions, html, style],
-			convertToHtml[content],
+			ConvertToHtml[content],
 			styles
 		];
 
@@ -698,8 +726,8 @@ convertToHtml[expr_] := Replace[expr, {
 
 	plainText_?StringQ :> plainText,
 
-	TextData[inline_?ListQ] :> Splice @ Map[convertToHtml, inline],
-	TextData[content_] :> convertToHtml[content],
+	TextData[inline_?ListQ] :> Splice @ Map[ConvertToHtml, inline],
+	TextData[content_] :> ConvertToHtml[content],
 
 	StyleBox[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
@@ -711,7 +739,7 @@ convertToHtml[expr_] := Replace[expr, {
 				"Code" :> XMLElement["code", {}, {elem}],
 				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],
-			convertToHtml[content],
+			ConvertToHtml[content],
 			styles
 		];
 
@@ -765,12 +793,10 @@ convertToHtml[expr_] := Replace[expr, {
 		BaseStyle -> "Hyperlink",
 		ButtonData -> {URL[url_?StringQ], None},
 		ButtonNote -> _?StringQ
-	] :> XMLElement["a", {"href" -> url}, {convertToHtml[content]}],
+	] :> XMLElement["a", {"href" -> url}, {ConvertToHtml[content]}],
 
 	other_ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
 }]
-
-SetFallthroughError[convertToHtml]
 
 (*======================================*)
 
@@ -797,7 +823,7 @@ wrapHtmlForStyle[
 		(* Textual cells *)
 		(*===============*)
 
-		"Text" :> XMLElement["p", {}, {convertToHtml[cellData]}],
+		"Text" :> XMLElement["p", {}, {ConvertToHtml[cellData]}],
 
 		"Item"
 		| "ItemNumbered"
@@ -807,13 +833,13 @@ wrapHtmlForStyle[
 		| "SubitemParagraph"
 		| "Subsubitem"
 		| "SubsubitemNumbered"
-		| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {convertToHtml[cellData]}],
+		| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {ConvertToHtml[cellData]}],
 
 		(*============*)
 		(* Code cells *)
 		(*============*)
 
-		"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {convertToHtml[cellData]}],
+		"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {ConvertToHtml[cellData]}],
 
 		(*===============*)
 		(* Special cells *)
