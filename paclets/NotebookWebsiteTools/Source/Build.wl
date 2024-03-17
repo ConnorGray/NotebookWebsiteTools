@@ -738,6 +738,14 @@ convertToHtml[expr_] := Replace[expr, {
 					{"style" -> "text-decoration: line-through"},
 					{elem}
 				],
+				(Background -> color_) :> Replace[color, {
+					RGBColor[r_, g_, b_] :> XMLElement[
+						"span",
+						{"style" -> TemplateApply["background: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
+						{elem}
+					],
+					other_ :> Raise[NotebookWebsiteError, "Unhandled Background option value: ``", InputForm[other]]
+				}],
 				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox option value: ``", InputForm[other]]
 			}],
 			element,
