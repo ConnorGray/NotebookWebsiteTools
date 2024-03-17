@@ -639,7 +639,10 @@ convertToHtml[expr_] := Replace[expr, {
 
 				(* FIXME: Catch any raised exceptions from these ToExpression
 					evaluation. *)
-				xml = Block[{
+				xml = WrapRaised[
+					NotebookWebsiteError,
+					"Error evaluating ComputedHTML cell"
+				] @ Block[{
 					$Context = UniqueContext["NotebookWebsiteBuild"],
 					$ContextPath = {"System`"}
 				},
