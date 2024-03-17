@@ -1069,11 +1069,14 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 				"html",
 				{{"http://www.w3.org/2000/xmlns/", "xmlns"} -> "http://www.w3.org/1999/xhtml"},
 				{
-					XMLElement["body", {}, elements:{(_XMLElement | _String)...}]
+					(* NOTE:
+					    This is typically "body", but can be "head" when the
+						parsed element is a custom <style>..</style> block *)
+					XMLElement["body" | "head", {}, elements:{(_XMLElement | _String)...}]
 				}
 			],
 			{}
-		] :> Replace[elements, {
+		] :> ConfirmReplace[elements, {
 			(* TODO(polish): Support empty LiteralHTML cells. *)
 			{} :> Raise[NotebookWebsiteError, "Unsupported empty LiteralHTML content: ``", InputForm[htmlString]],
 			{one_} :> one,
