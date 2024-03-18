@@ -501,6 +501,15 @@ h4.DocumentLink a:hover {
 div.link-group-container {
     column-count: 3;
 
+    /* Make the link group dashboard expand to fill the full width of the
+       viewport, overriding the default width restriction placed on notebook
+       content (which is a good default for general text readability, but makes
+       less sense of navigation / UI elements like a link dashboard.
+
+       See also: https://stackoverflow.com/a/31391593 */
+    width: calc(100vw - 50px);
+    margin-left: calc(-50vw + 50% + 25px);
+
     /* display: flex; */
     /* flex-flow: column wrap; */
     /* align-content: flex-start; */
