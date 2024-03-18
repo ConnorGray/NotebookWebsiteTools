@@ -6,7 +6,14 @@ NotebookWebsiteTools to author a website do not need to read this document.
 
 ### Command quick reference
 
-#### Build the main `NotebookWebsiteTools` paclet archive
+
+#### Build and install the `NotebookWebsiteTools` paclet
+
+```shell
+$ cargo make install
+```
+
+#### Build the main `NotebookWebsiteTools` paclet archive and install manually
 
 ```shell
 $ cargo make paclet

@@ -493,3 +493,46 @@ h4.DocumentLink a {
 h4.DocumentLink a:hover {
     text-decoration: underline;
 }
+
+/*====================================*/
+/* LinkDashboard[..]                  */
+/*====================================*/
+
+div.link-group-container {
+    column-count: 3;
+
+    /* Make the link group dashboard expand to fill the full width of the
+       viewport, overriding the default width restriction placed on notebook
+       content (which is a good default for general text readability, but makes
+       less sense of navigation / UI elements like a link dashboard.
+
+       See also: https://stackoverflow.com/a/31391593 */
+    width: calc(100vw - 50px);
+    margin-left: calc(-50vw + 50% + 25px);
+
+    /* display: flex; */
+    /* flex-flow: column wrap; */
+    /* align-content: flex-start; */
+    /* gap: 5px 10px */
+}
+
+div.link-group-container > ul.link-group:first-child {
+    margin: 0em
+}
+
+div.link-group-container > ul {
+    border: 2px solid gray
+}
+
+ul.link-group {
+    break-inside: avoid-column;
+    list-style-type: none;
+    margin: 1em;
+    padding: 0 1em 0 1em;
+    background: #f1f1f1;
+}
+
+ul.link-group > li > div.header {
+    margin-left: -0.5em;
+    font-weight: bold;
+}

@@ -52,6 +52,11 @@ GU`SetUsage[PrefixListsToRules, "
 PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitable for use with RulesTree.
 "]
 
+GU`SetUsage[GetWebsiteFavicon, "
+GetWebsiteFavicon[url$] attempts to retrieve the favicon of a website as an
+Image or Graphics expression.
+"]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
@@ -330,6 +335,73 @@ PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
 ]
 
 SetFallthroughError[PrefixListsToRules]
+
+(*========================================================*)
+
+GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
+	domain,
+	apiUrl,
+	resp
+},
+	(* TODO:
+		Is stripping the Path segment of the URL really required, and is
+		it perhaps also invalid? I think its probably required as long as this
+		function is using the Google-provided API, since otherwise there would
+		be an ambiguity for any query parameters that appear in `url`. Perhaps
+		though the URL parameter could be parameter encoded to fix that?
+
+		I.e. so that:
+			GetWebsiteFavicon["https://example.org/path?with_param=true"]
+		doesn't do naive string concatenation to get:
+			https://www.google.com/s2/favicons?domain=https://example.org/path?with_param=true
+		which invalidly has two "?" in it. We could instead URLEncode or
+		URLQueryEncode the domain parameter.
+	*)
+	domain = URLParse[url]["Domain"];
+
+	If[!StringQ[domain],
+		Raise[
+			NotebookWebsiteError,
+			"Unable to extract domain from URL ``: ``",
+			InputForm[url], InputForm[domain]
+		];
+	];
+
+	(* Per: https://dev.to/derlin/get-favicons-from-any-website-using-a-hidden-google-api-3p1e *)
+	apiUrl = StringJoin[
+		"https://www.google.com/s2/favicons?domain=",
+		domain,
+		"&sz=32"
+	];
+
+	resp = URLRead[apiUrl, TimeConstraint -> 10];
+
+	RaiseAssert[MatchQ[resp, _HTTPResponse]];
+
+	If[resp["StatusCode"] =!= 200,
+		(* FIXME: Improve this error handling. Could be especially common and
+		          flaky way for a website build to fail. *)
+		Raise[
+			NotebookWebsiteError,
+			<| "Response" -> resp |>,
+			"Favicon lookup returned non-success HTTP response (status=``)",
+			InputForm[resp["StatusCode"]]
+		];
+	];
+
+	favicon = Import[resp];
+
+	ConfirmReplace[favicon, {
+		_Image :> favicon,
+		other_ :> (
+			Raise[
+				NotebookWebsiteError,
+				"Unexpected imported favicon data head: ``",
+				Head[other]
+			];
+		)
+	}]
+]
 
 (*========================================================*)
 
