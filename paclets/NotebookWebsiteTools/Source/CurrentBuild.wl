@@ -4,6 +4,8 @@ TableOfContentsHtml::usage = "TableOfContentsHtml[] generates an XMLElement cont
 PagesSummaryListHtml::usage = "PagesSummaryListHtml[] generates an XMLElement containing a table of contents for the current notebook website."
 VisualSiteMapHtml::usage = "VisualSiteMapHtml[] generates an XMLElement containing a heirarchical listing of all documents in the current notebook website."
 
+LinkDashboard::usage = "LinkDashboard[links] generates an XMLElement displaying the specified links in an easily clickable \"dashboard\" display"
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
@@ -381,6 +383,111 @@ createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
 		],
 		statusBadge
 	}]
+]
+
+(*========================================================*)
+
+SetFallthroughError[LinkDashboard]
+
+LinkDashboard[linkGroups0_List] := Module[{
+	linkGroups = linkGroups0
+},
+	linkGroups = Map[
+		linkGroup |-> Module[{
+			itemsHtml
+		},
+			If[!ListQ[linkGroup],
+				Raise[
+					NotebookWebsiteError,
+					"Expected link display group to be a List, got: ``",
+					InputForm[other]
+				];
+			];
+
+			itemsHtml = Map[
+				item0 |-> ConfirmReplace[item0, {
+					heading_?StringQ :> (
+						XMLElement["div", {"class" -> "header"}, {heading}]
+					),
+					Delimiter :> (
+						XMLElement["hr", {}, {}]
+					),
+					Hyperlink[uri_?StringQ] :> (
+						XMLElement["a", {"href" -> uri}, {uri}]
+					),
+					Hyperlink[label_, uri_?StringQ] :> (
+						XMLElement["a", {"href" -> uri, "class" -> "IconLink"}, {
+							(* FIXME: Only do for https links, e.g. not file: links *)
+							Handle[
+								getWebsiteFaviconAsEmbeddedImg[uri],
+								f_Failure :> (
+									Print["WARNING: ", f];
+									Splice[{}]
+								)
+							],
+							ConvertToHtml[label]
+						}]
+					),
+					other_ :> Raise[
+						NotebookWebsiteError,
+						"Unexpected link display item: ``",
+						InputForm[other]
+					]
+				}],
+				linkGroup
+			];
+
+			itemsHtml //= Map[
+				itemHtml |-> XMLElement["li", {}, {itemHtml}]
+			];
+
+			XMLElement[
+				"ul",
+				{"class" -> "link-group"},
+				itemsHtml
+			]
+		],
+		linkGroups
+	];
+
+	XMLElement[
+		"div",
+		{"class" -> "link-group-container"},
+		linkGroups
+	]
+]
+
+(*========================================================*)
+
+getWebsiteFaviconAsEmbeddedImg[url_?StringQ] := WrapRaised[
+	NotebookWebsiteError,
+	"Error getting favicon for URL to embed in link: ``",
+	InputForm[url]
+] @ Module[{
+	image,
+	pngBase64
+},
+	(* TODO: We should cache this result based on the "Domain" of the URL. *)
+	image = GetWebsiteFavicon[url];
+
+	RaiseAssert[ImageQ[image]];
+
+	pngBase64 = BaseEncode[
+		ExportByteArray[image, "PNG"],
+		"Base64"
+	];
+
+	RaiseAssert[StringQ[pngBase64]];
+
+	XMLElement[
+		"img",
+		{
+			"src" -> "data:image/png;base64," <> pngBase64,
+			"width" -> "16",
+			"height" -> "16"
+		},
+		{}
+	]
 ]
 
 (*========================================================*)

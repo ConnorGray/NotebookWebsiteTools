@@ -25,28 +25,28 @@ GetBuildValue
 
 DetermineStatusAction
 
-GeneralUtilities`SetUsage[ConvertToHtml, "\
+GeneralUtilities`SetUsage[ConvertToHtml, "
 ConvertToHtml[expr] converts a Notebook, Cell, or box expression into HTML.
 
 The returned HTML expression will always be in one of the following forms:
 
-	* XMLElement[...]
-	* Splice[{___XMLElement}]
-	* String
-	* Nothing
+* XMLElement[...]
+* Splice[{___XMLElement}]
+* String
+* Nothing
 
 such that the result of calling ConvertToHtml will always produce a
 well-formed XMLElement when called in the 3rd argument list of XMLElement.
 
-	VALID:
+VALID:
 
-		XMLElement["p", {}, {ConvertToHtml[expr]}]
+	XMLElement[\"p\", {}, {ConvertToHtml[expr]}]
 
-	INVALID:
+INVALID:
 
-		XMLElement["p", {}, ConvertToHtml[expr]]
+	XMLElement[\"p\", {}, ConvertToHtml[expr]]
 
-	The latter is not a valid XMLElement.
+The latter is not a valid XMLElement.
 "]
 
 Begin["`Private`"]
