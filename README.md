@@ -4,11 +4,11 @@ A static site generator based on Wolfram Notebooks.
 
 ## Examples
 
-[kitchen-sink.nb](./Examples/Content/kitchen-sink.nb) ([**image**](./docs/images/kitchen-sink.nb.png.md))
+[feature-overview.nb](./Examples/Content/feature-overview.nb) ([**image**](./docs/images/feature-overview.nb.png.md))
 is a Wolfram Notebook that contains an overview of features supported by NotebookWebsiteTools.
 
-[**kitchen-sink.html**](https://www.wolframcloud.com/obj/connorg/Examples/NotebookWebsiteTools/kitchen-sink.html)
-is the HTML rendered version of kitchen-sink.nb.
+[**feature-overview.html**](https://www.wolframcloud.com/obj/connorg/Examples/NotebookWebsiteTools/feature-overview.html)
+is the HTML rendered version of feature-overview.nb.
 
 ### Building the Examples website
 
