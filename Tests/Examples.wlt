@@ -15,10 +15,10 @@ VerificationTest[
 	,
 	Success["NotebookWebsiteBuild", <|
 		"ProcessedNotebooks" -> {
-			FileNameJoin @ {$examplesDir, "Content", "kitchen-sink.nb"}
+			FileNameJoin @ {$examplesDir, "Content", "feature-overview.nb"}
 		},
 		"OutputHTMLFiles" -> {
-			File @ FileNameJoin @ {$buildDir, "kitchen-sink.html"}
+			File @ FileNameJoin @ {$buildDir, "feature-overview.html"}
 		}
 	|>]
 ]

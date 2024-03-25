@@ -68,12 +68,15 @@ installed:
   $ cargo install cargo-make
   ```
 
-## Updating Kitchen Sink Examples
+## Updating Feature Overview Examples
 
 *These instructions are currently only executable by me (Connor Gray), as they*
 *require access to my Wolfram Cloud account.*
 
-Delete the existing kitchen-sink.html page:
+**Note:** Before following these steps, ensure that `Examples/build/` is
+up-to-date by following the paclet build and Examples build instructions above.
+
+Delete the existing feature-overview.html page:
 
 ```wolfram
 DeleteDirectory[
@@ -82,7 +85,7 @@ DeleteDirectory[
 ]
 ```
 
-Publish the updated kitchen-sink.html page:
+Publish the updated feature-overview.html page:
 
 ```wolfram
 CopyDirectory[
@@ -91,13 +94,13 @@ CopyDirectory[
 ]
 ```
 
-Update the rasterized view of [kitchen-sink.nb](./images/kitchen-sink.nb.png):
+Update the rasterized view of [feature-overview.nb](./images/feature-overview.nb.png):
 
 ```wolfram
 Export[
-    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/docs/images/kitchen-sink.nb.png",
+    "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/docs/images/feature-overview.nb.png",
     Rasterize[NotebookOpen[
-        "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/Content/kitchen-sink.nb"
+        "~/Dev/GitHub/ConnorGray/NotebookWebsiteTools/Examples/Content/feature-overview.nb"
     ]]
 ]
 ```

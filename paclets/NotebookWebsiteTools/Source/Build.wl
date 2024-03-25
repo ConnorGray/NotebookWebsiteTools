@@ -506,7 +506,11 @@ ConvertToHtml[expr_] := Replace[expr, {
 			Background -> ColorConvert[Transparent, "RGB"]
 		];
 
-		RaiseAssert[ImageQ[image]];
+		RaiseAssert[
+			ImageQ[image],
+			"expected cell Rasterize result to be Image, got: ``",
+			InputForm[image]
+		];
 
 		(*------------------------------------------------------------------*)
 		(* Calculate the image dimensions in CSS pixels that will result in *)
@@ -974,8 +978,8 @@ AddSupportFile[
 		Store support files in a directory that has the same name as the base
 		name of the notebook they support.
 
-		E.g. if the current notebook is kitchen-sink.nb, then the support file
-		will be located at the file path `kitchen-sink/<name>.<ext>`
+		E.g. if the current notebook is feature-overview.nb, then the support file
+		will be located at the file path `feature-overview/<name>.<ext>`
 	*)
 	filePath = FileNameJoin[{
 		FileBaseName[$CurrentNotebookFile],
