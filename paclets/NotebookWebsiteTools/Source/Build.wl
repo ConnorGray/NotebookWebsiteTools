@@ -506,7 +506,11 @@ ConvertToHtml[expr_] := Replace[expr, {
 			Background -> ColorConvert[Transparent, "RGB"]
 		];
 
-		RaiseAssert[ImageQ[image]];
+		RaiseAssert[
+			ImageQ[image],
+			"expected cell Rasterize result to be Image, got: ``",
+			InputForm[image]
+		];
 
 		(*------------------------------------------------------------------*)
 		(* Calculate the image dimensions in CSS pixels that will result in *)

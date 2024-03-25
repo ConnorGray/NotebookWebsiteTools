@@ -470,7 +470,7 @@ getWebsiteFaviconAsEmbeddedImg[url_?StringQ] := WrapRaised[
 	(* TODO: We should cache this result based on the "Domain" of the URL. *)
 	image = GetWebsiteFavicon[url];
 
-	RaiseAssert[ImageQ[image]];
+	RaiseAssert[ImageQ[image], "expected favicon Image: ", InputForm[image]];
 
 	pngBase64 = BaseEncode[
 		ExportByteArray[image, "PNG"],
