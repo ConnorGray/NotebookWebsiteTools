@@ -54,6 +54,7 @@ Begin["`Private`"]
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
+Needs["ConnorGray`NotebookWebsiteTools`Configuration`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
@@ -97,11 +98,63 @@ NotebookWebsiteBuild[
 },
 Block[{
 	$BuildSettings = <|
-		"IncludeDrafts" -> TrueQ[includeDrafts]
+		"IncludeDrafts" -> TrueQ[includeDrafts],
+		(* Initialized below if the notebook website has a valid
+			NotebookWebsite.wl configuration file. *)
+		"Configuration" -> <||>
 	|>,
 	$BuildCache = CreateCache[],
 	$CurrentNotebookWebsiteDirectory = Replace[inputDir, _?StringQ :> File[inputDir]]
 },
+	(*================================*)
+	(* Setup global build state       *)
+	(*================================*)
+
+	Module[{
+		configFile = FileNameJoin[{inputDir, "NotebookWebsite.wl"}],
+		config
+	},
+		If[FileExistsQ[configFile],
+			If[FileType[configFile] =!= File,
+				Raise[
+					NotebookWebsiteError,
+					"Expected configuration file with name `` to be a normal file, got ``",
+					InputForm[configFile],
+					FileType[configFile]
+				];
+			];
+
+			config = WrapRaised[
+				NotebookWebsiteError,
+				"Unexpected error evaluating website configuration file at ``",
+				InputForm[configFile]
+			][
+				(* Load the configuration file using a consistent symbol table
+					environment. *)
+				Block[{
+					$Context = UniqueContext["NotebookWebsiteConfiguration"],
+					$ContextPath = {"System`"}
+				},
+					Needs["ConnorGray`NotebookWebsiteTools`Configuration`"];
+
+					Get[configFile]
+				]
+			];
+
+			ConfirmReplace[config, {
+				NotebookWebsite[assoc_?AssociationQ] :> (
+					$BuildSettings["Configuration"] = assoc;
+				),
+				other_ :> Raise[
+					NotebookWebsiteError,
+					"Website configuration file must contain a "
+					<> "NotebookWebsite[<| ... |>] object. Got: ``",
+					InputForm[other]
+				]
+			}]
+		];
+	];
+
 	(* Build settings should not be mutable once the build has started. This
 		ensures that cached values that depend on a particular setting don't
 		become invalidated. *)
@@ -815,7 +868,14 @@ wrapHtmlForStyle[
 		(* Headers with auto-anchor linking. *)
 		(*===================================*)
 
-		"Title" :> XMLElement["h1", {"class" -> "nb-Title"}, {makeAnchorLinkHtml[cellData, html]}],
+		"Title" :> (
+			Splice[{
+				makeBreadcrumbs[],
+				XMLElement["h1", {"class" -> "nb-Title"}, {
+					makeAnchorLinkHtml[cellData, html]
+				}]
+			}]
+		),
 		"Subtitle" :> XMLElement["p", {"class" -> "nb-Subtitle"}, {html}],
 		"Chapter" :> XMLElement["h2", {"class" -> "nb-Chapter"}, {makeAnchorLinkHtml[cellData, html]}],
 		"Section" :> XMLElement["h3", {"class" -> "nb-Section"}, {makeAnchorLinkHtml[cellData, html]}],
@@ -1096,6 +1156,54 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 ]
 
 SetFallthroughError[importHTMLFragment]
+
+(*====================================*)
+
+SetFallthroughError[makeBreadcrumbs]
+
+(* If this site configures a breadcrumb function, use it to
+	insert an HTML breadcrumb. *)
+makeBreadcrumbs[] := Catch @ Module[{
+	func = Lookup[$BuildSettings["Configuration"], "BreadcrumbFunction"],
+	breadcrumbs
+},
+	If[MissingQ[func],
+		Throw[Nothing];
+	];
+
+	breadcrumbs = WrapRaised[
+		NotebookWebsiteError,
+		"Error computing custom breadcrumbs"
+	][
+		func[$CurrentNotebookRelativeURL]
+	];
+
+	ConfirmReplace[breadcrumbs, {
+		{{_?StringQ, _?StringQ}..} :> (
+			XMLElement["div", {"class" -> "breadcrumbs"}, {
+				Splice @ Riffle[#, XML`RawXML["&nbsp;"]]& @ Map[
+					crumb |-> (
+						XMLElement[
+							"a",
+							{
+								"class" -> "breadcrumbs__crumb",
+								"href" -> crumb[[2]]
+							},
+							{crumb[[1]] <> " />"}
+						]
+					),
+					breadcrumbs
+				]
+			}]
+		),
+		Nothing -> Nothing,
+		other_ :> Raise[
+			NotebookWebsiteError,
+			"Invalid form for breadcrumb function result. Expected {{name, path}...}, got: ``",
+			InputForm[other]
+		]
+	}]
+]
 
 (*====================================*)
 

@@ -422,6 +422,23 @@ a.IconLink img {
     padding-right: 2pt;
 }
 
+/*------------------------------------*/
+/* Breadcrumbs                        */
+/*------------------------------------*/
+
+.breadcrumbs {
+    font-family: monospace;
+}
+
+.breadcrumbs__crumb {
+    color: gray;
+    text-decoration: none;
+}
+
+.breadcrumbs__crumb:hover {
+    text-decoration: underline;
+}
+
 /*========================================================*/
 /* Built-In Widgets                                       */
 /*========================================================*/
