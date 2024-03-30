@@ -5,14 +5,18 @@ default_to_workspace = false
 # Development tasks
 #---------------------------------------
 
+#
 # Define `$ cargo make install`
+#
 [tasks.install]
 dependencies = ["paclet"]
 command = "wolfram-cli"
 # TODO: Fix this hard-coded version number.
 args = ["paclet", "install", "build/ConnorGray__NotebookWebsiteTools-0.0.1.paclet"]
 
+#
 # Define `$ cargo make paclet`
+#
 [tasks.paclet]
 dependencies = ["build-library-resources"]
 script = { file = "./scripts/build-paclet.wls" }
