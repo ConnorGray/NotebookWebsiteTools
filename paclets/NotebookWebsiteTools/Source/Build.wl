@@ -818,6 +818,18 @@ ConvertToHtml[expr_] := Replace[expr, {
 					],
 					other_ :> Raise[NotebookWebsiteError, "Unhandled FontColor option value: ``", InputForm[other]]
 				}],
+				(FontSize -> size_) :> ConfirmReplace[size, {
+					_?IntegerQ :> XMLElement[
+						"span",
+						{"style" -> TemplateApply["font-size: ``pt", size]},
+						{elem}
+					],
+					other_ :> Raise[
+						NotebookWebsiteError,
+						"Unhandled FontSize option value: ``",
+						InputForm[other]
+					]
+				}],
 				(FontVariations -> {"StrikeThrough" -> True}) :> XMLElement[
 					"span",
 					{"style" -> "text-decoration: line-through"},
