@@ -4,7 +4,9 @@ Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 $workDir = CreateDirectory[];
 $buildDir = FileNameJoin[{$workDir, "build"}]
 
-$tagFileContents = ConnorGray`NotebookWebsiteTools`Utils`$tagFileContents;
+$tagFileContents = ConnorGray`NotebookWebsiteTools`Utils`Private`$tagFileContents;
+
+VerificationTest[StringQ[$tagFileContents]]
 
 (*-----------------------------------------------------------*)
 (* Create an initial cache directory and verify its contents *)
