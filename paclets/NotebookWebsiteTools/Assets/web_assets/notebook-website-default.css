@@ -130,6 +130,10 @@ pre.nb-Program {
 /* Textual Styles                     */
 /*====================================*/
 
+/*----------*/
+/* Headings */
+/*----------*/
+
 h1.nb-Title {
     color: var(--nwt--h1-color)
 }
@@ -190,6 +194,15 @@ h5.nb-Subsubsection {
 
 h1.nb-Title + p.nb-Subtitle {
     margin-block-start: -2em;
+}
+
+/*-----------*/
+/* Body text */
+/*-----------*/
+
+article.Notebook div.nb-CodeText {
+    color: rgb(55%, 55%, 55%);
+    font-size: 12pt;
 }
 
 /*====================================*/

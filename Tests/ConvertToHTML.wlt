@@ -30,3 +30,16 @@ VerificationTest[
 		{"Hello"}
 	]
 ]
+
+(* TID:240527/1: "CodeText" cell handling. *)
+VerificationTest[
+	ConvertToHtml @ Cell[
+		"This is some text",
+		"CodeText"
+	],
+	XMLElement[
+		"div",
+		{"class" -> "nb-CodeText"},
+		{"This is some text"}
+	]
+]

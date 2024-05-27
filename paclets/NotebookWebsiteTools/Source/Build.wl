@@ -910,6 +910,9 @@ wrapHtmlForStyle[
 
 		"Text" :> XMLElement["p", {}, {ConvertToHtml[cellData]}],
 
+		(*-------*)
+		(* Items *)
+		(*-------*)
 		"Item"
 		| "ItemNumbered"
 		| "ItemParagraph"
@@ -918,7 +921,18 @@ wrapHtmlForStyle[
 		| "SubitemParagraph"
 		| "Subsubitem"
 		| "SubsubitemNumbered"
-		| "SubsubitemParagraph" :> XMLElement["div", {"class" -> StringJoin["nb-", style]}, {ConvertToHtml[cellData]}],
+		| "SubsubitemParagraph"
+		(*-------*)
+		(* Other *)
+		(*-------*)
+		(* TID:240527/1: "CodeText" cell handling. *)
+		| "CodeText" :> (
+			XMLElement[
+				"div",
+				{"class" -> StringJoin["nb-", style]},
+				{ConvertToHtml[cellData]}
+			]
+		),
 
 		(*============*)
 		(* Code cells *)
