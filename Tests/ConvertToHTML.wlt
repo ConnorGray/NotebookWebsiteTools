@@ -17,3 +17,16 @@ VerificationTest[
 		]}
 	]
 ]
+
+(* TID:240526/1: FontColor -> GrayLevel[..] handling. *)
+VerificationTest[
+	ConvertToHtml @ StyleBox[
+		"Hello",
+		FontColor -> GrayLevel[0.5]
+	],
+	XMLElement[
+		"span",
+		{"style" -> "color: rgb(50.0%, 50.0%, 50.0%)"},
+		{"Hello"}
+	]
+]

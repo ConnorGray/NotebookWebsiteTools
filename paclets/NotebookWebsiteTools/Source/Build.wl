@@ -816,6 +816,15 @@ ConvertToHtml[expr_] := Replace[expr, {
 						{"style" -> TemplateApply["color: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
 						{elem}
 					],
+					(* TID:240526/1: FontColor -> GrayLevel[..] handling. *)
+					GrayLevel[value_?NumberQ] :> XMLElement[
+						"span",
+						{"style" -> TemplateApply[
+							"color: rgb(``%, ``%, ``%)",
+							Table[100 * value, 3]
+						]},
+						{elem}
+					],
 					other_ :> Raise[NotebookWebsiteError, "Unhandled FontColor option value: ``", InputForm[other]]
 				}],
 				(FontSize -> size_) :> ConfirmReplace[size, {
