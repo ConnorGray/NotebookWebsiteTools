@@ -111,9 +111,14 @@ code {
     border-radius: 0.25em;
 }
 
+pre {
+    overflow: scroll;
+
+    tab-size: 4;
+}
+
 pre.nb-Program {
     display: block;
-    overflow: scroll;
 
     padding: 1em;
     margin: 1em auto;
@@ -363,8 +368,6 @@ pre.nb-HighlightSyntax {
     border-left: 3px solid lightgray;
 
     line-height: 1.35;
-
-    overflow: scroll;
 }
 
 pre.nb-HighlightSyntax.line-numbers span.ln:before {
