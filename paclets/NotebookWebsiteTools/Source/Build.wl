@@ -512,10 +512,62 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* Cells                          *)
 	(*================================*)
 
+	(*--------------------------------*)
+	(* Cell Groups                    *)
+	(*--------------------------------*)
+
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Splice @ Map[ConvertToHtml, cells],
+
+	(*--------------------------------*)
+	(* Deprecated cells               *)
+	(*--------------------------------*)
+
+	Cell[
+		_,
+		stylesSeq___?StringQ,
+		___?OptionQ
+	] /; IntersectingQ[
+		{stylesSeq},
+		{"Excluded", "HighlightSyntax", "LiteralHTML", "ComputedHTML"}
+	] :> (
+		Raise[
+			NotebookWebsiteError,
+			"Cell has deprecated style: ``. Use cell style name prefixed with \"ConnorGray/\" instead.",
+			InputForm[styles]
+		];
+	),
+
+	(*--------------------------------*)
+	(* Flagged cells                  *)
+	(*--------------------------------*)
+
+	(* TID:240601/3: Excluded applied to textual (converted) cell *)
+	(* TID:240601/4: Excluded applied to box (rasterized) cell *)
+	(* Always remove Excluded cells *)
+	Cell[
+		_,
+		stylesSeq___?StringQ,
+		___?OptionQ
+	] /; MemberQ[{stylesSeq}, "ConnorGray/Excluded"] :> (
+		(* TODO: Better sentinel value for 'nothing' HTML? *)
+		Nothing
+	),
+
+	(* TID:240601/1: Draft applied to textual _converted_ cell *)
+	Cell[
+		_,
+		stylesSeq___?StringQ,
+		___?OptionQ
+	] /; And[
+		MemberQ[{stylesSeq}, "Draft" | "ConnorGray/Draft"],
+		!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
+	] :> (
+		(* TODO: Better sentinel value for 'nothing' HTML? *)
+		Nothing
+	),
 
 	(*--------------------------------*)
 	(* Rasterized cell types          *)
@@ -681,27 +733,6 @@ ConvertToHtml[expr_] := Replace[expr, {
 		cellOptions = {options0},
 		element
 	},
-		If[IntersectingQ[styles, {"Excluded", "HighlightSyntax", "LiteralHTML", "ComputedHTML"}],
-			Raise[
-				NotebookWebsiteError,
-				"Cell has deprecated style: ``. Use cell style name prefixed with \"ConnorGray/\" instead.",
-				InputForm[styles]
-			];
-		];
-
-		(* TID:240601/3: Excluded applied to textual (converted) cell *)
-		(* TID:240601/4: Excluded applied to box (rasterized) cell *)
-		If[MemberQ[styles, "ConnorGray/Excluded"],
-			(* TODO: Better sentinel value for 'nothing' HTML? *)
-			Return[Nothing, Module];
-		];
-
-		(* TID:240601/1: Draft applied to textual _converted_ cell *)
-		If[MemberQ[styles, "ConnorGray/Draft"] && !TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
-			(* TODO: Better sentinel value for 'nothing' HTML? *)
-			Return[Nothing, Module];
-		];
-
 		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
 			Module[{inputLines, xml},
 				(*---------------------------------------------------------------*)
