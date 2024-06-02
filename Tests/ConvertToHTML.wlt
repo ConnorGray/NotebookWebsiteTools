@@ -1,6 +1,8 @@
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 
+Needs["Wolfram`ErrorTools`"]
+
 VerificationTest[
 	ConvertToHtml @ StyleBox[
 		"Hello",
@@ -72,6 +74,50 @@ VerificationTest[
 			],
 			XMLElement["p", {}, {"This is some content"}]
 		}
+	]
+]
+
+VerificationTest[
+	(* TID:240602/1: Inline "Code" or "Program" StyleBox's *)
+	ConvertToHtml @ Cell[
+		TextData[{
+			"Inline code ",
+			StyleBox["code = 5", "Code"],
+			" example. Inline program ",
+			StyleBox["program = 10", "Program"],
+			" example."
+		}],
+		"Text"
+	],
+	XMLElement["p", {}, {
+		"Inline code ",
+		XMLElement["code", {}, {
+			"code = 5"
+		}],
+		" example. Inline program ",
+		XMLElement["code", {}, {
+			"program = 10"
+		}],
+		" example."
+	}]
+]
+
+VerificationTest[
+	(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
+	Handle[_Failure] @ ConvertToHtml @ Cell[
+		TextData[{
+			"Inline code ",
+			StyleBox["2 + 2", "NotAKnownStyle"],
+			" example."
+		}],
+		"Text"
+	],
+	Failure[
+		ConnorGray`NotebookWebsiteTools`Errors`NotebookWebsiteError,
+		<|
+			"MessageTemplate" -> "Unhandled StyleBox style: ``",
+			"MessageParameters" -> {InputForm["NotAKnownStyle"]}
+		|>
 	]
 ]
 

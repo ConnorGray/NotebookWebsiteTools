@@ -833,7 +833,9 @@ ConvertToHtml[expr_] := Replace[expr, {
 	},
 		element = Fold[
 			{elem, style} |-> Replace[style, {
-				"Code" :> XMLElement["code", {}, {elem}],
+				(* TID:240602/1: Inline "Code" or "Program" StyleBox's *)
+				"Code" | "Program" :> XMLElement["code", {}, {elem}],
+				(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
 				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],
 			ConvertToHtml[content],
