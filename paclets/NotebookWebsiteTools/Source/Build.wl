@@ -661,76 +661,6 @@ ConvertToHtml[expr_] := Replace[expr, {
 	],
 
 	(*--------------------------------*)
-	(* Inline special link cells      *)
-	(*--------------------------------*)
-
-	Cell[
-		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
-			"ConnorGray/GitHubLink"
-		],
-		___?OptionQ
-	] :> Module[{},
-		XMLElement[
-			"a",
-			{"href" -> url, "class" -> "IconLink"},
-			{
-				XMLElement["img", {
-					"src" -> URLBuild[{
-						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
-						"github-mark.svg"
-					}]
-				}, {}],
-				ConvertToHtml[label]
-			}
-		]
-	],
-
-	Cell[
-		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
-			"ConnorGray/PacletLink"
-		],
-		___?OptionQ
-	] :> Module[{},
-		XMLElement[
-			"a",
-			{"href" -> url, "class" -> "IconLink"},
-			{
-				XMLElement["img", {
-					"src" -> URLBuild[{
-						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
-						"paclet-icon.svg"
-					}]
-				}, {}],
-				ConvertToHtml[label]
-			}
-		]
-	],
-
-	Cell[
-		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
-			"ConnorGray/RustCrateLink"
-		],
-		___?OptionQ
-	] :> Module[{},
-		XMLElement[
-			"a",
-			{"href" -> url, "class" -> "IconLink"},
-			{
-				XMLElement["img", {
-					"src" -> URLBuild[{
-						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
-						"rust-logo-blk.svg"
-					}]
-				}, {}],
-				ConvertToHtml[label]
-			}
-		]
-	],
-
-	(*--------------------------------*)
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
@@ -912,6 +842,76 @@ ConvertToHtml[expr_] := Replace[expr, {
 		ButtonData -> {URL[url_?StringQ], None},
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {ConvertToHtml[content]}],
+
+	(*--------------------------------*)
+	(* Inline special link cells      *)
+	(*--------------------------------*)
+
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/GitHubLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url, "class" -> "IconLink"},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"github-mark.svg"
+					}]
+				}, {}],
+				ConvertToHtml[label]
+			}
+		]
+	],
+
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/PacletLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url, "class" -> "IconLink"},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"paclet-icon.svg"
+					}]
+				}, {}],
+				ConvertToHtml[label]
+			}
+		]
+	],
+
+	Cell[
+		BoxData @ TemplateBox[
+			{label_, url_?StringQ},
+			"ConnorGray/RustCrateLink"
+		],
+		___?OptionQ
+	] :> Module[{},
+		XMLElement[
+			"a",
+			{"href" -> url, "class" -> "IconLink"},
+			{
+				XMLElement["img", {
+					"src" -> URLBuild[{
+						notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL],
+						"rust-logo-blk.svg"
+					}]
+				}, {}],
+				ConvertToHtml[label]
+			}
+		]
+	],
 
 	other_ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
 }]
