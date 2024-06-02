@@ -689,11 +689,14 @@ ConvertToHtml[expr_] := Replace[expr, {
 			];
 		];
 
+		(* TID:240601/3: Excluded applied to textual (converted) cell *)
+		(* TID:240601/4: Excluded applied to box (rasterized) cell *)
 		If[MemberQ[styles, "ConnorGray/Excluded"],
 			(* TODO: Better sentinel value for 'nothing' HTML? *)
 			Return[Nothing, Module];
 		];
 
+		(* TID:240601/1: Draft applied to textual _converted_ cell *)
 		If[MemberQ[styles, "ConnorGray/Draft"] && !TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
 			(* TODO: Better sentinel value for 'nothing' HTML? *)
 			Return[Nothing, Module];
