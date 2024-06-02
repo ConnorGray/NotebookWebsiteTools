@@ -573,7 +573,13 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* Rasterized cell types          *)
 	(*--------------------------------*)
 
-	cell:Cell[_, "Input" | "Output", options0___?OptionQ] :> UsingFrontEnd @ Module[{
+	cell:Cell[
+		_,
+		"Input" | "Output",
+		(* FIXME: Handle these secondary styles *)
+		secondaryStylesSeq___?StringQ,
+		options0___?OptionQ
+	] :> UsingFrontEnd @ Module[{
 		$rasterResolution = 270,
 		(* The native PPI resolution of the FrontEnd on this device. This is
 		   typically 144 on HiDPI computers. *)

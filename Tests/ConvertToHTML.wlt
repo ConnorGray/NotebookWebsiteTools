@@ -172,7 +172,24 @@ With[{
 				"article",
 				{"class" -> "Notebook"},
 				{
-					XMLElement["p", {}, {"This is some content"}]
+					XMLElement["p", {}, {"Normal textual cell"}],
+					XMLElement["img", {
+						"src" -> "FakeTestNotebook/0.png",
+						"width" -> "133",
+						"height" -> "17",
+						"style" -> "display: block; padding: 4pt 0 4pt 0;"
+					}, {}],
+					XMLElement[
+						"div",
+						{"class" -> "nb-Draft"},
+						{XMLElement["p", {}, {"Draft textual cell"}]}
+					],
+					XMLElement["img", {
+						"src" -> "FakeTestNotebook/1.png",
+						"width" -> "126",
+						"height" -> "17",
+						"style" -> "display: block; padding: 4pt 0 4pt 0;"
+					}, {}]
 				}
 			]
 		];
@@ -180,7 +197,8 @@ With[{
 		VerificationTest[
 			$CurrentNotebookSupportFiles,
 			<|
-				File["FakeTestNotebook/0.png"] -> _?ImageQ
+				File["FakeTestNotebook/0.png"] -> _?ImageQ,
+				File["FakeTestNotebook/1.png"] -> _?ImageQ
 			|>,
 			SameTest -> MatchQ
 		];
