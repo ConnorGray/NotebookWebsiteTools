@@ -1085,7 +1085,11 @@ SetFallthroughError[wrapHtmlForStyle]
 AddSupportFile[
 	name0: _?StringQ | Automatic,
 	content: _?ImageQ
-] := Module[{
+] := WrapRaised[
+	NotebookWebsiteError,
+	"Error adding support file named: ``",
+	InputForm[name0]
+] @ Module[{
 	name = Replace[name0,
 		Automatic :> ToString[Length[$CurrentNotebookSupportFiles]]
 	],
