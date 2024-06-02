@@ -803,14 +803,12 @@ ConvertToHtml[expr_] := Replace[expr, {
 		(* Assume this is a cell whose content can be converted directly to HTML. *)
 		(*------------------------------------------------------------------------*)
 
-		element = Fold[
-			{html, style} |-> wrapHtmlForStyle[content, cellOptions, html, style],
+		wrapHtmlForStyles[
+			content,
 			ConvertToHtml[content],
-			styles
-		];
-
-		(* TODO: Handle the `options` as well. *)
-		element
+			styles,
+			cellOptions
+		]
 	],
 
 	(*================================*)
@@ -917,6 +915,28 @@ ConvertToHtml[expr_] := Replace[expr, {
 
 	other_ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
 }]
+
+(*======================================*)
+
+SetFallthroughError[wrapHtmlForStyles]
+
+wrapHtmlForStyles[
+	cellData_?CellDataQ,
+	initialHTML_?HTMLFragmentQ,
+	cellStyles:{___?StringQ},
+	cellOptions:{___?OptionQ}
+] := Module[{
+	element
+},
+	element = Fold[
+		{html, style} |-> wrapHtmlForStyle[cellData, cellOptions, html, style],
+		initialHTML,
+		cellStyles
+	];
+
+	(* TODO: Handle the `options` as well. *)
+	element
+]
 
 (*======================================*)
 
