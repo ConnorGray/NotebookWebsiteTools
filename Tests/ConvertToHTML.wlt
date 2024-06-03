@@ -250,3 +250,30 @@ With[{
 		];
 	];
 ]
+
+VerificationTest[
+	Block[{
+		$CurrentNotebookRelativeURL = URL["content/test-file.html"]
+	},
+		(* TID:240602/3: Convert inline PacletLink special link *)
+		ConvertToHtml @ Cell[
+			BoxData @ TemplateBox[
+				{"Foo", "https://example.com"},
+				"ConnorGray/PacletLink"
+			],
+			FontWeight -> "Bold"
+		]
+	],
+	XMLElement[
+		"a",
+		{"href" -> "https://example.com", "class" -> "IconLink"},
+		{
+			XMLElement[
+				"img",
+				{"src" -> "../web_assets/paclet-icon.svg"},
+				{}
+			],
+			"Foo"
+		}
+	]
+]

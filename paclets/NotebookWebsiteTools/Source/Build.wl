@@ -557,6 +557,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 	),
 
 	(* TID:240601/1: Draft applied to textual _converted_ cell *)
+	(* TID:240601/2: Draft applied to box (rasterized) cell *)
 	Cell[
 		_,
 		stylesSeq___?StringQ,
@@ -664,7 +665,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
-	Cell[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
+	Cell[content_, styles0__?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
 		cellOptions = {options0},
 		element
@@ -869,6 +870,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 		]
 	],
 
+	(* TID:240602/3: Convert inline PacletLink special link *)
 	Cell[
 		BoxData @ TemplateBox[
 			{label_, url_?StringQ},
