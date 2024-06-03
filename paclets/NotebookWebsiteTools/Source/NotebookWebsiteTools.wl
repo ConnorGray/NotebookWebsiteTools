@@ -107,6 +107,8 @@ SetFallthroughError[WebsiteNotebookStatus]
 
 (*========================================================*)
 
+SetFallthroughError[WebsiteNotebookSnippet]
+
 WebsiteNotebookSnippet[
 	nb:Notebook[{___Cell}, ___?OptionQ]
 ] := WrapRaised[

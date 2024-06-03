@@ -244,6 +244,25 @@ ConvertToString[expr_] := Replace[expr, {
 	RowBox[items_?ListQ] :> StringJoin[ConvertToString /@ items],
 	TemplateBox[items_?ListQ, "RowDefault"] :> StringJoin[ConvertToString /@ items],
 	ButtonBox[content_, ___] :> ConvertToString[content],
+
+	(*-------------------------------*)
+	(* NotebookWebsiteTools specific *)
+	(*-------------------------------*)
+
+	(* FIXME:
+		This should not be part of the general-purpose ConvertToString
+		function. Instead make WebsiteNotebookSnippet smarter. E.g.
+		WebsiteNotebookSnippet[nb, "PlainText" | "HTML"]. *)
+	Cell[
+		BoxData @ TemplateBox[
+			{label_?StringQ, url_?StringQ},
+			"ConnorGray/GitHubLink"
+		],
+		FontWeight -> "Bold",
+		(* TODO: Handle options *)
+		___?OptionQ
+	] :> label,
+
 	other_ :> Raise[NotebookWebsiteError, "no rule to convert form to string: ``", InputForm[other]]
 }]
 
