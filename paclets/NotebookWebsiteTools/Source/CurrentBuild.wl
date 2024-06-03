@@ -146,7 +146,11 @@ PagesSummaryListHtml[
 	notebooks = FileNames["*.nb", contentDir, Infinity];
 
 	listItems = Map[
-		nbFile |-> Module[{
+		nbFile |-> WrapRaised[
+			NotebookWebsiteError,
+			"Error generating pages summary list entry for file at ``",
+			nbFile
+		] @ Module[{
 			nbFileRelative = RelativePath[contentDir, nbFile],
 			nb,
 			title,

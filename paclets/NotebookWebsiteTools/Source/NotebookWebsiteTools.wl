@@ -109,7 +109,11 @@ SetFallthroughError[WebsiteNotebookStatus]
 
 WebsiteNotebookSnippet[
 	nb:Notebook[{___Cell}, ___?OptionQ]
-] := Module[{
+] := WrapRaised[
+	NotebookWebsiteError,
+	"Error generating website notebook snippet.",
+	InputForm[configFile]
+] @ Module[{
 	cells = NotebookCells[nb],
 	firstText
 },
