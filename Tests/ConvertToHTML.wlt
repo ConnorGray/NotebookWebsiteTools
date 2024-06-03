@@ -115,8 +115,15 @@ VerificationTest[
 	Failure[
 		ConnorGray`NotebookWebsiteTools`Errors`NotebookWebsiteError,
 		<|
-			"MessageTemplate" -> "Unhandled StyleBox style: ``",
-			"MessageParameters" -> {InputForm["NotAKnownStyle"]}
+			"CausedBy" -> Failure[
+				ConnorGray`NotebookWebsiteTools`Errors`NotebookWebsiteError,
+				<|
+					"MessageTemplate" -> "Unhandled StyleBox style: ``",
+					"MessageParameters" -> {InputForm["NotAKnownStyle"]}
+				|>
+			],
+			"MessageTemplate" -> "Error converting `` style cell",
+			"MessageParameters" -> {InputForm["Text"]}
 		|>
 	]
 ]
