@@ -188,7 +188,7 @@ With[{
 				{
 					XMLElement["p", {}, {"Normal textual cell"}],
 					XMLElement["img", {
-						"src" -> "FakeTestNotebook/0.png",
+						"src" -> "FakeTestNotebook/0-Input.png",
 						"width" -> "133",
 						"height" -> "17",
 						"style" -> "display: block; padding: 4pt 0 4pt 0;"
@@ -200,10 +200,7 @@ With[{
 		VerificationTest[
 			$CurrentNotebookSupportFiles,
 			<|
-				(* FIXME: Encode the cell style in this so its more distinct
-				 	for testing purposes. E.g. `/Input-0.png` or `0-Input.png`
-				*)
-				File["FakeTestNotebook/0.png"] -> _?ImageQ
+				File["FakeTestNotebook/0-Input.png"] -> _?ImageQ
 			|>,
 			SameTest -> MatchQ
 		];
@@ -227,7 +224,7 @@ With[{
 				{
 					XMLElement["p", {}, {"Normal textual cell"}],
 					XMLElement["img", {
-						"src" -> "FakeTestNotebook/0.png",
+						"src" -> "FakeTestNotebook/0-Input.png",
 						"width" -> "133",
 						"height" -> "17",
 						"style" -> "display: block; padding: 4pt 0 4pt 0;"
@@ -238,7 +235,7 @@ With[{
 						{XMLElement["p", {}, {"Draft textual cell"}]}
 					],
 					XMLElement["img", {
-						"src" -> "FakeTestNotebook/1.png",
+						"src" -> "FakeTestNotebook/1-Input.png",
 						"width" -> "126",
 						"height" -> "17",
 						"style" -> "display: block; padding: 4pt 0 4pt 0;"
@@ -250,8 +247,8 @@ With[{
 		VerificationTest[
 			$CurrentNotebookSupportFiles,
 			<|
-				File["FakeTestNotebook/0.png"] -> _?ImageQ,
-				File["FakeTestNotebook/1.png"] -> _?ImageQ
+				File["FakeTestNotebook/0-Input.png"] -> _?ImageQ,
+				File["FakeTestNotebook/1-Input.png"] -> _?ImageQ
 			|>,
 			SameTest -> MatchQ
 		];

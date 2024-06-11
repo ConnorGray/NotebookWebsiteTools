@@ -576,7 +576,9 @@ ConvertToHtml[expr_] := Replace[expr, {
 
 	cell:Cell[
 		_,
-		"Input" | "Output",
+		primaryCellStyle:(
+			"Input" | "Output"
+		),
 		(* FIXME: Handle these secondary styles *)
 		secondaryStylesSeq___?StringQ,
 		options0___?OptionQ
@@ -651,7 +653,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 		(* Return the HTML element *)
 		(*-------------------------*)
 
-		imageRelativeUrl = AddSupportFile[Automatic, image];
+		imageRelativeUrl = AddSupportFile[primaryCellStyle, image];
 
 		XMLElement["img", {
 			"src" -> imageRelativeUrl,
@@ -1087,13 +1089,20 @@ wrapHtmlForStyle[
 			XMLElement["div", {"class" -> "nb-Draft"}, {html}]
 		],
 
-		other_ :> Raise[NotebookWebsiteError, "Unhandled Cell style: ``: ``", InputForm[other], RawBoxes[cellData]]
+		other_ :> Raise[
+			NotebookWebsiteError,
+			"Unhandled Cell style: ``: ``",
+			InputForm[other],
+			RawBoxes[cellData]
+		]
 	}]
 ]
 
 SetFallthroughError[wrapHtmlForStyle]
 
 (*======================================*)
+
+SetFallthroughError[AddSupportFile]
 
 (*
 	Use this to add supporting files, like:
@@ -1116,9 +1125,13 @@ AddSupportFile[
 	"Error adding support file named: ``",
 	InputForm[name0]
 ] @ Module[{
-	name = Replace[name0,
-		Automatic :> ToString[Length[$CurrentNotebookSupportFiles]]
-	],
+	name = ConfirmReplace[name0, {
+		Automatic :> ToString[Length[$CurrentNotebookSupportFiles]],
+		stem_?StringQ :> (
+			ToString[Length[$CurrentNotebookSupportFiles]] <> "-" <> stem
+		),
+		Verbatim[filename_?StringQ] :> filename
+	}],
 	ext,
 	filePath,
 	urlPath
@@ -1160,8 +1173,6 @@ AddSupportFile[
 	RaiseAssert[StringQ[urlPath]];
 	urlPath
 ]
-
-SetFallthroughError[AddSupportFile]
 
 (*======================================*)
 

@@ -211,6 +211,8 @@ validTagFileContentsQ[contents_?StringQ] :=
 
 (*========================================================*)
 
+SetFallthroughError[RelativePath]
+
 (*
 	Return the portion of `path` which is relative to `root`. If `path` is not relative to
 	`root`, a failure is returned.
