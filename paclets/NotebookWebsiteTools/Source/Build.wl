@@ -516,10 +516,44 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* Cell Groups                    *)
 	(*--------------------------------*)
 
+	(* TID:240809/2: Handle ConnorGray/TabViewSection cell group. *)
+	Cell @ CellGroupData[
+		{
+			(* NOTE: The main tab view header just kind of evaporates(?),
+				the tab labels become descriptive. *)
+			tabSectionHeader:Cell[
+				_,
+				stylesSeq___?StringQ /;
+					MemberQ[{stylesSeq}, "ConnorGray/TabViewSection"],
+				___?OptionQ
+			],
+			tabContentsSeq__Cell
+		},
+		Open | Closed | {_?IntegerQ}
+	] :> (
+		(* Note: Warn about misleading filters applied to tab section header
+			cells. The cells themselves are not converted anyway, and the header
+			being excluded does not prevent the overall tab contents from being
+			included. *)
+		If[FilteredCellQ[tabSectionHeader],
+			Print["warning: Applying filtered style to tab view section header "
+				<> "cell does nothing."];
+		];
+
+		createTabViewSectionHTML[{tabContentsSeq}]
+	),
+
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
-	Cell[CellGroupData[cells_?ListQ, Open | Closed]] :> Splice @ Map[ConvertToHtml, cells],
+	Cell[CellGroupData[
+		cells_?ListQ,
+		Open | Closed | {_?IntegerQ}
+	]] :> Splice @ Map[ConvertToHtml, cells],
+
+	Cell[_CellGroupData, ___] :> (
+		Raise[NotebookWebsiteError, "Unhandled cell group: ``", InputForm[expr]]
+	),
 
 	(*--------------------------------*)
 	(* Deprecated cells               *)
@@ -547,25 +581,9 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* TID:240601/3: Excluded applied to textual (converted) cell *)
 	(* TID:240601/4: Excluded applied to box (rasterized) cell *)
 	(* Always remove Excluded cells *)
-	Cell[
-		_,
-		stylesSeq___?StringQ,
-		___?OptionQ
-	] /; MemberQ[{stylesSeq}, "ConnorGray/Excluded"] :> (
-		(* TODO: Better sentinel value for 'nothing' HTML? *)
-		Nothing
-	),
-
 	(* TID:240601/1: Draft applied to textual _converted_ cell *)
 	(* TID:240601/2: Draft applied to box (rasterized) cell *)
-	Cell[
-		_,
-		stylesSeq___?StringQ,
-		___?OptionQ
-	] /; And[
-		MemberQ[{stylesSeq}, "Draft" | "ConnorGray/Draft"],
-		!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
-	] :> (
+	cell_Cell /; FilteredCellQ[cell] :> (
 		(* TODO: Better sentinel value for 'nothing' HTML? *)
 		Nothing
 	),
@@ -1322,6 +1340,161 @@ makeBreadcrumbs[] := Catch @ Module[{
 		]
 	}]
 ]
+
+(*====================================*)
+
+SetFallthroughError[createTabViewSectionHTML]
+
+createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
+	NotebookWebsiteError,
+	"Error processing tabbed content"
+] @ Module[{
+	tabContents,
+	tabLabels,
+	tabCount
+},
+	tabContents = MapIndexed[
+		{tabCell, tabPosition} |-> WrapRaised[
+			NotebookWebsiteError,
+			"Error processing tab at position ``",
+			InputForm[tabPosition]
+		] @ ConfirmReplace[tabCell, {
+			Cell @ CellGroupData[{
+				headerCell_,
+				contentsSeq___Cell
+			}, Open | Closed] :> Module[{
+				label,
+				contents
+			},
+				(* TID:240810/2: Tab with excluded header cell. *)
+				If[FilteredCellQ[headerCell],
+					Return[Nothing, Module];
+				];
+
+				label = ConfirmReplace[headerCell, {
+					Cell[label0_?StringQ, __] :> label0,
+					(* TID:240810/3: Tab header with non-String cell data. *)
+					other_ :> Raise[
+						NotebookWebsiteError,
+						<| "TabHeaderCell" -> headerCell |>,
+						"Tab header cell data expected to be simple String."
+					]
+				}];
+
+				(* TID:240809/1: Multi-cell tab contents *)
+				contents = ConfirmReplace[Map[ConvertToHtml, {contentsSeq}], {
+					(* TID:240810/1: Tab with empty contents after filtering. *)
+					{} :> Raise[
+						NotebookWebsiteError,
+						"Empty tab contents are not supported"
+					],
+					contents0:{__} :> contents0
+				}];
+
+				<|
+					"Label" -> label,
+					"Contents" -> contents
+				|>
+			],
+			_ :> Raise[
+				NotebookWebsiteError,
+				"Unexpected structure for tab contents cell: ``",
+				InputForm[tabCell]
+			]
+		}],
+		tabContentsCells
+	];
+
+	RaiseConfirmMatch[tabContents, {
+		Repeated @ <|
+			"Label" -> _?HTMLFragmentQ,
+			"Contents" -> {__?HTMLFragmentQ}
+		|>
+	}];
+
+	tabCount = Length[tabContents];
+
+	RaiseAssert[IntegerQ[tabCount]];
+
+	tabLabels   = tabContents[[All, "Label"]];
+	tabContents = tabContents[[All, "Contents"]];
+
+	XMLElement["div", {"class" -> "tabbed"}, {
+		(* Radio buttons *)
+		Splice @ Table[
+			XMLElement["input", {
+				"type" -> "radio",
+				"id" -> StringJoin["tab", ToString[tabIndex]],
+				(* NOTE: This name is required to be the same for all
+					generated <input> elements, but the choice of name is
+					arbitrary. *)
+				"name" -> "css-tabs",
+				If[tabIndex === 1,
+					"checked" -> "true",
+					Splice[{}]
+				]
+			}, {}],
+			{tabIndex, tabCount}
+		],
+
+		(* Tab labels *)
+		XMLElement[
+			"ul",
+			{"class" -> "tabs"},
+			Table[
+				XMLElement["li", {"class" -> "tab"}, {
+					XMLElement[
+						"label",
+						{"for" -> StringJoin["tab", ToString[tabIndex]]},
+						{tabLabels[[tabIndex]]}
+					]
+				}],
+				{tabIndex, tabCount}
+			]
+		],
+
+		(* Tab contents *)
+		Splice @ Table[
+			XMLElement["div", {"class" -> "tab-content"}, {Splice @ tabContent}],
+			{tabContent, tabContents}
+		]
+	}]
+]
+
+(*====================================*)
+
+GeneralUtilities`SetUsage[FilteredCellQ, "
+	FilteredCellQ[cell$] returns True if cell$ is marked with a style that
+	should not be included in the current build configuration.
+
+	Excluded cells are always filtered. Draft cells are filtered if the
+	\"IncludeDrafts\" build setting is not enabled.
+"]
+
+SetFallthroughError[FilteredCellQ]
+
+FilteredCellQ[cell_] := Replace[cell, {
+	Cell[
+		_,
+		stylesSeq___?StringQ,
+		___?OptionQ
+	] /; MemberQ[{stylesSeq}, "ConnorGray/Excluded"] :> (
+		True
+	),
+
+	Cell[
+		_,
+		stylesSeq___?StringQ,
+		___?OptionQ
+	] /; And[
+		MemberQ[{stylesSeq}, "Draft" | "ConnorGray/Draft"],
+		!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
+	] :> (
+		True
+	),
+
+	_ -> False
+}]
 
 (*====================================*)
 

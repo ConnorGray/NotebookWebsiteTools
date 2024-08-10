@@ -58,3 +58,15 @@ develop NotebookWebsiteTools.
   and [rust-logo-32x32-blk.png](./paclets/NotebookWebsiteTools/Assets/Icons/rust-logo-32x32-blk.png)
   were sourced unchanged from the rust-lang/rust-artwork GitHub repository, and are licensed
   under the [Creative Commons Attribution license (CC-BY)](https://creativecommons.org/licenses/by/4.0/).
+
+* The icons:
+
+  - [w_tabs.png](./paclets/NotebookWebsiteTools/Assets/Icons/w_tabs.png)
+    ([#93521](https://www.onlinewebfonts.com/icon/93521>))
+
+  are from [www.onlinewebfonts.com/icon](http://www.onlinewebfonts.com/icon),
+  licensed as CC BY 4.0.
+
+* The implementation of CSS-only tabs is based on this public CodePen by Michał
+  Pawełczyk, [licensed under](https://blog.codepen.io/documentation/licensing/)
+  the MIT license: https://codepen.io/MPDoctor/pen/mpJdYe

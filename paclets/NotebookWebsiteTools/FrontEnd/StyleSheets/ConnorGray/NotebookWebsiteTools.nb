@@ -150,6 +150,32 @@ Notebook[{
 		CellFrameColor -> RGBColor[0.6, 0.4, 0.2] (* Draft color *)
 	],
 
+	(*======================*)
+	(* Special Header Cells *)
+	(*======================*)
+
+	Cell[StyleData["ConnorGray/TabViewSection"],
+		CellDingbat -> (
+			Cell @ BoxData @ DynamicBox[
+				ToBoxes[
+					Refresh[
+						Image[
+							Import[
+								PacletObject["ConnorGray/NotebookWebsiteTools"][
+									"AssetLocation", "TabViewIcon"
+								]
+							],
+							ImageSize -> 18,
+							BaselinePosition -> Scaled[0]
+						],
+						None
+					],
+					StandardForm
+				]
+			]
+		)
+	],
+
 	(*===============*)
 	(* Special Cells *)
 	(*===============*)
@@ -533,5 +559,5 @@ Notebook[{
 				}, "ConnorGray/DynamicIconLink"]
 			]
 		}
-	],
+	]
 }]

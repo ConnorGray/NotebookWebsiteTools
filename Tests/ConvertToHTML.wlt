@@ -1,5 +1,6 @@
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["Wolfram`ErrorTools`"]
 
@@ -280,4 +281,203 @@ VerificationTest[
 			"Foo"
 		}
 	]
+]
+
+(*====================================*)
+(* Test conversion of tabbed content  *)
+(*====================================*)
+
+(* TID:240809/2: Handle ConnorGray/TabViewSection cell group. *)
+VerificationTest[
+	ConvertToHtml @ Cell @ CellGroupData[{
+		Cell[
+			"Tabbed Content",
+			"Section",
+			"ConnorGray/TabViewSection"
+		],
+		Cell @ CellGroupData[{
+			Cell["Tab One Label", "Subsection"],
+			Cell["This is some content in the first tab.", "Text"]
+		}, Open],
+		(* TID:240809/1: Multi-cell tab contents *)
+		Cell @ CellGroupData[{
+			Cell["Tab Two Label", "Subsection"],
+			Cell["This is some content in the second tab.", "Text"],
+			Cell["This tab has multiple cells", "Text"],
+			Cell @ CellGroupData[{
+				Cell["And Even an Inner Cell Group", "Subsubsection"],
+				Cell["With its own content.", "Text"]
+			}, Open]
+		}, Open]
+	}, Open]
+	,
+	XMLElement["div", {"class" -> "tabbed"}, {
+		(*------------------*)
+		(* Radio buttons    *)
+		(*------------------*)
+
+		XMLElement["input", {
+			"type" -> "radio",
+			"id" -> "tab1",
+			"name" -> "css-tabs",
+			"checked" -> "true"
+		}, {}],
+		XMLElement["input", {
+			"type" -> "radio",
+			"id" -> "tab2",
+			"name" -> "css-tabs"
+		}, {}],
+
+		(*------------------*)
+		(* Tab labels       *)
+		(*------------------*)
+
+		XMLElement["ul", {"class" -> "tabs"}, {
+			XMLElement["li", {"class" -> "tab"}, {
+				XMLElement["label", {"for" -> "tab1"}, {"Tab One Label"}]
+			}],
+			XMLElement["li", {"class" -> "tab"}, {
+				XMLElement["label", {"for" -> "tab2"}, {"Tab Two Label"}]
+			}]
+		}],
+
+		(*------------------*)
+		(* Tab contents     *)
+		(*------------------*)
+
+		XMLElement["div", {"class" -> "tab-content"}, {
+			XMLElement["p", {}, {"This is some content in the first tab."}]
+		}],
+
+		XMLElement["div", {"class" -> "tab-content"}, {
+			XMLElement["p", {}, {"This is some content in the second tab."}],
+			XMLElement["p", {}, {"This tab has multiple cells"}],
+			XMLElement["h5", {"class" -> "nb-Subsubsection"}, {
+				XMLElement["a", {
+					"id" -> "and-even-an-inner-cell-group",
+					"class" -> "anchor",
+					"href" -> "#and-even-an-inner-cell-group"
+				}, {
+					"And Even an Inner Cell Group"
+				}]
+			}],
+			XMLElement["p", {}, {"With its own content."}]
+		}]
+	}]
+]
+
+(* TID:240810/1: Tab with empty contents after filtering. *)
+VerificationTest[
+	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
+		Cell @ CellGroupData[{
+			Cell["Tab One Label", "Subsection"],
+			Cell[
+				"This is some content in the first tab.",
+				"Text",
+				"ConnorGray/Excluded"
+			]
+		}, Open],
+		Cell @ CellGroupData[{
+			Cell["Tab Two Label", "Subsection"],
+			Cell["This is some content in the second tab.", "Text"]
+		}, Open]
+	}, Open],
+	Failure[NotebookWebsiteError, <|
+		"CausedBy" -> Failure[NotebookWebsiteError, <|
+			"CausedBy" -> Failure[NotebookWebsiteError, <|
+				"MessageTemplate" -> "Empty tab contents are not supported",
+				"MessageParameters" -> {}
+			|>],
+			"MessageTemplate" -> "Error processing tab at position ``",
+			"MessageParameters" -> {InputForm[{1}]}
+		|>],
+		"MessageTemplate" -> "Error processing tabbed content",
+		"MessageParameters" -> {}
+	|>]
+]
+
+(* TID:240810/2: Tab with excluded header cell. *)
+VerificationTest[
+	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
+		Cell @ CellGroupData[{
+			Cell["Tab One Label", "Subsection", "ConnorGray/Excluded"],
+			Cell["This is some content in the first tab.", "Text"]
+		}, Open],
+		Cell @ CellGroupData[{
+			Cell["Tab Two Label", "Subsection"],
+			Cell["This is some content in the second tab.", "Text"]
+		}, Open]
+	}, Open],
+	XMLElement["div", {"class" -> "tabbed"}, {
+		(*------------------*)
+		(* Radio buttons    *)
+		(*------------------*)
+
+		XMLElement["input", {
+			"type" -> "radio",
+			"id" -> "tab1",
+			"name" -> "css-tabs",
+			"checked" -> "true"
+		}, {}],
+
+		(*------------------*)
+		(* Tab labels       *)
+		(*------------------*)
+
+		XMLElement["ul", {"class" -> "tabs"}, {
+			XMLElement["li", {"class" -> "tab"}, {
+				XMLElement["label", {"for" -> "tab1"}, {"Tab Two Label"}]
+			}]
+		}],
+
+		(*------------------*)
+		(* Tab contents     *)
+		(*------------------*)
+
+		XMLElement["div", {"class" -> "tab-content"}, {
+			XMLElement["p", {}, {"This is some content in the second tab."}]
+		}]
+	}]
+]
+
+(* TID:240810/3: Tab header with non-String cell data. *)
+VerificationTest[
+	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
+
+		Cell @ CellGroupData[{
+			Cell["Tab One Header", "Subsection"],
+			Cell["This is some content in the first tab.", "Text"]
+		}, Open],
+
+		Cell @ CellGroupData[{
+			Cell[
+				TextData[{"Tab Two ", StyleBox["Header", FontSlant->"Italic"]}],
+				"Subsection"
+			],
+			Cell["This is some content in the second tab.", "Text"]
+		}, Open]
+	}, Open]
+	,
+	Failure[NotebookWebsiteError, <|
+		"CausedBy" -> Failure[NotebookWebsiteError, <|
+			"CausedBy" -> Failure[NotebookWebsiteError, <|
+				"TabHeaderCell" -> Cell[
+					TextData[{
+						"Tab Two ",
+						StyleBox["Header", FontSlant -> "Italic"]
+					}],
+					"Subsection"
+				],
+				"MessageTemplate" -> "Tab header cell data expected to be simple String.",
+				"MessageParameters" -> {}
+			|>],
+			"MessageTemplate" -> "Error processing tab at position ``",
+			"MessageParameters" -> {InputForm[{2}]}
+		|>],
+		"MessageTemplate" -> "Error processing tabbed content",
+		"MessageParameters" -> {}
+	|>]
 ]
