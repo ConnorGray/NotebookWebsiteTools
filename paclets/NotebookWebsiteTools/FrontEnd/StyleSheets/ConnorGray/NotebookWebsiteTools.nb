@@ -351,7 +351,7 @@ Notebook[{
 				contents of the cell in our "KeyDown" event hander. *)
 			EvaluationOrder -> After,
 			"KeyDown" :> (
-				HandleHighlightSyntaxCellEvent[EvaluationCell[], "KeyDown"]
+				ConnorGray`NotebookWebsiteTools`UI`HandleHighlightSyntaxCellEvent[EvaluationCell[], "KeyDown"]
 			)
 		}
 	],
