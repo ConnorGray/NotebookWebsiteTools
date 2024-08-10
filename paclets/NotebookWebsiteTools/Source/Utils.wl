@@ -57,9 +57,15 @@ GetWebsiteFavicon[url$] attempts to retrieve the favicon of a website as an
 Image or Graphics expression.
 "]
 
+GU`SetUsage[CodeSyntaxHighlight, "
+CodeSyntaxHighlight[code$, syntax$, theme$] returns styling directives rendering
+code$ using syntax rules for the specified programming language syntax$, in the
+color theme theme$."]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
+Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 
 (*========================================================*)
 
@@ -422,6 +428,29 @@ GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
 			];
 		)
 	}]
+]
+
+(*========================================================*)
+
+SetFallthroughError[CodeSyntaxHighlight]
+
+CodeSyntaxHighlight[
+	code: _?StringQ,
+	syntax: _?StringQ,
+	theme: _?StringQ : Automatic
+] := Module[{
+	highlighted,
+	background
+},
+	highlighted = RaiseConfirm @ GetLibraryFunction["highlight_to_wolfram"][
+		code, syntax, theme
+	];
+
+	background = RaiseConfirm @ GetLibraryFunction["theme_default_background"][
+		theme
+	];
+
+	{background, highlighted}
 ]
 
 (*========================================================*)

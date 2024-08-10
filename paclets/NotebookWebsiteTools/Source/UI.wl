@@ -120,8 +120,8 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	(*----------------------------------------------*)
 
 	(* FIXME: Do ToBoxes on this; fix ConvertToString parsing. *)
-	highlightedContent = ReplaceAll[
-		GetLibraryFunction["highlight_to_wolfram"][plainTextContent, syntax, theme],
+	{background, highlightedContent} = ReplaceAll[
+		CodeSyntaxHighlight[plainTextContent, syntax, theme],
 		Style -> StyleBox
 	];
 
