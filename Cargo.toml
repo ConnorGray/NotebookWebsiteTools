@@ -2,3 +2,7 @@
 members = [
     "crates/notebook-website-tools"
 ]
+
+# FIXME: Publish this functionality to crates.io and remove this patch.
+[patch.'crates-io'.wolfram-expr]
+path = "/Users/connorgray/Dev/GitHub/WolframResearch/wolfram-expr-rs"

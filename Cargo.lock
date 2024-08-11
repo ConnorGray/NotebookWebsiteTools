@@ -828,8 +828,6 @@ dependencies = [
 [[package]]
 name = "wolfram-expr"
 version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "614f5538290eb531931222ac71322f5b2617cd80243e24d02a1c28cfa172eebd"
 dependencies = [
  "ordered-float",
 ]

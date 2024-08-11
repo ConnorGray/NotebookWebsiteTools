@@ -1,13 +1,21 @@
+use std::ops::Range;
+
 use wolfram_library_link::{
     self as wll,
-    expr::{Expr, Symbol},
+    expr::{
+        convert::{
+            forms::{List, RGBColor, Rule},
+            parse_headed, parse_headed_args, FromExpr, FromExprError,
+        },
+        st, Expr, Symbol,
+    },
 };
 
 use once_cell::sync::Lazy;
 
 use syntect::{
     easy::HighlightLines,
-    highlighting::{Color, FontStyle, Style, Theme, ThemeSet},
+    highlighting::{Color, FontStyle, Style, StyleModifier, Theme, ThemeSet},
     parsing::{SyntaxReference, SyntaxSet},
     util::LinesWithEndings,
 };
@@ -100,8 +108,8 @@ fn highlight_to_html(args: Vec<Expr>) -> Expr {
 /// expressions.
 #[wll::export(wstp)]
 fn highlight_to_wolfram(args: Vec<Expr>) -> Expr {
-    if args.len() != 3 {
-        panic!("expected 3 arguments, got {}: {args:?}", args.len())
+    if args.len() != 4 {
+        panic!("expected 4 arguments, got {}: {args:?}", args.len())
     }
 
     let source: &str = args[0]
@@ -113,6 +121,13 @@ fn highlight_to_wolfram(args: Vec<Expr>) -> Expr {
     let theme_name: &str = args[2]
         .try_as_str()
         .expect("expected 3rd arg to be a String");
+    let custom_highlights = if args[3] != st::None {
+        List::<CustomHighlight>::from_expr_req(&args[3])
+            .expect("Invalid form for custom highlight specification")
+            .0
+    } else {
+        vec![]
+    };
 
     let syntax = match lookup_syntax(syntax_name) {
         Ok(syntax) => syntax,
@@ -130,10 +145,17 @@ fn highlight_to_wolfram(args: Vec<Expr>) -> Expr {
 
     let mut segments = Vec::new();
 
-    for line in LinesWithEndings::from(source) {
-        let ranges: Vec<(Style, &str)> = highlighter
+    for (line_number, line) in LinesWithEndings::from(source).enumerate() {
+        let mut ranges: Vec<(Style, &str)> = highlighter
             .highlight_line(line, &SYNTAX_SET)
             .expect("error highlighting line");
+
+        for custom in custom_highlights
+            .iter()
+            .filter(|custom| custom.line == line_number)
+        {
+            ranges = syntect::util::modify_range(&ranges, custom.range.clone(), custom.style_mod);
+        }
 
         let line = Expr::list(
             ranges
@@ -197,17 +219,25 @@ fn syntect_style_span_to_wolfram(
 fn syntect_color_to_wolfram(color: syntect::highlighting::Color) -> Expr {
     let syntect::highlighting::Color { r, g, b, a } = color;
 
-    let mut rgb = vec![
-        Expr::real(r as f64 / 255.0),
-        Expr::real(g as f64 / 255.0),
-        Expr::real(b as f64 / 255.0),
-    ];
+    let rgb_color = RGBColor {
+        r,
+        g,
+        b,
+        a: if a == 255 { None } else { Some(a) },
+    };
 
-    if a != 255 {
-        rgb.push(Expr::real(a as f64 / 255.0));
+    rgb_color.to_expr()
+}
+
+fn wolfram_to_syntect_color(color: RGBColor) -> syntect::highlighting::Color {
+    let RGBColor { r, g, b, a } = color;
+
+    syntect::highlighting::Color {
+        r,
+        g,
+        b,
+        a: a.unwrap_or(u8::MAX),
     }
-
-    Expr::normal(Symbol::new("System`RGBColor"), rgb)
 }
 
 #[wll::export(wstp)]
@@ -313,4 +343,79 @@ fn lookup_theme(theme_name: &str) -> Result<&'static Theme, Expr> {
             ),
         ],
     ))
+}
+
+struct CustomHighlight {
+    line: usize,
+    // TODO: Bytes or codepoints?
+    range: Range<usize>,
+    style_mod: StyleModifier,
+}
+
+impl FromExpr<'_> for CustomHighlight {
+    fn parse_from_expr(expr: &Expr) -> Result<Self, FromExprError> {
+        // lhs -> style_mod:StyleModifier
+        let Rule(lhs, New(style_mod)) = Rule::<&Expr, New<StyleModifier>>::parse_from_expr(expr)?;
+
+        // {line:usize, range} -> style_mod:StyleModifier
+        // TODO: This should always yield a FromExprError::Malformed.
+        let (line, range): (usize, &Expr) = parse_headed_args(lhs, st::List)?;
+
+        // TODO: This should always yield a FromExprError::Malformed.
+        let (range_start, range_end): (usize, usize) = parse_headed_args(range, st::Span)?;
+
+        Ok(CustomHighlight {
+            line,
+            range: Range {
+                start: range_start,
+                end: range_end,
+            },
+            style_mod,
+        })
+    }
+}
+
+struct New<T>(T);
+
+impl FromExpr<'_> for New<StyleModifier> {
+    fn parse_from_expr(expr: &'_ Expr) -> Result<Self, FromExprError> {
+        let mut modifier = StyleModifier::default();
+
+        let directives = match parse_headed(expr, st::Directive) {
+            Ok(directives) => directives,
+            Err(_) => &[expr.clone()],
+        };
+
+        for directive in directives {
+            if *directive == st::Bold {
+                modifier.font_style = Some(FontStyle::BOLD);
+                continue;
+            } else if *directive == st::Italic {
+                modifier.font_style = Some(FontStyle::ITALIC);
+                continue;
+            } else if *directive == st::Underlined {
+                modifier.font_style = Some(FontStyle::UNDERLINE);
+                continue;
+            }
+
+            if let Some(Rule(lhs, rhs)) = Rule::<&Expr, _>::from_expr_opt(directive)? {
+                if *lhs == st::Background {
+                    let rgb_color = RGBColor::from_expr_req(rhs)?;
+                    modifier.background = Some(wolfram_to_syntect_color(rgb_color));
+                    continue;
+                } else if *lhs == st::FontColor {
+                    let rgb_color = RGBColor::from_expr_req(rhs)?;
+                    modifier.foreground = Some(wolfram_to_syntect_color(rgb_color));
+                    continue;
+                }
+            }
+
+            return Err(FromExprError::unexpected_custom(
+                directive,
+                "expected style directive of Bold, Italic, Underlined, FontColor -> ..., or Background -> ...",
+            ));
+        }
+
+        Ok(New(modifier))
+    }
 }

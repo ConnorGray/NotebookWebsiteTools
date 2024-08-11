@@ -60,7 +60,11 @@ Image or Graphics expression.
 GU`SetUsage[CodeSyntaxHighlight, "
 CodeSyntaxHighlight[code$, syntax$, theme$] returns styling directives rendering
 code$ using syntax rules for the specified programming language syntax$, in the
-color theme theme$."]
+color theme theme$.
+
+CodeSyntaxHighlight[code$, syntax$, theme$, custom$] returns styled output with
+the specified custom$ styling applied to spans of the input.
+"]
 
 Begin["`Private`"]
 
@@ -437,13 +441,14 @@ SetFallthroughError[CodeSyntaxHighlight]
 CodeSyntaxHighlight[
 	code: _?StringQ,
 	syntax: _?StringQ,
-	theme: _?StringQ : Automatic
+	theme: _?StringQ : Automatic,
+	customHighlights: _ : None
 ] := Module[{
 	highlighted,
 	background
 },
 	highlighted = RaiseConfirm @ GetLibraryFunction["highlight_to_wolfram"][
-		code, syntax, theme
+		code, syntax, theme, customHighlights
 	];
 
 	background = RaiseConfirm @ GetLibraryFunction["theme_default_background"][
