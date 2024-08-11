@@ -132,6 +132,9 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 		Return[Null, Module];
 	];
 
+	(* Flatten the nesting that indicates separate lines. *)
+	highlightedContent = Flatten[highlightedContent, 1];
+
 	newCell = Replace[originalCell, {
 		Cell[_, args___] :> (
 			Cell[

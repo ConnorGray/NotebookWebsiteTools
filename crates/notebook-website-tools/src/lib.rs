@@ -135,9 +135,16 @@ fn highlight_to_wolfram(args: Vec<Expr>) -> Expr {
             .highlight_line(line, &SYNTAX_SET)
             .expect("error highlighting line");
 
-        segments.extend(ranges.into_iter().map(|(style, source_fragment)| {
-            syntect_style_span_to_wolfram(style, source_fragment, default_background)
-        }))
+        let line = Expr::list(
+            ranges
+                .into_iter()
+                .map(|(style, source_fragment)| {
+                    syntect_style_span_to_wolfram(style, source_fragment, default_background)
+                })
+                .collect(),
+        );
+
+        segments.push(line);
     }
 
     Expr::list(segments)
