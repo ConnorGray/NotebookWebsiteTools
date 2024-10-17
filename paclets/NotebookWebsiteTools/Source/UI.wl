@@ -28,6 +28,7 @@ $GitHubIcon :=
 (* Used in Cell style implementations *)
 (*------------------------------------*)
 
+InitializeHighlightSyntaxCell
 HandleHighlightSyntaxCellEvent::usage = "HandleHighlightSyntaxCellEvent[cellObj, event]"
 HighlightSyntaxCellDefaultBackground
 KnownHighlightChoices
@@ -74,6 +75,119 @@ ToggleDraft[nb_NotebookObject] := Module[{
 (*========================================================*)
 (* Syntax Highlighting                                    *)
 (*========================================================*)
+
+InitializeHighlightSyntaxCell[cellObj: _CellObject] := Module[{
+	cellHoveredPane,
+	attachedCellData,
+	attachedCell
+},
+	(*----------------------------------------------*)
+	(* Construct the HighlightSyntax menu cell expr *)
+	(*----------------------------------------------*)
+
+	cellHoveredPane = Row[{
+		PopupMenu[
+			Dynamic @ CurrentValue[
+				ParentCell @ EvaluationCell[],
+				{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
+			],
+			ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[]["Syntaxes"],
+			ConnorGray`NotebookWebsiteTools`$DefaultSyntax,
+			Framed[
+				Style[
+					Row[{
+						Dynamic @ Replace[
+							CurrentValue[
+								ParentCell @ EvaluationCell[],
+								{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
+							],
+							Inherited -> ConnorGray`NotebookWebsiteTools`$DefaultSyntax
+						],
+						"\[VeryThinSpace]\[RightAngleBracket]"
+					}],
+					FontSize -> 11,
+					FontWeight -> "Bold",
+					FontColor -> GrayLevel[0.5]
+				],
+				FrameMargins -> 4,
+				FrameStyle -> Directive[
+					RGBColor[0.8549, 0.83137, 0.72549],
+					AbsoluteThickness[1]
+				],
+				ImageMargins -> {{0, 3}, {0, 0}},
+				RoundingRadius -> 3,
+				Background -> LightYellow
+			]
+		],
+		PopupMenu[
+			Dynamic @ CurrentValue[
+				ParentCell @ EvaluationCell[],
+				{TaggingRules, "HighlightSyntaxOptions", "Theme"}
+			],
+			ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[]["Themes"],
+			ConnorGray`NotebookWebsiteTools`$DefaultTheme,
+			Framed[
+				Style[
+					Row[{
+						Dynamic @ Replace[
+							CurrentValue[
+								ParentCell @ EvaluationCell[],
+								{TaggingRules, "HighlightSyntaxOptions", "Theme"}
+							],
+							Inherited -> ConnorGray`NotebookWebsiteTools`$DefaultTheme
+						],
+						"\[VeryThinSpace]\[RightAngleBracket]"
+					}],
+					FontSize -> 11,
+					FontWeight -> "Bold",
+					FontColor -> GrayLevel[0.5]
+				],
+				FrameMargins -> 4,
+				FrameStyle -> Directive[
+					RGBColor[0.8549, 0.83137, 0.72549],
+					AbsoluteThickness[1]
+				],
+				ImageMargins -> {{0, 3}, {0, 0}},
+				RoundingRadius -> 3,
+				Background -> LightYellow
+			]
+		]
+	}];
+
+	attachedCellData = PaneSelector[
+		{
+			True -> cellHoveredPane,
+			False -> ""
+		},
+		(* Display the Syntax picker popup if the mouse is
+			over the parent HighlightSynax cell or this
+			attached cell. *)
+		Dynamic[
+			CurrentValue[
+				ParentCell @ EvaluationCell[],
+				{TaggingRules, "parent_cell_is_hovered"}
+			] || CurrentValue["MouseOver"]
+		]
+	];
+
+	attachedCell = Cell[
+		BoxData @ ToBoxes @ attachedCellData,
+		CellEventActions -> None,
+		Background -> Transparent
+	];
+
+	(*---------------------------------------------*)
+	(* Attach the menu to the HighlightSyntax cell *)
+	(*---------------------------------------------*)
+
+	AttachCell[
+		cellObj,
+		attachedCell,
+		{Right, Top},
+		-2,
+		{Right, Top}
+	];
+]
 
 HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	cellObj,
