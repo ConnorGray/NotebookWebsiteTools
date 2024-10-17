@@ -211,10 +211,7 @@ Notebook[{
 	Cell[StyleData["ConnorGray/HighlightSyntax"],
 		MenuSortingValue -> 2500 + 75,
 		CellMargins->{{66, 10}, {8, 8}},
-		(* FIXME: Don't make the display of this cell depend on
-			NotebookWebsiteTools having been loaded. *)
-		Background :> Dynamic[ConnorGray`NotebookWebsiteTools`UI`HighlightSyntaxCellDefaultBackground[EvaluationCell[]]],
-		Background -> RGBColor[1, 1, 0], (* Yellow *)
+		(* NOTE: Background is set when the cell initializes. *)
 		CellFrame -> {{3, False}, {False, False}},
 		CellFrameColor -> GrayLevel[0.8],
 		(* Copied from Default.nb "Program" cells: *)

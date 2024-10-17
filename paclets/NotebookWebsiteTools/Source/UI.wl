@@ -76,32 +76,46 @@ ToggleDraft[nb_NotebookObject] := Module[{
 (* Syntax Highlighting                                    *)
 (*========================================================*)
 
-InitializeHighlightSyntaxCell[cellObj: _CellObject] := Module[{
+(*
+	Initialize a HighlightSyntax cell.
+
+	This could be a first-time initialization, but typically will be a
+	session initialization.
+*)
+InitializeHighlightSyntaxCell[cellObj: _CellObject] := With[{
+	$syntaxSpec = {TaggingRules, "HighlightSyntaxOptions", "Syntax"},
+	$themeSpec  = {TaggingRules, "HighlightSyntaxOptions", "Theme"}
+}, Module[{
 	cellHoveredPane,
 	attachedCellData,
 	attachedCell
 },
+	If[CurrentValue[cellObj, $syntaxSpec] === Inherited,
+		CurrentValue[cellObj, $syntaxSpec] = $DefaultSyntax;
+	];
+	If[CurrentValue[cellObj, $themeSpec] === Inherited,
+		CurrentValue[cellObj, $themeSpec] = $DefaultTheme;
+	];
+
+	CurrentValue[cellObj, Background] = HighlightSyntaxCellDefaultBackground[
+		cellObj
+	];
+
 	(*----------------------------------------------*)
 	(* Construct the HighlightSyntax menu cell expr *)
 	(*----------------------------------------------*)
 
 	cellHoveredPane = Row[{
 		PopupMenu[
-			Dynamic @ CurrentValue[
-				ParentCell @ EvaluationCell[],
-				{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
-			],
-			ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[]["Syntaxes"],
-			ConnorGray`NotebookWebsiteTools`$DefaultSyntax,
+			Dynamic @ CurrentValue[cellObj, $syntaxSpec],
+			KnownHighlightChoices[]["Syntaxes"],
+			$DefaultSyntax,
 			Framed[
 				Style[
 					Row[{
-						Dynamic @ Replace[
-							CurrentValue[
-								ParentCell @ EvaluationCell[],
-								{TaggingRules, "HighlightSyntaxOptions", "Syntax"}
-							],
-							Inherited -> ConnorGray`NotebookWebsiteTools`$DefaultSyntax
+						Dynamic[
+							CurrentValue[cellObj, $syntaxSpec],
+							None
 						],
 						"\[VeryThinSpace]\[RightAngleBracket]"
 					}],
@@ -120,21 +134,15 @@ InitializeHighlightSyntaxCell[cellObj: _CellObject] := Module[{
 			]
 		],
 		PopupMenu[
-			Dynamic @ CurrentValue[
-				ParentCell @ EvaluationCell[],
-				{TaggingRules, "HighlightSyntaxOptions", "Theme"}
-			],
-			ConnorGray`NotebookWebsiteTools`UI`KnownHighlightChoices[]["Themes"],
-			ConnorGray`NotebookWebsiteTools`$DefaultTheme,
+			Dynamic @ CurrentValue[cellObj, $themeSpec],
+			KnownHighlightChoices[]["Themes"],
+			$DefaultTheme,
 			Framed[
 				Style[
 					Row[{
-						Dynamic @ Replace[
-							CurrentValue[
-								ParentCell @ EvaluationCell[],
-								{TaggingRules, "HighlightSyntaxOptions", "Theme"}
-							],
-							Inherited -> ConnorGray`NotebookWebsiteTools`$DefaultTheme
+						Dynamic[
+							CurrentValue[cellObj, $themeSpec],
+							None
 						],
 						"\[VeryThinSpace]\[RightAngleBracket]"
 					}],
@@ -187,7 +195,9 @@ InitializeHighlightSyntaxCell[cellObj: _CellObject] := Module[{
 		-2,
 		{Right, Top}
 	];
-]
+]]
+
+(*====================================*)
 
 HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	cellObj,
