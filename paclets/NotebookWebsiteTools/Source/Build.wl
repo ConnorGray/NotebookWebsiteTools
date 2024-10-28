@@ -1064,6 +1064,13 @@ wrapHtmlForStyle[
 
 			RaiseAssert[StringQ[syntaxString]];
 
+			syntaxString = DeleteDelimitedLines[
+				syntaxString,
+				{"begin-hidden", "end-hidden"}
+			];
+
+			RaiseAssert[StringQ[syntaxString]];
+
 			highlightOptions = Replace[cellOptions, {
 				KeyValuePattern[
 					TaggingRules -> KeyValuePattern[

@@ -66,6 +66,9 @@ CodeSyntaxHighlight[code$, syntax$, theme$, custom$] returns styled output with
 the specified custom$ styling applied to spans of the input.
 "]
 
+GU`SetUsage[DeleteDelimitedLines, "
+DeleteDelimitedLines[text$, {start$, end$}] returns a string where runs of lines"]
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
@@ -456,6 +459,55 @@ CodeSyntaxHighlight[
 	];
 
 	{background, highlighted}
+]
+
+(*========================================================*)
+
+SetFallthroughError[DeleteDelimitedLines]
+
+DeleteDelimitedLines[
+	text: _?StringQ,
+	{startMarker: _?StringQ, endMarker: _?StringQ}
+] := Module[{
+	excludedPatt,
+	lines
+},
+	excludedPatt = Shortest @ PatternSequence[
+		start: _ /; StringContainsQ[start, startMarker],
+		___,
+		end: _ /; StringContainsQ[end, endMarker]
+	];
+
+	lines = StringSplit[text, "\n", All];
+
+	RaiseAssert[MatchQ[lines, {___?StringQ}]];
+
+	lines = ReplaceRepeated[lines, {
+		(* TID/241027/1: Deleted interior section of hidden lines. *)
+		{
+			most: ___,
+			"",
+			excludedPatt,
+			"",
+			rest: ___
+		} :> {most, "", rest},
+
+		(* TID/241027/2: Deleted leading section of hidden lines. *)
+		{
+			excludedPatt,
+			"",
+			rest: ___
+		} :> {rest},
+
+		(* Handle any other cases *)
+		{
+			most: ___,
+			excludedPatt,
+			rest: ___
+		} :> {most, rest}
+	}];
+
+	StringRiffle[lines, "\n"]
 ]
 
 (*========================================================*)
