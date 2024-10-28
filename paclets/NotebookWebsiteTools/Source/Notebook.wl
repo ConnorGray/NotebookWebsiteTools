@@ -10,6 +10,8 @@ MakeNotebookDockedCells
 
 UpdateNotebook::usage = "UpdateNotebook[obj] updates the website notebook specified by the notebook object obj."
 
+$NotebookWebsiteToolsStylesheet
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
@@ -85,17 +87,17 @@ SetFallthroughError[MakeNotebookTaggingRules]
 
 (*====================================*)
 
-$MenuSortingValueOffset = 2500;
-
-MakeNotebookStyleDefinitions[] := Module[{},
-	Notebook[{
-		Cell[StyleData[StyleDefinitions -> "ConnorGray/NotebookWebsiteTools.nb"]]
-	},
-		StyleDefinitions -> "PrivateStylesheetFormatting.nb"
-	]
+$NotebookWebsiteToolsStylesheet = FrontEnd`FileName[
+	{"ConnorGray"},
+	"NotebookWebsiteTools.nb",
+	CharacterEncoding -> "UTF-8"
 ]
 
+MakeNotebookStyleDefinitions[] :=
+	$NotebookWebsiteToolsStylesheet
+
 SetFallthroughError[MakeNotebookStyleDefinitions]
+
 
 (*------------------------------------*)
 

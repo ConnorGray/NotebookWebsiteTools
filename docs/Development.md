@@ -45,6 +45,11 @@ Using the CLI:
 $ wolfram-cli paclet test ./paclets/NotebookWebsiteTools Tests
 ```
 
+#### Regenerate the NotebookWebsiteTools.nb stylesheet
+
+```shell
+$ ./scripts/build-stylesheet.wls
+```
 
 
 ## Setup

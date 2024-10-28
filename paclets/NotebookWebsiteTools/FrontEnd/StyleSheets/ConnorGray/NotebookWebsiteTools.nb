@@ -1,469 +1,337 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     14110,        328]
+NotebookOptionsPosition[     11227,        290]
+NotebookOutlinePosition[     11565,        304]
+CellTagsIndexPosition[     11522,        301]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
 Notebook[{
-	(* Inherit from Default.nb *)
-	Cell[StyleData[StyleDefinitions -> "Default.nb"]],
+Cell[StyleData[StyleDefinitions -> "Default.nb"],ExpressionUUID->"76576f49-408d-4942-8f0e-175f8ad9c0d9"],
 
-	Cell[StyleData["Notebook"],
-		DockedCells -> {
-			Cell[
-				BoxData @ GridBox[{{
-					ItemBox[
-						GridBox[{{
-							TemplateBox[
-								{
-									GraphicsBox[{
-										InsetBox[
-											FormBox["\"TD\"", TraditionalForm],
-											{0, 0}
-										]
-									}, {
-										ImageSize -> 15,
-										BaselinePosition -> Center
-									}],
-									"Exclude",
-									"Toggle whether the selected cells are marked as Excluded.",
-									Function[
-										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-										ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
-									],
-									"Queued",
-									RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
-									RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
-								},
-								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
-							],
-							TemplateBox[
-								{
-									GraphicsBox[{
-										InsetBox[
-											FormBox["\"\"", TraditionalForm],
-											{0, 0}
-										]
-									}, {
-										ImageSize -> 15,
-										BaselinePosition -> Center
-									}],
-									"Draft",
-									"Toggle whether the selected cells are marked as Draft.",
-									Function[
-										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-										ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[ButtonNotebook[]]
-									],
-									"Queued",
-									RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
-									RGBColor[0.6, 0.4, 0.2] (* Draft color *)
-								},
-								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
-							]
-						}}],
-						(* Force this item to take up the maximum possible width. This
-						makes items that come after this appear aligned to the right
-						side of the notebook. *)
-						ItemSize -> Fit
-					],
-					StyleBox[
-						"Status: ",
-						"Text",
-						GrayLevel[0.5]
-					],
-					PopupMenuBox[
-						Dynamic[
-							CurrentValue[
-								EvaluationNotebook[],
-								{TaggingRules, "ConnorGray/NotebookWebsiteTools", "DocumentStatus"}
-							]
-						],
-						{
-							"Draft" -> StyleBox["\"Draft\"", Bold, RGBColor[0.6, 0.4, 0.2]], (* Brown *)
-							"Published" -> StyleBox["\"Published\"", Bold, RGBColor[0, Rational[2, 3], 0]], (* Darker[Green] *)
-							"Excluded" -> StyleBox["\"Excluded\"", Bold, RGBColor[Rational[2, 3], 0, 0]] (* Darker[Red] *)
-						},
-						(* If no known document status value is selected, show
-							a long dash to indicate that this value is missing. *)
-						ItemBox[
-							StyleBox["\[LongDash]", Bold, GrayLevel[0.4], Alignment -> Center],
-							Alignment -> Center
-						]
-					]
-				}},
-					GridBoxAlignment -> {
-						"Columns" -> {{Left}},
-						"ColumnsIndexed" -> {-1 -> Right},
-						"Rows" -> {{Center}}
-					}
-				],
-				CellFrameMargins -> {{Inherited, Inherited}, {0, 0}}
-			]
-		}
-	],
+Cell[StyleData["Notebook"],
+ DockedCells->{
+   Cell[
+    BoxData[
+     GridBox[{{
+        ItemBox[
+         GridBox[{{
+            TemplateBox[{
+              GraphicsBox[{
+                InsetBox[
+                 FormBox["\"TD\"", TraditionalForm], {0, 0}]}, {
+               ImageSize -> 15, BaselinePosition -> Center}], "Exclude", 
+              "Toggle whether the selected cells are marked as Excluded.", (
+              Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None]; 
+              ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[
+                ButtonNotebook[]])& , "Queued", 
+              RGBColor[1, 0.85, 0.85], 
+              RGBColor[0.8, 0, 0]}, 
+             "NotebookWebsiteTools:IconAndLabelButtonTemplate"], 
+            TemplateBox[{
+              GraphicsBox[{
+                InsetBox[
+                 FormBox["\"\"", TraditionalForm], {0, 0}]}, {
+               ImageSize -> 15, BaselinePosition -> Center}], "Draft", 
+              "Toggle whether the selected cells are marked as Draft.", (
+              Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None]; 
+              ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[
+                ButtonNotebook[]])& , "Queued", 
+              RGBColor[1, 0.8, 0.6], 
+              RGBColor[0.6, 0.4, 0.2]}, 
+             "NotebookWebsiteTools:IconAndLabelButtonTemplate"]}}], ItemSize -> 
+         Fit], 
+        StyleBox["Status: ", "Text", 
+         GrayLevel[0.5]], 
+        PopupMenuBox[
+         Dynamic[
+          CurrentValue[
+           EvaluationNotebook[], {
+           TaggingRules, "ConnorGray/NotebookWebsiteTools", 
+            "DocumentStatus"}]], {"Draft" -> StyleBox["\"Draft\"", Bold, 
+            RGBColor[0.6, 0.4, 0.2]], "Published" -> 
+          StyleBox["\"Published\"", Bold, 
+            RGBColor[0, 
+             Rational[2, 3], 0]], "Excluded" -> StyleBox["\"Excluded\"", Bold, 
+            RGBColor[
+             Rational[2, 3], 0, 0]]}, 
+         ItemBox[
+          StyleBox["\[LongDash]", Bold, 
+           GrayLevel[0.4], Alignment -> Center], Alignment -> Center]]}}, 
+      GridBoxAlignment -> {
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {-1 -> Right}, 
+        "Rows" -> {{Center}}}]], 
+    CellFrameMargins -> {{Inherited, Inherited}, {0, 
+      0}}]},ExpressionUUID->"7f77401b-d808-40a0-84ac-efebad24471c"],
 
-	(*================================*)
-	(* Deprecated cell styles         *)
-	(*================================*)
+Cell[StyleData["Excluded", StyleDefinitions -> 
+ StyleData["ConnorGray/Excluded"]],
+ MenuSortingValue->
+  None,ExpressionUUID->"3f8ecd64-a060-414e-bc24-076136731c60"],
 
-	Cell[
-		StyleData[
-			"Excluded",
-			StyleDefinitions -> StyleData["ConnorGray/Excluded"]
-		],
-		MenuSortingValue -> None
-	],
+Cell[StyleData["LiteralHTML", StyleDefinitions -> 
+ StyleData["ConnorGray/LiteralHTML"]],
+ MenuSortingValue->
+  None,ExpressionUUID->"e8fcf280-d56f-42ef-896f-1f3dbd0b902b"],
 
-	Cell[
-		StyleData[
-			"LiteralHTML",
-			StyleDefinitions -> StyleData["ConnorGray/LiteralHTML"]
-		],
-		MenuSortingValue -> None
-	],
+Cell[StyleData["ComputedHTML", StyleDefinitions -> 
+ StyleData["ConnorGray/ComputedHTML"]],
+ MenuSortingValue->
+  None,ExpressionUUID->"e2cbf08e-4e2e-42e8-a900-82ebc8d68ca6"],
 
-	Cell[
-		StyleData[
-			"ComputedHTML",
-			StyleDefinitions -> StyleData["ConnorGray/ComputedHTML"]
-		],
-		MenuSortingValue -> None
-	],
+Cell[StyleData["HighlightSyntax", StyleDefinitions -> 
+ StyleData["ConnorGray/HighlightSyntax"]],
+ MenuSortingValue->
+  None,ExpressionUUID->"230b793f-a703-4d70-9ce7-3606b09960e8"],
 
-	Cell[
-		StyleData[
-			"HighlightSyntax",
-			StyleDefinitions -> StyleData["ConnorGray/HighlightSyntax"]
-		],
-		MenuSortingValue -> None
-	],
+Cell[StyleData["ConnorGray/Excluded"],
+ CellFrame->{{3, False}, {False, False}},
+ CellFrameColor->RGBColor[0.8, 0, 0],
+ MenuSortingValue->2500,
+ Background->RGBColor[
+  1, 0.85, 0.85],ExpressionUUID->"9cb1dc03-efaf-45bc-9496-c2a66ac6071d"],
 
-	(*====================*)
-	(* Content Processing *)
-	(*====================*)
+Cell[StyleData["ConnorGray/Draft"],
+ CellFrame->{{3, False}, {False, False}},
+ CellFrameColor->RGBColor[0.6, 0.4, 0.2],
+ MenuSortingValue->2500,
+ Background->RGBColor[
+  1, 0.8, 0.6],ExpressionUUID->"cf6cf640-b29a-4686-b788-f373a3616f7d"],
 
-	Cell[StyleData["ConnorGray/Excluded"],
-		MenuSortingValue -> 2500,
-		Background -> RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
-		CellFrame -> {{3, False}, {False, False}},
-		CellFrameColor -> RGBColor[0.8, 0, 0] (* Darker[Red, 0.2] *)
-	],
+Cell[StyleData["ConnorGray/TabViewSection"],
+ CellDingbat->Cell[
+   BoxData[
+    DynamicBox[
+     ToBoxes[
+      Refresh[
+       Image[
+        Import[
+         PacletObject["ConnorGray/NotebookWebsiteTools"][
+         "AssetLocation", "TabViewIcon"]], ImageSize -> 18, BaselinePosition -> 
+        Scaled[0]], None], 
+      StandardForm]]]],ExpressionUUID->"a54c58fa-92d9-4fe8-8977-6ada9e15f148"],
 
-	Cell[StyleData["ConnorGray/Draft"],
-		MenuSortingValue -> 2500,
-		Background -> RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
-		CellFrame -> {{3, False}, {False, False}},
-		CellFrameColor -> RGBColor[0.6, 0.4, 0.2] (* Draft color *)
-	],
+Cell[StyleData["ConnorGray/LiteralHTML"],
+ CellFrame->{{3, False}, {False, False}},
+ CellDingbat->StyleBox["\"</>\"", Bold, 
+   GrayLevel[0.6], ShowStringCharacters -> False],
+ CellMargins->{{66, 10}, {8, 8}},
+ StripStyleOnPaste->True,
+ CellFrameColor->GrayLevel[0.8],
+ CodeAssistOptions->{"AutoDetectHyperlinks"->False},
+ Hyphenation->False,
+ AutoQuoteCharacters->{},
+ PasteAutoQuoteCharacters->{},
+ LanguageCategory->None,
+ MenuSortingValue->2525,
+ FontFamily->Dynamic[
+   AbsoluteCurrentValue[
+    EvaluationCell[], {StyleHints, "CodeFont"}]],
+ Background->GrayLevel[
+  0.95],ExpressionUUID->"c70ccaef-da33-4930-a85f-45a2e468ee61"],
 
-	(*======================*)
-	(* Special Header Cells *)
-	(*======================*)
+Cell[StyleData["ConnorGray/ComputedHTML", StyleDefinitions -> 
+ StyleData["Input"]],
+ CellDingbat->StyleBox["\"</>\"", Bold, 
+   GrayLevel[0.6], ShowStringCharacters -> False],
+ MenuSortingValue->
+  2550,ExpressionUUID->"a4ea950b-8369-4d23-94f2-22b9da96d47a"],
 
-	Cell[StyleData["ConnorGray/TabViewSection"],
-		CellDingbat -> (
-			Cell @ BoxData @ DynamicBox[
-				ToBoxes[
-					Refresh[
-						Image[
-							Import[
-								PacletObject["ConnorGray/NotebookWebsiteTools"][
-									"AssetLocation", "TabViewIcon"
-								]
-							],
-							ImageSize -> 18,
-							BaselinePosition -> Scaled[0]
-						],
-						None
-					],
-					StandardForm
-				]
-			]
-		)
-	],
+Cell[StyleData["ConnorGray/HighlightSyntax"],
+ CellFrame->{{3, False}, {False, False}},
+ CellMargins->{{66, 10}, {8, 8}},
+ StripStyleOnPaste->True,
+ Initialization:>(Needs["ConnorGray`NotebookWebsiteTools`" -> None]; 
+  ConnorGray`NotebookWebsiteTools`UI`InitializeHighlightSyntaxCell[
+    EvaluationCell[]]; Null),
+ CellEventActions->{
+  PassEventsDown -> True, EvaluationOrder -> After, "KeyDown" :> 
+   ConnorGray`NotebookWebsiteTools`UI`HandleHighlightSyntaxCellEvent[
+     EvaluationCell[], "KeyDown"]},
+ CellDynamicExpression:>Dynamic[CurrentValue[
+      EvaluationCell[], {TaggingRules, "parent_cell_is_hovered"}] = If[
+      TrueQ[
+       CurrentValue["MouseOver"]], True, Inherited]; Null],
+ CellFrameColor->GrayLevel[0.8],
+ CodeAssistOptions->{"AutoDetectHyperlinks"->False},
+ Hyphenation->False,
+ AutoQuoteCharacters->{},
+ PasteAutoQuoteCharacters->{},
+ LanguageCategory->None,
+ MenuSortingValue->2575,
+ FontFamily->Dynamic[
+   AbsoluteCurrentValue[
+    EvaluationCell[], {
+    StyleHints, 
+     "CodeFont"}]],ExpressionUUID->"06175e90-a91b-4fdd-a400-ed6e2ed14a58"],
 
-	(*===============*)
-	(* Special Cells *)
-	(*===============*)
+Cell[StyleData["ConnorGray/DynamicIconLink"],
+ TemplateBoxOptions->{DisplayFunction->(Cell[
+   BoxData[
+    TemplateBox[{
+      GridBox[{{
+         DynamicBox[
+          ToBoxes[
+           Refresh[#, None], StandardForm]], #2}}, 
+       GridBoxSpacings -> {"Columns" -> {{0.15}}}], {
+       URL[#3], None}, #3, "Hyperlink", {"HyperlinkActive"}, 
+      BaseStyle -> {"Text"}}, "HyperlinkTemplate"]], Editable -> 
+   False]& )},ExpressionUUID->"686a2084-02fc-425e-a3bc-b98c18a6bf70"],
 
-	Cell[StyleData["ConnorGray/LiteralHTML"],
-		MenuSortingValue -> 2500 + 25,
-		CellMargins->{{66, 10}, {8, 8}},
-		Background -> GrayLevel[0.95],
-		CellFrame -> {{3, False}, {False, False}},
-		CellFrameColor -> GrayLevel[0.8],
-		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False],
-		(* Copied from Default.nb "Program" cells: *)
-		StripStyleOnPaste -> True,
-		CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
-		Hyphenation -> False,
-		AutoQuoteCharacters -> {},
-		PasteAutoQuoteCharacters -> {},
-		LanguageCategory -> None,
-		FontFamily -> Dynamic[
-			AbsoluteCurrentValue[
-				EvaluationCell[],
-				{StyleHints, "CodeFont"}
-			]
-		]
-	],
+Cell[StyleData["ConnorGray/GitHubLink"],
+ TemplateBoxOptions->{DisplayFunction->(Cell[
+   BoxData[
+    TemplateBox[{
+      Image[
+       Import[
+        PacletObject["ConnorGray/NotebookWebsiteTools"][
+        "AssetLocation", "GitHubIcon"]], ImageSize -> 18, BaselinePosition -> 
+       Scaled[0.15]], #, #2}, 
+     "ConnorGray/DynamicIconLink"]]]& \
+)},ExpressionUUID->"39250fc2-27e5-4054-9691-0d16244220c5"],
 
-	(* TODO: Better name for this style. Template, plugin, etc? *)
-	Cell[StyleData["ConnorGray/ComputedHTML", StyleDefinitions -> StyleData["Input"]],
-		MenuSortingValue -> 2500 + 50,
-		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False]
-	],
+Cell[StyleData["ConnorGray/PacletLink"],
+ TemplateBoxOptions->{DisplayFunction->(Cell[
+   BoxData[
+    TemplateBox[{
+      Show[
+       Import[
+        PacletObject["ConnorGray/NotebookWebsiteTools"][
+        "AssetLocation", "PacletIcon"]], ImageSize -> 18, BaselinePosition -> 
+       Scaled[0.18]], #, #2}, 
+     "ConnorGray/DynamicIconLink"]]]& \
+)},ExpressionUUID->"4ed75473-9fde-4381-81fe-6199c71b2caa"],
 
-	Cell[StyleData["ConnorGray/HighlightSyntax"],
-		MenuSortingValue -> 2500 + 75,
-		CellMargins->{{66, 10}, {8, 8}},
-		(* NOTE: Background is set when the cell initializes. *)
-		CellFrame -> {{3, False}, {False, False}},
-		CellFrameColor -> GrayLevel[0.8],
-		(* Copied from Default.nb "Program" cells: *)
-		StripStyleOnPaste -> True,
-		CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
-		Hyphenation -> False,
-		AutoQuoteCharacters -> {},
-		PasteAutoQuoteCharacters -> {},
-		LanguageCategory -> None,
-		FontFamily -> Dynamic[
-			AbsoluteCurrentValue[
-				EvaluationCell[],
-				{StyleHints, "CodeFont"}
-			]
-		],
-		(* TODO: Uncomment this PageWidth setting after the bug with its
-			interaction with attached cells is fixed. (The Right-aligned
-			attached cell is not shown) *)
-		(* Don't word wrap content in HighlightSyntax cells, which is
-			typically pre-formatted code input. *)
-		(* PageWidth -> Infinity, *)
-		Initialization :> (
-			Needs["ConnorGray`NotebookWebsiteTools`" -> None];
-			ConnorGray`NotebookWebsiteTools`UI`InitializeHighlightSyntaxCell[EvaluationCell[]];
-		),
-		CellDynamicExpression -> Dynamic[
-			(* If this HighlightSyntax cell is hovered, set this tagging rule
-				so that the attached settings cell knows to display itself.
-				Use `Inherited` in the False case so that this tagging rule
-				is removed when hovering ends. *)
-			CurrentValue[EvaluationCell[], {TaggingRules, "parent_cell_is_hovered"}] =
-				If[TrueQ[CurrentValue["MouseOver"]], True, Inherited];
-		],
-		CellEventActions -> {
-			PassEventsDown -> True,
-			(* Note: This undocumented option causes the cell event handler
-				actions to be run AFTER the default FE behavior for the
-				event runs (the default is that user-specified event handlers
-				are run before the default FE ones).
+Cell[StyleData["ConnorGray/RustCrateLink"],
+ TemplateBoxOptions->{DisplayFunction->(Cell[
+   BoxData[
+    TemplateBox[{
+      Image[
+       Import[
+        PacletObject["ConnorGray/NotebookWebsiteTools"][
+        "AssetLocation", "RustIcon"]], ImageSize -> 18, BaselinePosition -> 
+       Scaled[0.15]], #, #2}, 
+     "ConnorGray/DynamicIconLink"]]]& \
+)},ExpressionUUID->"f9180e83-8631-4056-8efa-aa2a46ccfdef"],
 
-				We want this because we need the character the user typed to
-				be added to the content of the cell before we read the
-				contents of the cell in our "KeyDown" event hander. *)
-			EvaluationOrder -> After,
-			"KeyDown" :> (
-				ConnorGray`NotebookWebsiteTools`UI`HandleHighlightSyntaxCellEvent[EvaluationCell[], "KeyDown"]
-			)
-		}
-	],
+Cell[StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
+ TemplateBoxOptions->{
+ DisplayFunction->(DynamicModuleBox[{$CellContext`state = "default"}, 
+   TagBox[
+    ButtonBox[
+     FrameBox[
+      GridBox[{{
+         StyleBox[#, GraphicsBoxOptions -> {BaseStyle -> Dynamic[
+              Switch[$CellContext`state, "hovered", White, 
+               Blank[], #7]]}], 
+         PaneBox[#2]}}, 
+       GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Center}}}], 
+      BaseStyle -> {
+       FontSize -> 10, FontWeight -> Automatic, FontColor -> Dynamic[
+          Switch[$CellContext`state, "hovered", White, 
+           Blank[], #7]]}, FrameMargins -> {{2, 2}, {2, 1}}, FrameStyle -> 
+      Directive[
+        Thickness[1], #7], Background -> Dynamic[
+        Switch[$CellContext`state, "default", #6, "hovered", 
+         RGBColor[1, 0.5, 0], "pressed", Gray]], RoundingRadius -> 3], 
+     Appearance -> None, ButtonFunction :> #4, Method -> #5, Evaluator -> 
+     Automatic], 
+    EventHandlerTag[{
+     "MouseEntered" :> ($CellContext`state = "hovered"), 
+      "MouseExited" :> ($CellContext`state = "default"), {
+       "MouseDown", 1} :> ($CellContext`state = "pressed"), {
+       "MouseUp", 1} :> ($CellContext`state = "hovered"), PassEventsDown -> 
+      True, PassEventsUp -> True, Method -> "Preemptive"}]], 
+   DynamicModuleValues :> {}]& \
+)},ExpressionUUID->"98d8a537-7425-4a5d-9dc3-ff22550f32b1"],
 
-	(*====================================*)
-	(* Toolbar button TemplateBox styles  *)
-	(*====================================*)
+Cell[StyleData["NotebookWebsiteTools:IconAndLabelDropdownTemplate"],
+ TemplateBoxOptions->{
+ DisplayFunction->(DynamicModuleBox[{$CellContext`state = "default"}, 
+   TagBox[
+    ActionMenuBox[
+     FrameBox[
+      GridBox[{{
+         StyleBox[#, GraphicsBoxOptions -> {BaseStyle -> Dynamic[
+              Switch[$CellContext`state, "hovered", White, 
+               Blank[], #7]]}], 
+         TemplateBox[{#2, 
+           "\"\[ThinSpace]\[ThinSpace]\[FilledDownTriangle]\""}, 
+          "RowDefault"]}}, 
+       GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Center}}}], 
+      BaseStyle -> {
+       FontSize -> 10, FontWeight -> Automatic, FontColor -> Dynamic[
+          Switch[$CellContext`state, "hovered", White, 
+           Blank[], #7]]}, FrameMargins -> {{2, 2}, {2, 1}}, FrameStyle -> 
+      Directive[
+        Thickness[1], #7], Background -> Dynamic[
+        Switch[$CellContext`state, "default", #6, "hovered", 
+         RGBColor[1, 0.5, 0], "pressed", Gray]], RoundingRadius -> 3], #4, 
+     Appearance -> None, Method -> #5, Evaluator -> Automatic], 
+    EventHandlerTag[{
+     "MouseEntered" :> ($CellContext`state = "hovered"), 
+      "MouseExited" :> ($CellContext`state = "default"), {
+       "MouseDown", 1} :> ($CellContext`state = "pressed"), {
+       "MouseUp", 1} :> ($CellContext`state = "hovered"), PassEventsDown -> 
+      True, PassEventsUp -> True, Method -> "Preemptive"}]], 
+   DynamicModuleValues :> {}]& \
+)},ExpressionUUID->"b75785f0-e4b7-47ec-b50d-83ab495c878a"]
+},
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (July 24, 2023)",
+StyleDefinitions->"PrivateStylesheetFormatting.nb",
+ExpressionUUID->"27e0bedb-0257-4c2f-8520-03e5b87b7461"
+]
+(* End of Notebook Content *)
 
-	Cell[
-		StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
-		TemplateBoxOptions -> {
-			(*
-				Parameters: {icon, label, tooltip, action, buttonMethod, buttonDefaultBackground, buttonAccentColor}
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 104, 0, 70, 49, 0, "StyleData", "StyleDefinitions", "",ExpressionUUID->"76576f49-408d-4942-8f0e-175f8ad9c0d9"],
+Cell[665, 22, 2331, 53, 70, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"7f77401b-d808-40a0-84ac-efebad24471c"],
+Cell[2999, 77, 166, 3, 70, 83, 1, "StyleData", "Excluded", "All",ExpressionUUID->"3f8ecd64-a060-414e-bc24-076136731c60",
+ MenuSortingValue->None],
+Cell[3168, 82, 172, 3, 70, 89, 1, "StyleData", "LiteralHTML", "All",ExpressionUUID->"e8fcf280-d56f-42ef-896f-1f3dbd0b902b",
+ MenuSortingValue->None],
+Cell[3343, 87, 174, 3, 70, 91, 1, "StyleData", "ComputedHTML", "All",ExpressionUUID->"e2cbf08e-4e2e-42e8-a900-82ebc8d68ca6",
+ MenuSortingValue->None],
+Cell[3520, 92, 180, 3, 70, 97, 1, "StyleData", "HighlightSyntax", "All",ExpressionUUID->"230b793f-a703-4d70-9ce7-3606b09960e8",
+ MenuSortingValue->None],
+Cell[3703, 97, 239, 5, 70, 38, 0, "StyleData", "ConnorGray/Excluded", "All",ExpressionUUID->"9cb1dc03-efaf-45bc-9496-c2a66ac6071d",
+ MenuSortingValue->2500],
+Cell[3945, 104, 238, 5, 70, 35, 0, "StyleData", "ConnorGray/Draft", "All",ExpressionUUID->"cf6cf640-b29a-4686-b788-f373a3616f7d",
+ MenuSortingValue->2500],
+Cell[4186, 111, 397, 11, 70, 44, 0, "StyleData", "ConnorGray/TabViewSection", "All",ExpressionUUID->"a54c58fa-92d9-4fe8-8977-6ada9e15f148"],
+Cell[4586, 124, 634, 17, 70, 41, 0, "StyleData", "ConnorGray/LiteralHTML", "All",ExpressionUUID->"c70ccaef-da33-4930-a85f-45a2e468ee61",
+ MenuSortingValue->2525],
+Cell[5223, 143, 259, 5, 70, 84, 1, "StyleData", "ConnorGray/ComputedHTML", "All",ExpressionUUID->"a4ea950b-8369-4d23-94f2-22b9da96d47a",
+ MenuSortingValue->2550],
+Cell[5485, 150, 1076, 26, 70, 45, 0, "StyleData", "ConnorGray/HighlightSyntax", "All",ExpressionUUID->"06175e90-a91b-4fdd-a400-ed6e2ed14a58",
+ MenuSortingValue->2575],
+Cell[6564, 178, 482, 11, 70, 45, 0, "StyleData", "ConnorGray/DynamicIconLink", "All",ExpressionUUID->"686a2084-02fc-425e-a3bc-b98c18a6bf70"],
+Cell[7049, 191, 410, 10, 70, 40, 0, "StyleData", "ConnorGray/GitHubLink", "All",ExpressionUUID->"39250fc2-27e5-4054-9691-0d16244220c5"],
+Cell[7462, 203, 409, 10, 70, 40, 0, "StyleData", "ConnorGray/PacletLink", "All",ExpressionUUID->"4ed75473-9fde-4381-81fe-6199c71b2caa"],
+Cell[7874, 215, 411, 10, 70, 43, 0, "StyleData", "ConnorGray/RustCrateLink", "All",ExpressionUUID->"f9180e83-8631-4056-8efa-aa2a46ccfdef"],
+Cell[8288, 227, 1427, 29, 70, 66, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelButtonTemplate", "All",ExpressionUUID->"98d8a537-7425-4a5d-9dc3-ff22550f32b1"],
+Cell[9718, 258, 1505, 30, 70, 68, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelDropdownTemplate", "All",ExpressionUUID->"b75785f0-e4b7-47ec-b50d-83ab495c878a"]
+}
+]
+*)
 
-				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-				very basic evaluator doesn't not support named Function parameters.)
-			*)
-			DisplayFunction -> Function[
-				DynamicModuleBox[{state = "default"},
-					TagBox[
-						ButtonBox[
-							FrameBox[
-								GridBox[
-									{{
-										StyleBox[
-											#1,
-											GraphicsBoxOptions -> {
-												BaseStyle -> Dynamic[
-													Switch[state,
-														"hovered", White,
-														_, #7
-													]
-												]
-											}
-										],
-										PaneBox[#2]
-									}},
-									GridBoxAlignment -> {
-										"Columns" -> {{Left}},
-										"Rows" -> {{Center}}
-									}
-								],
-								BaseStyle -> {
-									FontSize -> 10,
-									FontWeight -> Automatic,
-									FontColor -> Dynamic[Switch[state,
-										"hovered", White,
-										_, #7
-									]]
-								},
-								FrameMargins -> {{2, 2}, {2, 1}},
-								FrameStyle -> Directive[Thickness[1], #7],
-								Background -> Dynamic[Switch[state,
-									"default",
-										#6,
-									"hovered",
-										RGBColor[1, 0.5, 0],
-									"pressed",
-										Gray
-								]],
-								RoundingRadius -> 3
-							],
-							Appearance -> None,
-							ButtonFunction :> #4,
-							Method -> #5,
-							Evaluator -> Automatic
-						],
-						EventHandlerTag[{
-							"MouseEntered" :> (state = "hovered"),
-							"MouseExited" :> (state = "default"),
-							{"MouseDown", 1} :> (state = "pressed"),
-							{"MouseUp", 1} :> (state = "hovered"),
-							PassEventsDown -> True,
-							PassEventsUp -> True,
-							Method -> "Preemptive"
-						}]
-					],
-					DynamicModuleValues :> {}
-				]
-			]
-		}
-	],
-
-	(*================================*)
-	(* Icon Link TemplateBox styles   *)
-	(*================================*)
-
-	Cell[
-		StyleData["ConnorGray/DynamicIconLink"],
-		TemplateBoxOptions -> {
-			(*
-				Parameters: {icon, label, URL}
-
-				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-				very basic evaluator doesn't not support named Function parameters.)
-			*)
-			DisplayFunction -> Function[
-				Cell[
-					BoxData @ TemplateBox[
-						{
-							GridBox[{{
-								DynamicBox[
-									ToBoxes[
-										Refresh[
-											#1,
-											None
-										],
-										StandardForm
-									]
-								],
-								#2
-							}},
-								GridBoxSpacings -> {"Columns" -> {{0.15}}}
-							],
-							{URL[#3], None},
-							#3,
-							"Hyperlink",
-							{"HyperlinkActive"},
-							BaseStyle -> {"Text"}
-						},
-						"HyperlinkTemplate"
-					],
-					Editable -> False
-				]
-			]
-		}
-	],
-
-	Cell[
-		StyleData["ConnorGray/GitHubLink"],
-		TemplateBoxOptions -> {
-			(*
-				Parameters: {label, URL}
-
-				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-				very basic evaluator doesn't not support named Function parameters.)
-			*)
-			DisplayFunction -> Function[
-				Cell @ BoxData @ TemplateBox[{
-					Image[
-						Import[
-							PacletObject["ConnorGray/NotebookWebsiteTools"][
-								"AssetLocation", "GitHubIcon"
-							]
-						],
-						ImageSize -> 18,
-						BaselinePosition -> Scaled[0.15]
-					],
-					#1,
-					#2
-				}, "ConnorGray/DynamicIconLink"]
-			]
-		}
-	],
-
-	Cell[
-		StyleData["ConnorGray/PacletLink"],
-		TemplateBoxOptions -> {
-			(*
-				Parameters: {label, URL}
-
-				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-				very basic evaluator doesn't not support named Function parameters.)
-			*)
-			DisplayFunction -> Function[
-				Cell @ BoxData @ TemplateBox[{
-					Show[
-						Import[
-							PacletObject["ConnorGray/NotebookWebsiteTools"][
-								"AssetLocation", "PacletIcon"
-							]
-						],
-						ImageSize -> 18,
-						BaselinePosition -> Scaled[0.18]
-					],
-					#1,
-					#2
-				}, "ConnorGray/DynamicIconLink"]
-			]
-		}
-	],
-
-	Cell[
-		StyleData["ConnorGray/RustCrateLink"],
-		TemplateBoxOptions -> {
-			(*
-				Parameters: {label, URL}
-
-				(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-				very basic evaluator doesn't not support named Function parameters.)
-			*)
-			DisplayFunction -> Function[
-				Cell @ BoxData @ TemplateBox[{
-					Image[
-						Import[
-							PacletObject["ConnorGray/NotebookWebsiteTools"][
-								"AssetLocation", "RustIcon"
-							]
-						],
-						ImageSize -> 18,
-						BaselinePosition -> Scaled[0.15]
-					],
-					#1,
-					#2
-				}, "ConnorGray/DynamicIconLink"]
-			]
-		}
-	]
-}]
+(* End of internal cache information *)
