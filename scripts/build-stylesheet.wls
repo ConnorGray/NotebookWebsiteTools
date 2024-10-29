@@ -440,7 +440,8 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 				Function[
 					Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
 					ConnorGray`NotebookWebsiteTools`UI`MakeHighlightSyntaxCellMenu[##]
-				]
+				],
+				AutoAction -> True
 			],
 			Background -> White
 		],

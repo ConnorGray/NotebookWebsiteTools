@@ -240,11 +240,16 @@ care to attach to the left or right side based on heuristic for available space.
 
 (*====================================*)
 
+Options[MakeMenuCellDingbat] = {
+	AutoAction -> False
+}
+
 SetFallthroughError[MakeMenuCellDingbat]
 
 MakeMenuCellDingbat[
 	menuIcon: _,
-	makeMenuCallback: _
+	makeMenuCallback: _,
+	OptionsPattern[]
 ] := Module[{
 	button
 },
@@ -277,13 +282,22 @@ MakeMenuCellDingbat[
 				{Left, Bottom},
 				Offset[{0, 0}, {Left, Top}],
 				{Left, Top},
-				RemovalConditions -> {"EvaluatorQuit", "MouseClickOutside"}
+				RemovalConditions -> {
+					"EvaluatorQuit", "MouseClickOutside",
+					(* If the menu opens on hover, then it should disappear
+						quickly as well (without the user having to click). *)
+					If[TrueQ[OptionValue[AutoAction]],
+						"MouseExit",
+						Nothing
+					]
+				}
 			];
 		),
 		Appearance -> $suppressButtonAppearance,
 		ImageMargins -> 0,
 		FrameMargins -> 0,
-		ContentPadding -> False
+		ContentPadding -> False,
+		AutoAction -> OptionValue[AutoAction]
 	];
 
 	button
