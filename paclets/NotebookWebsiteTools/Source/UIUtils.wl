@@ -22,6 +22,11 @@ Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 (* Style Definitions                                      *)
 (*========================================================*)
 
+$suppressButtonAppearance = Dynamic @ FEPrivate`FrontEndResource[
+    "FEExpressions",
+    "SuppressMouseDownNinePatchAppearance"
+];
+
 GU`SetUsage[UIUtilsStyleDefinitions, "
 UIUtilsStyleDefinitions[] returns a list of style definition cells, suitable
 for splicing into a stylesheet notebook.
@@ -64,9 +69,9 @@ UIUtilsStyleDefinitions[] := {
 	Cell[
 		StyleData["ConnorGray/ButtonMenuItem"],
 		TemplateBoxOptions -> {
-			DisplayFunction -> Function @ ButtonBox[
-				TemplateBox[
-					{
+			DisplayFunction -> Function @ Evaluate @ TemplateBox[
+				{
+					ButtonBox[
 						TagBox[
 							GridBox[
 								{
@@ -98,29 +103,81 @@ UIUtilsStyleDefinitions[] := {
 							],
 							"Grid"
 						],
-						FrameStyle -> Dynamic @ If[
-							CurrentValue["MouseOver"],
-							GrayLevel[0.8],
-							GrayLevel[0.98]
+						ButtonFunction :> ReleaseHold @ #3,
+						Appearance     -> $suppressButtonAppearance,
+						Method         -> "Queued",
+						Evaluator      -> Automatic
+					]
+				},
+				"ConnorGray/FramedMenuItem"
+			]
+		}
+	],
+
+	Cell[
+		StyleData["ConnorGray/ActionMenuItem"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {label, actions}
+			*)
+			DisplayFunction -> Function @ Evaluate @ TemplateBox[
+				{
+					ActionMenuBox[
+						TagBox[
+							GridBox[
+								{{
+									StyleBox[#1, "ConnorGray/MenuLabel"],
+									ToBoxes @ Pane[
+										Style[
+											Column[
+												{
+													"\[FilledUpTriangle]",
+													"\[FilledDownTriangle]"
+												},
+												Spacings -> 0
+											],
+											10
+										],
+										BaselinePosition -> Scaled[0.40]
+									]
+								}},
+								AutoDelete -> False
+							],
+							"Grid"
 						],
-						RoundingRadius -> 0,
-						FrameMargins   -> {{5, 2}, {2, 2}},
-						ImageSize      -> Full,
-						ImageMargins   -> {{0, 0}, {0, 0}},
-						Background     -> Dynamic @ If[
-							CurrentValue["MouseOver"],
-							GrayLevel[1],
-							GrayLevel[0.98]
-						]
-					},
-					"Highlighted"
+						#2,
+						Appearance -> None,
+						Alignment -> Left,
+						ImageSize -> Full
+					]
+				},
+				"ConnorGray/FramedMenuItem"
+			]
+		}
+	],
+
+	(* Menu item content that should show a frame when hovered. *)
+	Cell[
+		StyleData["ConnorGray/FramedMenuItem"],
+		TemplateBoxOptions -> {
+			(*
+				Parameters: {content}
+			*)
+			DisplayFunction -> Function @ FrameBox[
+				#1,
+				FrameStyle -> Dynamic @ If[
+					CurrentValue["MouseOver"],
+					GrayLevel[0.8],
+					GrayLevel[0.98]
 				],
-				ButtonFunction :> ReleaseHold @ #3,
-				(* PRECOMMIT *)
-				Appearance -> None,
-				(* Appearance     -> $suppressButtonAppearance, *)
-				Method         -> "Queued",
-				Evaluator      -> Automatic
+				Background -> Dynamic @ If[
+					CurrentValue["MouseOver"],
+					GrayLevel[1],
+					GrayLevel[0.98]
+				],
+				FrameMargins   -> {{5, 2}, {2, 2}},
+				ImageMargins   -> 0,
+				ImageSize      -> Full
 			]
 		}
 	],
@@ -128,44 +185,14 @@ UIUtilsStyleDefinitions[] := {
 	Cell[
 		StyleData["ConnorGray/MenuSection"],
 		TemplateBoxOptions -> {
-			DisplayFunction -> Function @ TemplateBox[
-				{
-					TagBox[
-						GridBox[
-							{
-								{
-									PaneBox[
-										StyleBox[#1, "ConnorGray/MenuSectionLabel"],
-										FrameMargins     -> 0,
-										ImageMargins     -> 0,
-										BaselinePosition -> Baseline,
-										ImageSize        -> Full
-									]
-								}
-							},
-							GridBoxAlignment -> {
-								"Columns" -> {{Left}},
-								"Rows" -> {{Baseline}}
-							},
-							AutoDelete       -> False,
-							GridBoxItemSize  -> {
-								"Columns" -> {{Automatic}},
-								"Rows" -> {{Automatic}}},
-							GridBoxSpacings  -> {
-								"Columns" -> {{0}},
-								"Rows" -> {{0}}
-							}
-						],
-						"Grid"
-					],
-					Background     -> GrayLevel[ 0.937 ],
-					FrameMargins   -> {{5, 2}, {2, 2}},
-					FrameStyle     -> None,
-					ImageMargins   -> {{0, 0}, {0, 0}},
-					ImageSize      -> Full,
-					RoundingRadius -> 0
-				},
-				"Highlighted"
+			DisplayFunction -> Function @ FrameBox[
+				StyleBox[#1, "ConnorGray/MenuSectionLabel"],
+				BaselinePosition -> Baseline,
+				Background     -> GrayLevel[ 0.937 ],
+				FrameStyle     -> None,
+				FrameMargins   -> {{5, 2}, {2, 2}},
+				ImageMargins   -> 0,
+				ImageSize      -> Full
 			]
 		}
 	],
@@ -197,7 +224,8 @@ UIUtilsStyleDefinitions[] := {
 
 
 GU`SetUsage[MakeMenuCellDingbat, "
-PRECOMMIT"]
+MakeMenuCellDingbat[icon$, callback$]
+"]
 
 GU`SetUsage[MakeMenu, "
 MakeMenu[items$$] returns an expression representing a menu of actions.
@@ -252,9 +280,7 @@ MakeMenuCellDingbat[
 				RemovalConditions -> {"EvaluatorQuit", "MouseClickOutside"}
 			];
 		),
-		(* PRECOMMIT *)
-		(* Appearance -> $suppressButtonAppearance, *)
-		Appearance -> None,
+		Appearance -> $suppressButtonAppearance,
 		ImageMargins -> 0,
 		FrameMargins -> 0,
 		ContentPadding -> False
@@ -275,21 +301,18 @@ MakeMenu[
 	frameColor = Replace[frameColor0, Automatic -> GrayLevel[0.85]]
 },
 	Pane[
-		RawBoxes @ TemplateBox[
-			{
-				ToBoxes @ Column[
-					menuItem /@ items,
-					ItemSize -> Automatic,
-					Spacings -> 0,
-					Alignment -> Left
-				],
-				FrameMargins   -> 3,
-				Background     -> GrayLevel[0.98],
-				RoundingRadius -> 3,
-				FrameStyle     -> Directive[AbsoluteThickness[1], frameColor],
-				ImageMargins   -> 0
-			},
-			"Highlighted"
+		RawBoxes @ FrameBox[
+			ToBoxes @ Column[
+				menuItem /@ items,
+				ItemSize -> Automatic,
+				Spacings -> 0,
+				Alignment -> Left
+			],
+			Background     -> GrayLevel[0.98],
+			RoundingRadius -> 3,
+			FrameStyle     -> Directive[AbsoluteThickness[1], frameColor],
+			FrameMargins   -> 3,
+			ImageMargins   -> 0
 		],
 		ImageSize -> {width, Automatic}
 	]
@@ -303,7 +326,7 @@ menuItem[item: _] := ConfirmReplace[item, {
 	Delimiter :>
 		RawBoxes @ TemplateBox[{}, "ConnorGray/MenuItemDelimiter"],
 
-	RuleDelayed[display_, action_] :> Module[{
+	RuleDelayed[display: _, action: _] :> Module[{
 		selectedState, icon, label
 	},
 		{selectedState, icon, label} = ConfirmReplace[display, {
@@ -339,15 +362,43 @@ menuItem[item: _] := ConfirmReplace[item, {
 		]
 	],
 
-	{"ActionMenu", label: _, actions: _List} :> Module[{
-		(* TODO: Handle lack of icon for these menus better. *)
-		icon = Graphics[{}, ImageSize -> 0],
-		label
+	{"ActionMenu", label: _, actions0: _List} :> Module[{
+		actions = Map[
+			Replace[
+				RuleDelayed[lbl: _, act: _] :>
+					RuleDelayed[ToBoxes[lbl], act]
+			],
+			actions0
+		]
 	},
-
 		RawBoxes @ TemplateBox[
-			{ToBoxes @ icon, ToBoxes @ label, Hold[action]},
+			{ToBoxes[label], actions},
 			"ConnorGray/ActionMenuItem"
+		]
+	],
+
+	{"Submenu", label0: _, submenuItems: _List} :> Module[{
+		submenuTriangle = Style[
+			"\[FilledRightTriangle]",
+			RGBColor[0.53725, 0.53725, 0.53725]
+		],
+		icon, label, action
+	},
+		(* TODO: Better way of omitting icons. *)
+		icon = Graphics[{}, ImageSize -> 0];
+		label = Grid[{{
+			Item[label0, ItemSize -> Fit, Alignment -> Left],
+			submenuTriangle
+		}}, Spacings -> 0];
+		action = Hold @ AttachSubmenu[
+			EvaluationCell[],
+			MakeMenu[submenuItems]
+		];
+
+		(* TODO: Dedicated SubmenuItem style? *)
+		RawBoxes @ TemplateBox[
+			{ToBoxes[icon], ToBoxes[label], action},
+			"ConnorGray/ButtonMenuItem"
 		]
 	],
 
@@ -377,13 +428,11 @@ AttachSubmenu[
 		TrueQ[mouseX < 0.5],
 		{
 			{Right, Bottom},
-			(* PRECOMMIT: Bottom? *)
-			{Left, Center}
+			{Left, Bottom}
 		},
 		{
 			{Left, Bottom},
-			(* PRECOMMIT: Bottom? *)
-			{Right, Center}
+			{Right, Bottom}
 		}
 	]
 },
@@ -391,9 +440,7 @@ AttachSubmenu[
 		EvaluationCell[],
 		submenu,
 		positions[[1]],
-		(* PRECOMMIT: 50? *)
-		(* {100, 100}, *)
-		0,
+		{50, 50},
 		positions[[2]],
 		RemovalConditions -> "MouseExit"
 	]

@@ -30,8 +30,8 @@ $GitHubIcon :=
 
 MakeHighlightSyntaxCellMenu
 
-InitializeHighlightSyntaxCell
 HandleHighlightSyntaxCellEvent::usage = "HandleHighlightSyntaxCellEvent[cellObj, event]"
+RedrawHighlightSyntaxCell
 HighlightSyntaxCellDefaultBackground
 KnownHighlightChoices
 
@@ -79,137 +79,6 @@ ToggleDraft[nb_NotebookObject] := Module[{
 (* Syntax Highlighting                                    *)
 (*========================================================*)
 
-(*
-	Initialize a HighlightSyntax cell.
-
-	This could be a first-time initialization, but typically will be a
-	session initialization.
-*)
-(* PRECOMMIT: Remove *)
-InitializeHighlightSyntaxCell[cellObj: _CellObject] := With[{
-	$syntaxSpec = {TaggingRules, "HighlightSyntaxOptions", "Syntax"},
-	$themeSpec  = {TaggingRules, "HighlightSyntaxOptions", "Theme"}
-}, Module[{
-	cellHoveredPane,
-	attachedCellData,
-	attachedCell
-},
-	If[Echo[AbsoluteCurrentValue[cellObj, $syntaxSpec]] === Inherited,
-		Print["SETTING DEFAULT SYNTAX:\n\t",
-			CurrentValue[cellObj, CellStyle],
-			"\n\t",
-			CurrentValue[cellObj, TaggingRules]
-		];
-		CurrentValue[cellObj, $syntaxSpec] = $DefaultSyntax;
-	];
-	If[CurrentValue[cellObj, $themeSpec] === Inherited,
-		Print["SETTING DEFAULT THEME"];
-		CurrentValue[cellObj, $themeSpec] = $DefaultTheme;
-	];
-
-	(* PRECOMMIT: Set when settings change *)
-	(* CurrentValue[cellObj, Background] = HighlightSyntaxCellDefaultBackground[
-		cellObj
-	]; *)
-
-	(*----------------------------------------------*)
-	(* Construct the HighlightSyntax menu cell expr *)
-	(*----------------------------------------------*)
-
-	cellHoveredPane = Row[{
-		PopupMenu[
-			Dynamic @ CurrentValue[cellObj, $syntaxSpec],
-			KnownHighlightChoices[]["Syntaxes"],
-			$DefaultSyntax,
-			Framed[
-				Style[
-					Row[{
-						Dynamic[
-							CurrentValue[cellObj, $syntaxSpec],
-							None
-						],
-						"\[VeryThinSpace]\[RightAngleBracket]"
-					}],
-					FontSize -> 11,
-					FontWeight -> "Bold",
-					FontColor -> GrayLevel[0.5]
-				],
-				FrameMargins -> 4,
-				FrameStyle -> Directive[
-					RGBColor[0.8549, 0.83137, 0.72549],
-					AbsoluteThickness[1]
-				],
-				ImageMargins -> {{0, 3}, {0, 0}},
-				RoundingRadius -> 3,
-				Background -> LightYellow
-			]
-		],
-		PopupMenu[
-			Dynamic @ CurrentValue[cellObj, $themeSpec],
-			KnownHighlightChoices[]["Themes"],
-			$DefaultTheme,
-			Framed[
-				Style[
-					Row[{
-						Dynamic[
-							CurrentValue[cellObj, $themeSpec],
-							None
-						],
-						"\[VeryThinSpace]\[RightAngleBracket]"
-					}],
-					FontSize -> 11,
-					FontWeight -> "Bold",
-					FontColor -> GrayLevel[0.5]
-				],
-				FrameMargins -> 4,
-				FrameStyle -> Directive[
-					RGBColor[0.8549, 0.83137, 0.72549],
-					AbsoluteThickness[1]
-				],
-				ImageMargins -> {{0, 3}, {0, 0}},
-				RoundingRadius -> 3,
-				Background -> LightYellow
-			]
-		]
-	}];
-
-	attachedCellData = PaneSelector[
-		{
-			True -> cellHoveredPane,
-			False -> ""
-		},
-		(* Display the Syntax picker popup if the mouse is
-			over the parent HighlightSynax cell or this
-			attached cell. *)
-		Dynamic[
-			CurrentValue[
-				ParentCell @ EvaluationCell[],
-				{TaggingRules, "parent_cell_is_hovered"}
-			] || CurrentValue["MouseOver"]
-		]
-	];
-
-	attachedCell = Cell[
-		BoxData @ ToBoxes @ attachedCellData,
-		CellEventActions -> None,
-		Background -> Transparent
-	];
-
-	(*---------------------------------------------*)
-	(* Attach the menu to the HighlightSyntax cell *)
-	(*---------------------------------------------*)
-
-	AttachCell[
-		cellObj,
-		attachedCell,
-		{Right, Top},
-		-2,
-		{Right, Top}
-	];
-]]
-
-(*====================================*)
-
 SetFallthroughError[MakeHighlightSyntaxCellMenu]
 
 MakeHighlightSyntaxCellMenu[
@@ -220,17 +89,16 @@ MakeHighlightSyntaxCellMenu[
 	$themeSpec  = {TaggingRules, "HighlightSyntaxOptions", "Theme"}
 },
 	Module[{
-	(* PRECOMMIT: Should be part of MakeMenu syntax. *)
-	submenuTriangle = Style[
-		"\[FilledRightTriangle]",
-		RGBColor[0.53725, 0.53725, 0.53725]
-	],
 	menuItems,
-	currentSyntax = CurrentValue[syntaxCellObj, $syntaxSpec],
-	currentTheme = CurrentValue[syntaxCellObj, $themeSpec],
+	currentSyntax,
+	currentTheme,
 	syntaxes,
 	themes
 },
+	{currentSyntax, currentTheme} = getHighlightSyntaxCellSyntaxAndTheme[
+		syntaxCellObj
+	];
+
 	{syntaxes, themes} = Lookup[
 		KnownHighlightChoices[],
 		{"Syntaxes", "Themes"}
@@ -242,66 +110,75 @@ MakeHighlightSyntaxCellMenu[
 	menuItems = With[{
 		syntaxChoices = Map[
 			choice |-> (
-				{choice === currentSyntax, None, choice} :> (
+				styleListItem[currentSyntax, choice] :> (
 					CurrentValue[syntaxCellObj, $syntaxSpec] = choice;
-					(* PRECOMMIT: Better close menu action. *)
+					(* TODO: Better close menu action. *)
 					NotebookDelete[EvaluationCell[]];
+
+					RedrawHighlightSyntaxCell[syntaxCellObj];
 				)
 			),
 			syntaxes
 		],
 		themeChoices = Map[
 			choice |-> (
-				{choice === currentTheme, None, choice} :> (
+				styleListItem[currentTheme, choice] :> (
 					CurrentValue[syntaxCellObj, $themeSpec] = choice;
-					(* PRECOMMIT: Better close menu action. *)
+					(* TODO: Better close menu action. *)
 					NotebookDelete[EvaluationCell[]];
+
+					RedrawHighlightSyntaxCell[syntaxCellObj];
 				)
 			),
 			themes
 		]
 	},
 		{
-			{
-				None,
-				Grid[{{
-					Item["Syntax", ItemSize -> Fit, Alignment -> Left],
-					submenuTriangle
-				}}, Spacings -> 0]
-			} :> (
-				AttachSubmenu[
-					EvaluationCell[],
-					MakeMenu[syntaxChoices]
-				]
-			),
-			{
-				None,
-				Grid[{{
-					Item["Theme", ItemSize -> Fit, Alignment -> Left],
-					submenuTriangle
-				}}, Spacings -> 0]
-			} :> (
-				AttachSubmenu[
-					EvaluationCell[],
-					MakeMenu[themeChoices]
-				]
-			)
+			{"ActionMenu",
+				Row[{"Syntax: ", currentSyntax}],
+				syntaxChoices
+			},
+			{"ActionMenu",
+				Row[{"Theme: ", currentTheme}],
+				themeChoices
+			}
 		}
 	];
 
-	MakeMenu[menuItems, Automatic, 120]
+	MakeMenu[menuItems, Automatic, 240]
 ]]
+
+(*------------------------------------*)
+
+SetFallthroughError[styleListItem]
+
+styleListItem[currentSelection: _, choice: _] :=
+	If[currentSelection === choice,
+		Row[{
+			"\[Checkmark]",
+			"  ",
+			choice
+		}],
+		(* This possible value is not whatever the currently selected value is. *)
+		(* Display a hidden checkmark purely so that this
+			is offset by the same amount as list items that
+			display a visible checkmark. *)
+		Row[{
+			Style[
+				"\[Checkmark]",
+				ShowContents -> False
+			],
+			"  ",
+			choice
+		}]
+	]
 
 (*====================================*)
 
-HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
-	cellObj,
-	originalCell,
-	position,
-	syntax, theme,
-	plainTextContent,
-	highlightedContent,
-	newCell
+HandleHighlightSyntaxCellEvent[
+	cellObj: _CellObject,
+	"KeyDown"
+] := Module[{
 },
 	(* Optimization: If the key the user pressed was an arrow key (moving the
 		cursor position), don't reparse and rehighlight the content of the
@@ -313,14 +190,30 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 		)
 	}];
 
-	cellObj = EvaluationCell[];
+	RedrawHighlightSyntaxCell[cellObj]
+]
 
+(*====================================*)
+
+SetFallthroughError[RedrawHighlightSyntaxCell]
+
+RedrawHighlightSyntaxCell[cellObj: _CellObject] := Module[{
+	originalCell,
+	position,
+	syntax, theme,
+	plainTextContent,
+	highlightedContent,
+	newCell
+},
 	(*---------------------------------------------------*)
 	(* Extract current cell content and cursor position. *)
 	(*---------------------------------------------------*)
 
 	position = Replace[Developer`CellInformation[cellObj], {
 		KeyValuePattern[{"CursorPosition" -> {c_, c_}}] :> c,
+		KeyValuePattern[{
+			"CursorPosition" -> None | "AboveCell" | "BelowCell"
+		}] :> None,
 		other_ :> Raise[NotebookWebsiteError, "Unexpected cell information: ``", InputForm@other]
 	}];
 
@@ -358,6 +251,7 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 		Cell[_, args___] :> (
 			Cell[
 				TextData[highlightedContent],
+				Background -> background,
 				args
 			]
 		),
@@ -382,13 +276,18 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	NotebookWrite[EvaluationNotebook[], TextData[highlightedContent]];
 	SetOptions[EvaluationNotebook[], ShowSelection -> True]; *)
 
-	(* PRECOMMIT: This is causing the `Initialization` to re-run as well. *)
-	NotebookWrite[cellObj, newCell, All, AutoScroll -> False];
 
 	(* Re-position the input cursor/caret. *)
-	SelectionMove[EvaluationNotebook[], Before, CellContents, AutoScroll -> False];
-	SelectionMove[EvaluationNotebook[], Next, Character, position, AutoScroll -> False];
-	SelectionMove[EvaluationNotebook[], After, Character, AutoScroll -> True]
+	If[position =!= None,
+		NotebookWrite[cellObj, newCell, All, AutoScroll -> False];
+		SelectionMove[EvaluationNotebook[], Before, CellContents, AutoScroll -> False];
+		SelectionMove[EvaluationNotebook[], Next, Character, position, AutoScroll -> False];
+		SelectionMove[EvaluationNotebook[], After, Character, AutoScroll -> True]
+		,
+		(* The cursor was not inside the cell, so write without changing the
+			selection. *)
+		NotebookWrite[cellObj, newCell, AutoScroll -> False];
+	];
 ]
 
 SetFallthroughError[HandleHighlightSyntaxCellEvent]
@@ -415,7 +314,11 @@ KnownHighlightChoices[] := GetLibraryFunction["known_highlight_choices"][]
 
 (*====================================*)
 
-getHighlightSyntaxCellSyntaxAndTheme[cellObj_CellObject] := Module[{},
+SetFallthroughError[getHighlightSyntaxCellSyntaxAndTheme]
+
+getHighlightSyntaxCellSyntaxAndTheme[
+	cellObj: _CellObject
+] := Module[{},
 	syntaxOptions = Replace[AbsoluteCurrentValue[cellObj, {TaggingRules, "HighlightSyntaxOptions"}], {
 		Inherited -> <||>,
 		opts_?ListQ :> Association[opts],
