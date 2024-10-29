@@ -28,6 +28,8 @@ $GitHubIcon :=
 (* Used in Cell style implementations *)
 (*------------------------------------*)
 
+MakeHighlightSyntaxCellMenu
+
 InitializeHighlightSyntaxCell
 HandleHighlightSyntaxCellEvent::usage = "HandleHighlightSyntaxCellEvent[cellObj, event]"
 HighlightSyntaxCellDefaultBackground
@@ -39,6 +41,7 @@ Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
+Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
 
 (*====================================*)
 
@@ -82,6 +85,7 @@ ToggleDraft[nb_NotebookObject] := Module[{
 	This could be a first-time initialization, but typically will be a
 	session initialization.
 *)
+(* PRECOMMIT: Remove *)
 InitializeHighlightSyntaxCell[cellObj: _CellObject] := With[{
 	$syntaxSpec = {TaggingRules, "HighlightSyntaxOptions", "Syntax"},
 	$themeSpec  = {TaggingRules, "HighlightSyntaxOptions", "Theme"}
@@ -90,16 +94,23 @@ InitializeHighlightSyntaxCell[cellObj: _CellObject] := With[{
 	attachedCellData,
 	attachedCell
 },
-	If[CurrentValue[cellObj, $syntaxSpec] === Inherited,
+	If[Echo[AbsoluteCurrentValue[cellObj, $syntaxSpec]] === Inherited,
+		Print["SETTING DEFAULT SYNTAX:\n\t",
+			CurrentValue[cellObj, CellStyle],
+			"\n\t",
+			CurrentValue[cellObj, TaggingRules]
+		];
 		CurrentValue[cellObj, $syntaxSpec] = $DefaultSyntax;
 	];
 	If[CurrentValue[cellObj, $themeSpec] === Inherited,
+		Print["SETTING DEFAULT THEME"];
 		CurrentValue[cellObj, $themeSpec] = $DefaultTheme;
 	];
 
-	CurrentValue[cellObj, Background] = HighlightSyntaxCellDefaultBackground[
+	(* PRECOMMIT: Set when settings change *)
+	(* CurrentValue[cellObj, Background] = HighlightSyntaxCellDefaultBackground[
 		cellObj
-	];
+	]; *)
 
 	(*----------------------------------------------*)
 	(* Construct the HighlightSyntax menu cell expr *)
@@ -199,6 +210,90 @@ InitializeHighlightSyntaxCell[cellObj: _CellObject] := With[{
 
 (*====================================*)
 
+SetFallthroughError[MakeHighlightSyntaxCellMenu]
+
+MakeHighlightSyntaxCellMenu[
+	syntaxCellObj: _CellObject,
+	dingbatObj: _CellObject
+] := With[{
+	$syntaxSpec = {TaggingRules, "HighlightSyntaxOptions", "Syntax"},
+	$themeSpec  = {TaggingRules, "HighlightSyntaxOptions", "Theme"}
+},
+	Module[{
+	(* PRECOMMIT: Should be part of MakeMenu syntax. *)
+	submenuTriangle = Style[
+		"\[FilledRightTriangle]",
+		RGBColor[0.53725, 0.53725, 0.53725]
+	],
+	menuItems,
+	currentSyntax = CurrentValue[syntaxCellObj, $syntaxSpec],
+	currentTheme = CurrentValue[syntaxCellObj, $themeSpec],
+	syntaxes,
+	themes
+},
+	{syntaxes, themes} = Lookup[
+		KnownHighlightChoices[],
+		{"Syntaxes", "Themes"}
+	];
+
+	syntaxes = Sort[syntaxes];
+	themes = Sort[themes];
+
+	menuItems = With[{
+		syntaxChoices = Map[
+			choice |-> (
+				{choice === currentSyntax, None, choice} :> (
+					CurrentValue[syntaxCellObj, $syntaxSpec] = choice;
+					(* PRECOMMIT: Better close menu action. *)
+					NotebookDelete[EvaluationCell[]];
+				)
+			),
+			syntaxes
+		],
+		themeChoices = Map[
+			choice |-> (
+				{choice === currentTheme, None, choice} :> (
+					CurrentValue[syntaxCellObj, $themeSpec] = choice;
+					(* PRECOMMIT: Better close menu action. *)
+					NotebookDelete[EvaluationCell[]];
+				)
+			),
+			themes
+		]
+	},
+		{
+			{
+				None,
+				Grid[{{
+					Item["Syntax", ItemSize -> Fit, Alignment -> Left],
+					submenuTriangle
+				}}, Spacings -> 0]
+			} :> (
+				AttachSubmenu[
+					EvaluationCell[],
+					MakeMenu[syntaxChoices]
+				]
+			),
+			{
+				None,
+				Grid[{{
+					Item["Theme", ItemSize -> Fit, Alignment -> Left],
+					submenuTriangle
+				}}, Spacings -> 0]
+			} :> (
+				AttachSubmenu[
+					EvaluationCell[],
+					MakeMenu[themeChoices]
+				]
+			)
+		}
+	];
+
+	MakeMenu[menuItems, Automatic, 120]
+]]
+
+(*====================================*)
+
 HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	cellObj,
 	originalCell,
@@ -287,6 +382,7 @@ HandleHighlightSyntaxCellEvent[cell_CellObject, "KeyDown"] := Module[{
 	NotebookWrite[EvaluationNotebook[], TextData[highlightedContent]];
 	SetOptions[EvaluationNotebook[], ShowSelection -> True]; *)
 
+	(* PRECOMMIT: This is causing the `Initialization` to re-run as well. *)
 	NotebookWrite[cellObj, newCell, All, AutoScroll -> False];
 
 	(* Re-position the input cursor/caret. *)
@@ -299,11 +395,11 @@ SetFallthroughError[HandleHighlightSyntaxCellEvent]
 
 (*====================================*)
 
-HighlightSyntaxCellDefaultBackground[cellObj_CellObject] := Module[{
-	theme, color
-},
-	theme = getHighlightSyntaxCellSyntaxAndTheme[cellObj][[2]];
+SetFallthroughError[HighlightSyntaxCellDefaultBackground]
 
+HighlightSyntaxCellDefaultBackground[] := Module[{
+	theme = $DefaultTheme, color
+},
 	RaiseAssert[StringQ[theme]];
 
 	color = RaiseConfirm[GetLibraryFunction["theme_default_background"][theme]];
@@ -312,8 +408,6 @@ HighlightSyntaxCellDefaultBackground[cellObj_CellObject] := Module[{
 
 	color
 ]
-
-SetFallthroughError[HighlightSyntaxCellDefaultBackground]
 
 (*====================================*)
 

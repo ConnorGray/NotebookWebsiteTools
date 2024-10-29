@@ -6,6 +6,11 @@ $pacletDirectory = FileNameJoin[{
 	"NotebookWebsiteTools"
 }]
 
+PacletDirectoryLoad[$pacletDirectory]
+
+Needs["ConnorGray`NotebookWebsiteTools`UI`"]
+Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
+
 Print["INFO: Building using $InstallationDirectory == ", $InstallationDirectory]
 
 (*========================================================*)
@@ -388,9 +393,22 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 	Cell[StyleData["ConnorGray/HighlightSyntax"],
 		MenuSortingValue -> 2500 + 75,
 		CellMargins->{{66, 10}, {8, 8}},
-		(* NOTE: Background is set when the cell initializes. *)
 		CellFrame -> {{3, False}, {False, False}},
 		CellFrameColor -> GrayLevel[0.8],
+		(* Overridden whenever the user changes the syntax coloring theme. *)
+		Background -> HighlightSyntaxCellDefaultBackground[],
+		CellDingbat -> Cell[
+			BoxData @ ToBoxes @ MakeMenuCellDingbat[
+				Graphics @ {
+					Text @ Style["{}", FontSize -> 16, FontFamily -> "PT Mono"]
+				},
+				Function[
+					Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+					ConnorGray`NotebookWebsiteTools`UI`MakeHighlightSyntaxCellMenu[##]
+				]
+			],
+			Background -> White
+		],
 		(* Copied from Default.nb "Program" cells: *)
 		StripStyleOnPaste -> True,
 		CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
@@ -404,24 +422,9 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 				{StyleHints, "CodeFont"}
 			]
 		],
-		(* TODO: Uncomment this PageWidth setting after the bug with its
-			interaction with attached cells is fixed. (The Right-aligned
-			attached cell is not shown) *)
 		(* Don't word wrap content in HighlightSyntax cells, which is
 			typically pre-formatted code input. *)
-		(* PageWidth -> Infinity, *)
-		Initialization :> (
-			Needs["ConnorGray`NotebookWebsiteTools`" -> None];
-			ConnorGray`NotebookWebsiteTools`UI`InitializeHighlightSyntaxCell[EvaluationCell[]];
-		),
-		CellDynamicExpression -> Dynamic[
-			(* If this HighlightSyntax cell is hovered, set this tagging rule
-				so that the attached settings cell knows to display itself.
-				Use `Inherited` in the False case so that this tagging rule
-				is removed when hovering ends. *)
-			CurrentValue[EvaluationCell[], {TaggingRules, "parent_cell_is_hovered"}] =
-				If[TrueQ[CurrentValue["MouseOver"]], True, Inherited];
-		],
+		PageWidth -> Infinity,
 		CellEventActions -> {
 			PassEventsDown -> True,
 			(* Note: This undocumented option causes the cell event handler
@@ -580,7 +583,13 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 		TemplateBoxOptions -> {
 			DisplayFunction -> $iconAndLabelDropdownTemplate
 		}
-	]
+	],
+
+	(*================================*)
+	(* Generic UIUtils Styles         *)
+	(*================================*)
+
+	Splice[UIUtilsStyleDefinitions[]]
 },
 	StyleDefinitions -> "PrivateStylesheetFormatting.nb"
 ]
