@@ -242,6 +242,41 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 						side of the notebook. *)
 						ItemSize -> Fit
 					],
+					TemplateBox[
+						{
+							GraphicsBox[{
+								InsetBox[
+									FormBox["\"\"", TraditionalForm],
+									{0, 0}
+								]
+							}, {
+								ImageSize -> 15,
+								BaselinePosition -> Center
+							}],
+							"Preview",
+							"View a preview of the built webpage.",
+							{
+								ToBoxes["Published"] :> (
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+										ButtonNotebook[]
+									];
+								),
+								ToBoxes["Draft"] :> (
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+										ButtonNotebook[],
+										"IncludeDrafts" -> True
+									];
+								)
+							},
+							"Queued",
+							RGBColor["#8ecae6"],
+							RGBColor["#023047"]
+						},
+						"NotebookWebsiteTools:IconAndLabelDropdownTemplate"
+					],
+					ToBoxes @ Spacer[5],
 					StyleBox[
 						"Status: ",
 						"Text",
