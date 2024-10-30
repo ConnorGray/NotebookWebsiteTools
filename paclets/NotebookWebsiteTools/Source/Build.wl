@@ -1204,7 +1204,11 @@ AddSupportFile[
 makeAnchorContentSlug[content_] := Module[{
 	contentString = ConvertToString[content]
 },
-	RaiseAssert[StringQ[contentString]];
+	RaiseAssert[
+		StringQ[contentString],
+		"expected anchor content String: ``",
+		InputForm[contentString]
+	];
 
 	StringReplace[contentString, {
 		c:LetterCharacter :> ToLowerCase[c],
@@ -1221,7 +1225,11 @@ makeAnchorLinkHtml[content_, html_] := Module[{
 	contentString = ConvertToString[content],
 	contentSlug
 },
-	RaiseAssert[StringQ[contentString]];
+	RaiseAssert[
+		StringQ[contentString],
+		"expected anchor link String: ``",
+		InputForm[contentString]
+	];
 
 	contentSlug = makeAnchorContentSlug[contentString];
 
