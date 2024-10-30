@@ -28,13 +28,10 @@ VerificationTest[
 		},
 		Initialization :> _,
 		FrontEndVersion -> _,
-		StyleDefinitions -> Notebook[
-			{
-				Cell[StyleData[StyleDefinitions -> "ConnorGray/NotebookWebsiteTools.nb"]]
-			},
-			Visible -> False,
-			FrontEndVersion -> _,
-			StyleDefinitions -> "PrivateStylesheetFormatting.nb"
+		StyleDefinitions -> FrontEnd`FileName[
+			{"ConnorGray"},
+			"NotebookWebsiteTools.nb",
+			CharacterEncoding -> "UTF-8"
 		]
 	]
 	,
