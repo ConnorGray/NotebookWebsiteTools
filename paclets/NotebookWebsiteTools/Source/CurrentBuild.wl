@@ -45,41 +45,7 @@ makeTableOfContentsHtml[
 	listItems
 },
 	listItems = Map[
-		Replace[{
-			(* Remove Excluded and Draft cells. *)
-			Rule[cell_Cell /; FilteredCellQ[cell], _] -> Nothing,
-
-			(* Prevent Item cells from showing up in the table of contents. *)
-			Rule[Cell[
-				_,
-				___,
-				"Item" | "Subitem" | "SubsubItem"
-				| "ItemNumbered" | "SubitemNumbered" | "SubsubitemNumbered"
-				| "ItemParagraph" | "SubitemParagraph" | "SubsubitemParagraph",
-				___
-			], _] -> Nothing,
-
-			(* Prevent Input/Output cell groups from showing up in the table of
-			   contents. *)
-			(Cell[___, "Input", ___] -> {}) -> Nothing,
-
-			Rule[Cell[cellData_, ___], children_?ListQ] :> Module[{
-				contentString = ConvertToString[cellData],
-				contentSlug
-			},
-				contentSlug = makeAnchorContentSlug[contentString];
-
-				XMLElement["li", {}, {
-					XMLElement["a", {"href" -> "#" <> contentSlug}, {
-						contentString,
-						XMLElement["small", {}, {"↴"}]
-					}],
-					(* Now recurse to add sub-tables-of-contents. *)
-					makeTableOfContentsHtml[children]
-				}]
-			],
-			other_ :> Raise[NotebookWebsiteError, "Unexpected cell headings structure: ``", other]
-		}],
+		listItemForGroup,
 		headings
 	];
 
@@ -91,6 +57,60 @@ makeTableOfContentsHtml[
 ]
 
 SetFallthroughError[makeTableOfContentsHtml]
+
+(*------------------------------------*)
+
+SetFallthroughError[listItemForGroup]
+
+(*
+	Returns one of:
+
+	* Nothing
+	* XMLElement["li", ___]
+	* Splice @ {XMLElement["li", __] ...}
+*)
+listItemForGroup[
+	heading: _Cell -> children: _List
+] := Replace[heading, {
+	(* Remove Excluded and Draft cells. *)
+	cell: _Cell /; FilteredCellQ[cell] -> Nothing,
+
+	(* Prevent Item cells from showing up in the table of contents. *)
+	Cell[
+		_,
+		___,
+		"Item" | "Subitem" | "SubsubItem"
+		| "ItemNumbered" | "SubitemNumbered" | "SubsubitemNumbered"
+		| "ItemParagraph" | "SubitemParagraph" | "SubsubitemParagraph",
+		___
+	] -> Nothing,
+
+	(* Prevent Input/Output cell groups from showing up in the table of
+		contents. *)
+	Cell[___, "Input", ___] /; children === {} -> Nothing,
+
+	Cell[cellData_, ___] :> Module[{
+		contentString = ConvertToString[cellData],
+		contentSlug
+	},
+		contentSlug = makeAnchorContentSlug[contentString];
+
+		XMLElement["li", {}, {
+			XMLElement["a", {"href" -> "#" <> contentSlug}, {
+				contentString,
+				XMLElement["small", {}, {"↴"}]
+			}],
+			(* Now recurse to add sub-tables-of-contents. *)
+			makeTableOfContentsHtml[children]
+		}]
+	],
+
+	other_ :> Raise[
+		NotebookWebsiteError,
+		"Unexpected cell headings structure: ``",
+		other
+	]
+}]
 
 (*====================================*)
 
