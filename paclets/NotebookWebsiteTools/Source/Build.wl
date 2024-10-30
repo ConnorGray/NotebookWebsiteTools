@@ -685,10 +685,11 @@ ConvertToHtml[expr_] := Replace[expr, {
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
-	Cell[content_, styles0__?StringQ, options0___?OptionQ] :> WrapRaised[
+	cell0: Cell[content_, styles0__?StringQ, options0___?OptionQ] :> WrapRaised[
 		NotebookWebsiteError,
-		"Error converting `` style cell",
-		InputForm[First[{styles0}]]
+		"Error converting `` style cell: ``",
+		InputForm[First[{styles0}]],
+		cell0
 	] @ Module[{
 		styles = {styles0},
 		cellOptions = {options0},

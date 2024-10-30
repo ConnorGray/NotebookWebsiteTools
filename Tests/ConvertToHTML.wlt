@@ -123,8 +123,15 @@ VerificationTest[
 					"MessageParameters" -> {InputForm["NotAKnownStyle"]}
 				|>
 			],
-			"MessageTemplate" -> "Error converting `` style cell",
-			"MessageParameters" -> {InputForm["Text"]}
+			"MessageTemplate" -> "Error converting `` style cell: ``",
+			"MessageParameters" -> {
+				InputForm["Text"],
+				Cell[TextData[{
+					"Inline code ",
+					StyleBox["2 + 2", "NotAKnownStyle"],
+					" example."
+				}], "Text"]
+			}
 		|>
 	]
 ]
