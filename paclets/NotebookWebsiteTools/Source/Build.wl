@@ -24,6 +24,7 @@ $BuildCache
 GetBuildValue
 
 DetermineStatusAction
+FilteredCellQ
 
 GeneralUtilities`SetUsage[ConvertToHtml, "
 ConvertToHtml[expr] converts a Notebook, Cell, or box expression into HTML.
@@ -1494,7 +1495,7 @@ FilteredCellQ[cell_] := Replace[cell, {
 		_,
 		stylesSeq___?StringQ,
 		___?OptionQ
-	] /; MemberQ[{stylesSeq}, "ConnorGray/Excluded"] :> (
+	] /; MemberQ[{stylesSeq}, "Excluded" | "ConnorGray/Excluded"] :> (
 		True
 	),
 
