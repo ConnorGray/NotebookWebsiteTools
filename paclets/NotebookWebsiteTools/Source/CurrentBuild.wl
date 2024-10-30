@@ -72,8 +72,13 @@ SetFallthroughError[listItemForGroup]
 listItemForGroup[
 	heading: _Cell -> children: _List
 ] := Replace[heading, {
-	(* Remove Excluded and Draft cells. *)
-	cell: _Cell /; FilteredCellQ[cell] -> Nothing,
+	(* Remove Excluded and Draft cells, but still generate headings for
+		any non-filtered subheadings. This enables using excluded headings
+		for the authors organizing purpose, without preventing the headings
+		from subsections from being omitted from the table of contents. *)
+	cell: _Cell /; FilteredCellQ[cell] -> (
+		Splice @ Map[listItemForGroup, children]
+	),
 
 	(* Prevent Item cells from showing up in the table of contents. *)
 	Cell[
