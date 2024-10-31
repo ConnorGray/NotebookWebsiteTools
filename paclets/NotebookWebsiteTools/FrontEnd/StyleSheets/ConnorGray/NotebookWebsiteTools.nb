@@ -10,15 +10,15 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     21092,        481]
-NotebookOptionsPosition[     17213,        436]
-NotebookOutlinePosition[     17551,        450]
-CellTagsIndexPosition[     17508,        447]
+NotebookDataLength[     21307,        486]
+NotebookOptionsPosition[     17428,        441]
+NotebookOutlinePosition[     17766,        455]
+CellTagsIndexPosition[     17723,        452]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-Cell[StyleData[StyleDefinitions -> "Default.nb"],ExpressionUUID->"5fc622c8-3a8d-459d-939d-5d4ed23c5778"],
+Cell[StyleData[StyleDefinitions -> "Default.nb"],ExpressionUUID->"a24e0784-0fd5-4d0a-a2c0-b5cee16be1a0"],
 
 Cell[StyleData["Notebook"],
  DockedCells->{
@@ -92,41 +92,41 @@ Cell[StyleData["Notebook"],
        "Columns" -> {{Left}}, "ColumnsIndexed" -> {-1 -> Right}, 
         "Rows" -> {{Center}}}]], 
     CellFrameMargins -> {{Inherited, Inherited}, {0, 
-      0}}]},ExpressionUUID->"4bedfdfd-9f3d-4523-bb44-1a9a2233db14"],
+      0}}]},ExpressionUUID->"a679117e-f9d2-4e31-bcf7-77c52d127cc8"],
 
 Cell[StyleData["Excluded", StyleDefinitions -> 
  StyleData["ConnorGray/Excluded"]],
  MenuSortingValue->
-  None,ExpressionUUID->"83763f8c-cdd6-4c8b-8ab2-f90ef5af7272"],
+  None,ExpressionUUID->"e09a6463-eb2b-4872-8f8f-b792305ce412"],
 
 Cell[StyleData["LiteralHTML", StyleDefinitions -> 
  StyleData["ConnorGray/LiteralHTML"]],
  MenuSortingValue->
-  None,ExpressionUUID->"7cf50866-4d84-4d45-8205-d783b8f6531f"],
+  None,ExpressionUUID->"6bdca12d-a356-4a72-bc48-f6742fa4bb8a"],
 
 Cell[StyleData["ComputedHTML", StyleDefinitions -> 
  StyleData["ConnorGray/ComputedHTML"]],
  MenuSortingValue->
-  None,ExpressionUUID->"9baace02-cddb-4b47-bf50-c08725664a25"],
+  None,ExpressionUUID->"83543509-944f-4dde-b57d-14966c70618d"],
 
 Cell[StyleData["HighlightSyntax", StyleDefinitions -> 
  StyleData["ConnorGray/HighlightSyntax"]],
  MenuSortingValue->
-  None,ExpressionUUID->"c47b2474-051c-4b10-84d5-71d985802df3"],
+  None,ExpressionUUID->"9389cdc9-b3be-498d-b5a7-43f936eb3986"],
 
 Cell[StyleData["ConnorGray/Excluded"],
  CellFrame->{{3, False}, {False, False}},
  CellFrameColor->RGBColor[0.8, 0, 0],
  MenuSortingValue->2500,
  Background->RGBColor[
-  1, 0.85, 0.85],ExpressionUUID->"1bb2777a-2a60-40cb-aeb1-c7353886f7ed"],
+  1, 0.85, 0.85],ExpressionUUID->"4a123137-6f94-4b33-afae-5f514a90cb7b"],
 
 Cell[StyleData["ConnorGray/Draft"],
  CellFrame->{{3, False}, {False, False}},
  CellFrameColor->RGBColor[0.6, 0.4, 0.2],
  MenuSortingValue->2500,
  Background->RGBColor[
-  1, 0.8, 0.6],ExpressionUUID->"072577d0-499f-4d0d-afa0-b83d5b042d71"],
+  1, 0.8, 0.6],ExpressionUUID->"8b5a285a-78b8-49d9-ad4f-489708ef296b"],
 
 Cell[StyleData["ConnorGray/TabViewSection"],
  CellDingbat->Cell[
@@ -139,9 +139,10 @@ Cell[StyleData["ConnorGray/TabViewSection"],
          PacletObject["ConnorGray/NotebookWebsiteTools"][
          "AssetLocation", "TabViewIcon"]], ImageSize -> 18, BaselinePosition -> 
         Scaled[0]], None], 
-      StandardForm]]]],ExpressionUUID->"fd13119c-3007-4d0f-a01d-89a0f4bb57b0"],
+      StandardForm]]]],ExpressionUUID->"3c0cf7c7-b5cc-4601-937f-163f2a51f5cb"],
 
 Cell[StyleData["ConnorGray/LiteralHTML"],
+ PageWidth->DirectedInfinity[1],
  CellFrame->{{3, False}, {False, False}},
  CellDingbat->StyleBox["\"</>\"", Bold, 
    GrayLevel[0.6], ShowStringCharacters -> False],
@@ -158,14 +159,14 @@ Cell[StyleData["ConnorGray/LiteralHTML"],
    AbsoluteCurrentValue[
     EvaluationCell[], {StyleHints, "CodeFont"}]],
  Background->GrayLevel[
-  0.95],ExpressionUUID->"2410ff1e-28fe-4e75-a435-e39d10bb9b36"],
+  0.95],ExpressionUUID->"f102ffaa-30d6-4a6b-a810-ae15d72c7f3f"],
 
 Cell[StyleData["ConnorGray/ComputedHTML", StyleDefinitions -> 
  StyleData["Input"]],
  CellDingbat->StyleBox["\"</>\"", Bold, 
    GrayLevel[0.6], ShowStringCharacters -> False],
  MenuSortingValue->
-  2550,ExpressionUUID->"62bcefc4-f10a-484e-9400-ff416c1a315c"],
+  2550,ExpressionUUID->"9d2b70ca-948d-4aec-8c9e-3ebbd2f5acc8"],
 
 Cell[StyleData["ConnorGray/HighlightSyntax"],
  PageWidth->DirectedInfinity[1],
@@ -199,9 +200,13 @@ Cell[StyleData["ConnorGray/HighlightSyntax"],
           EvaluationCell[]], 
          EvaluationCell[]], {Left, Bottom}, 
         Offset[{0, 0}, {Left, Top}], {Left, Top}, 
-        RemovalConditions -> {
-         "EvaluatorQuit", "MouseClickOutside", "MouseExit"}]; Null), 
-     Appearance -> Dynamic[
+        RemovalConditions -> {"EvaluatorQuit", "MouseClickOutside", 
+          If[
+           TrueQ[
+            OptionValue[
+            ConnorGray`NotebookWebsiteTools`UIUtils`MakeMenuCellDingbat, {
+             AutoAction -> True}, AutoAction]], "MouseExit", Nothing]}]; 
+      Null), Appearance -> Dynamic[
        FEPrivate`FrontEndResource[
        "FEExpressions", "SuppressMouseDownNinePatchAppearance"]], 
      ImageMargins -> 0, FrameMargins -> 0, ContentPadding -> False, 
@@ -225,7 +230,7 @@ Cell[StyleData["ConnorGray/HighlightSyntax"],
     EvaluationCell[], {StyleHints, "CodeFont"}]],
  Background->RGBColor[
   0.9921568627450981, 0.9647058823529412, 
-   0.8901960784313725],ExpressionUUID->"2f99434b-6781-42ca-a396-fc3d0298ac2c"],
+   0.8901960784313725],ExpressionUUID->"3b3b8829-5d9a-4de3-86bc-4764f3753a03"],
 
 Cell[StyleData["ConnorGray/DynamicIconLink"],
  TemplateBoxOptions->{DisplayFunction->(Cell[
@@ -238,7 +243,7 @@ Cell[StyleData["ConnorGray/DynamicIconLink"],
        GridBoxSpacings -> {"Columns" -> {{0.15}}}], {
        URL[#3], None}, #3, "Hyperlink", {"HyperlinkActive"}, 
       BaseStyle -> {"Text"}}, "HyperlinkTemplate"]], Editable -> 
-   False]& )},ExpressionUUID->"99d7b22e-8c6b-4d16-8211-36b4e527fa00"],
+   False]& )},ExpressionUUID->"27c6b44d-cb05-4863-8996-efa777cb5236"],
 
 Cell[StyleData["ConnorGray/GitHubLink"],
  TemplateBoxOptions->{DisplayFunction->(Cell[
@@ -250,7 +255,7 @@ Cell[StyleData["ConnorGray/GitHubLink"],
         "AssetLocation", "GitHubIcon"]], ImageSize -> 18, BaselinePosition -> 
        Scaled[0.15]], #, #2}, 
      "ConnorGray/DynamicIconLink"]]]& \
-)},ExpressionUUID->"0e9c1d69-6d93-4efb-8fcf-55610957ca50"],
+)},ExpressionUUID->"cfdf210d-a7cd-41a8-a6a6-946c58fa5848"],
 
 Cell[StyleData["ConnorGray/PacletLink"],
  TemplateBoxOptions->{DisplayFunction->(Cell[
@@ -262,7 +267,7 @@ Cell[StyleData["ConnorGray/PacletLink"],
         "AssetLocation", "PacletIcon"]], ImageSize -> 18, BaselinePosition -> 
        Scaled[0.18]], #, #2}, 
      "ConnorGray/DynamicIconLink"]]]& \
-)},ExpressionUUID->"7d416b33-a1bc-40ee-87fc-ba993aef2b7e"],
+)},ExpressionUUID->"69c8627d-f16d-4cbf-82f1-4b7cbde21a37"],
 
 Cell[StyleData["ConnorGray/RustCrateLink"],
  TemplateBoxOptions->{DisplayFunction->(Cell[
@@ -274,7 +279,7 @@ Cell[StyleData["ConnorGray/RustCrateLink"],
         "AssetLocation", "RustIcon"]], ImageSize -> 18, BaselinePosition -> 
        Scaled[0.15]], #, #2}, 
      "ConnorGray/DynamicIconLink"]]]& \
-)},ExpressionUUID->"12bae6c6-098a-4150-88de-97fb52ba289c"],
+)},ExpressionUUID->"cef7a7fc-d9b9-4183-b03e-b6fd12a1fbf2"],
 
 Cell[StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
  TemplateBoxOptions->{
@@ -305,7 +310,7 @@ Cell[StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
        "MouseUp", 1} :> ($CellContext`state = "hovered"), PassEventsDown -> 
       True, PassEventsUp -> True, Method -> "Preemptive"}]], 
    DynamicModuleValues :> {}]& \
-)},ExpressionUUID->"a4ed7f23-3d0e-4b38-bc8f-87893b49ebc0"],
+)},ExpressionUUID->"615ee370-d772-4ce1-956e-fcc330eaaea2"],
 
 Cell[StyleData["NotebookWebsiteTools:IconAndLabelDropdownTemplate"],
  TemplateBoxOptions->{
@@ -337,7 +342,7 @@ Cell[StyleData["NotebookWebsiteTools:IconAndLabelDropdownTemplate"],
        "MouseUp", 1} :> ($CellContext`state = "hovered"), PassEventsDown -> 
       True, PassEventsUp -> True, Method -> "Preemptive"}]], 
    DynamicModuleValues :> {}]& \
-)},ExpressionUUID->"9c0a516c-8962-4b39-b443-6fe9d4dd861c"],
+)},ExpressionUUID->"4dc109a5-af1a-404b-9ade-53522eb2adce"],
 
 Cell[StyleData["ConnorGray/MenuItemDelimiter"],
  TemplateBoxOptions->{DisplayFunction->(PaneBox[
@@ -351,7 +356,7 @@ Cell[StyleData["ConnorGray/MenuItemDelimiter"],
      ImageSize -> {Full, 2}, PlotRange -> {{-1, 1}, {-1, 1}}], LineIndent -> 
     0], BaselinePosition -> Baseline, FrameMargins -> 0, ImageMargins -> 0, 
    ImageSize -> 
-   Full]& )},ExpressionUUID->"66fed13e-4e39-4175-a6e2-fb97caee9b47"],
+   Full]& )},ExpressionUUID->"e1fb17f3-df74-4a4d-b09b-a33800c8d755"],
 
 Cell[StyleData["ConnorGray/ButtonMenuItem"],
  TemplateBoxOptions->{DisplayFunction->(TemplateBox[{
@@ -373,7 +378,7 @@ Cell[StyleData["ConnorGray/ButtonMenuItem"],
        "FEExpressions", "SuppressMouseDownNinePatchAppearance"]], Method -> 
      "Queued", Evaluator -> Automatic]}, 
    "ConnorGray/FramedMenuItem"]& \
-)},ExpressionUUID->"bfae4cab-65c8-467b-932e-7e0cfc28f25d"],
+)},ExpressionUUID->"20d1c711-756e-4f8a-a7ec-f2a698a169cc"],
 
 Cell[StyleData["ConnorGray/ActionMenuItem"],
  TemplateBoxOptions->{DisplayFunction->(TemplateBox[{
@@ -397,7 +402,7 @@ Cell[StyleData["ConnorGray/ActionMenuItem"],
        AutoDelete -> False], "Grid"], #2, Appearance -> None, Alignment -> 
      Left, ImageSize -> Full]}, 
    "ConnorGray/FramedMenuItem"]& \
-)},ExpressionUUID->"5fd8405c-e6fd-4a90-b801-61243db5189b"],
+)},ExpressionUUID->"5d322969-d7fa-4a64-bb53-8153fcde108a"],
 
 Cell[StyleData["ConnorGray/FramedMenuItem"],
  TemplateBoxOptions->{DisplayFunction->(FrameBox[#, FrameStyle -> Dynamic[
@@ -410,14 +415,14 @@ Cell[StyleData["ConnorGray/FramedMenuItem"],
       GrayLevel[1], 
       GrayLevel[0.98]]], FrameMargins -> {{5, 2}, {2, 2}}, ImageMargins -> 0, 
    ImageSize -> 
-   Full]& )},ExpressionUUID->"d6a54afd-5fe3-4a69-93cd-c86e55f5f4ac"],
+   Full]& )},ExpressionUUID->"1baa72f0-18cd-48e6-bc5b-389e390b9ad5"],
 
 Cell[StyleData["ConnorGray/MenuSection"],
  TemplateBoxOptions->{DisplayFunction->(FrameBox[
    StyleBox[#, "ConnorGray/MenuSectionLabel"], BaselinePosition -> Baseline, 
    Background -> GrayLevel[0.937], FrameStyle -> None, 
    FrameMargins -> {{5, 2}, {2, 2}}, ImageMargins -> 0, ImageSize -> 
-   Full]& )},ExpressionUUID->"5ea0e7c8-2c2b-4bfc-8e42-d832e42964d4"],
+   Full]& )},ExpressionUUID->"925d8162-e93c-4223-826f-0470d0c8d8ea"],
 
 Cell[StyleData["ConnorGray/MenuLabel"],
  LineBreakWithin->False,
@@ -426,17 +431,17 @@ Cell[StyleData["ConnorGray/MenuLabel"],
  FontSize->13,
  FontWeight->Plain,
  FontColor->GrayLevel[
-  0.2],ExpressionUUID->"ba6ec9cc-2960-49b2-8e99-a096fa4f6533"],
+  0.2],ExpressionUUID->"a7289aa9-1d96-410e-9a75-a6ddef9c5b15"],
 
 Cell[StyleData["ConnorGray/MenuSectionLabel", StyleDefinitions -> 
  StyleData["ConnorGray/MenuLabel"]],
  FontSize->13,
  FontColor->GrayLevel[
-  0.35],ExpressionUUID->"1948d6ed-98e3-4053-a9ed-19128d09fb5c"]
+  0.35],ExpressionUUID->"f6b41937-305c-46ab-b484-0a3c097f3bcc"]
 },
 FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (July 24, 2023)",
 StyleDefinitions->"PrivateStylesheetFormatting.nb",
-ExpressionUUID->"9d886c82-5e3e-496c-a74d-5899e6aa6ae6"
+ExpressionUUID->"3b31f18f-8423-4424-9ab8-f1f942e437d3"
 ]
 (* End of Notebook Content *)
 
@@ -449,40 +454,40 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 104, 0, 70, 49, 0, "StyleData", "StyleDefinitions", "",ExpressionUUID->"5fc622c8-3a8d-459d-939d-5d4ed23c5778"],
-Cell[665, 22, 3289, 72, 70, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"4bedfdfd-9f3d-4523-bb44-1a9a2233db14"],
-Cell[3957, 96, 166, 3, 70, 83, 1, "StyleData", "Excluded", "All",ExpressionUUID->"83763f8c-cdd6-4c8b-8ab2-f90ef5af7272",
+Cell[558, 20, 104, 0, 70, 49, 0, "StyleData", "StyleDefinitions", "",ExpressionUUID->"a24e0784-0fd5-4d0a-a2c0-b5cee16be1a0"],
+Cell[665, 22, 3289, 72, 70, 27, 0, "StyleData", "Notebook", "All",ExpressionUUID->"a679117e-f9d2-4e31-bcf7-77c52d127cc8"],
+Cell[3957, 96, 166, 3, 70, 83, 1, "StyleData", "Excluded", "All",ExpressionUUID->"e09a6463-eb2b-4872-8f8f-b792305ce412",
  MenuSortingValue->None],
-Cell[4126, 101, 172, 3, 70, 89, 1, "StyleData", "LiteralHTML", "All",ExpressionUUID->"7cf50866-4d84-4d45-8205-d783b8f6531f",
+Cell[4126, 101, 172, 3, 70, 89, 1, "StyleData", "LiteralHTML", "All",ExpressionUUID->"6bdca12d-a356-4a72-bc48-f6742fa4bb8a",
  MenuSortingValue->None],
-Cell[4301, 106, 174, 3, 70, 91, 1, "StyleData", "ComputedHTML", "All",ExpressionUUID->"9baace02-cddb-4b47-bf50-c08725664a25",
+Cell[4301, 106, 174, 3, 70, 91, 1, "StyleData", "ComputedHTML", "All",ExpressionUUID->"83543509-944f-4dde-b57d-14966c70618d",
  MenuSortingValue->None],
-Cell[4478, 111, 180, 3, 70, 97, 1, "StyleData", "HighlightSyntax", "All",ExpressionUUID->"c47b2474-051c-4b10-84d5-71d985802df3",
+Cell[4478, 111, 180, 3, 70, 97, 1, "StyleData", "HighlightSyntax", "All",ExpressionUUID->"9389cdc9-b3be-498d-b5a7-43f936eb3986",
  MenuSortingValue->None],
-Cell[4661, 116, 239, 5, 70, 38, 0, "StyleData", "ConnorGray/Excluded", "All",ExpressionUUID->"1bb2777a-2a60-40cb-aeb1-c7353886f7ed",
+Cell[4661, 116, 239, 5, 70, 38, 0, "StyleData", "ConnorGray/Excluded", "All",ExpressionUUID->"4a123137-6f94-4b33-afae-5f514a90cb7b",
  MenuSortingValue->2500],
-Cell[4903, 123, 238, 5, 70, 35, 0, "StyleData", "ConnorGray/Draft", "All",ExpressionUUID->"072577d0-499f-4d0d-afa0-b83d5b042d71",
+Cell[4903, 123, 238, 5, 70, 35, 0, "StyleData", "ConnorGray/Draft", "All",ExpressionUUID->"8b5a285a-78b8-49d9-ad4f-489708ef296b",
  MenuSortingValue->2500],
-Cell[5144, 130, 397, 11, 70, 44, 0, "StyleData", "ConnorGray/TabViewSection", "All",ExpressionUUID->"fd13119c-3007-4d0f-a01d-89a0f4bb57b0"],
-Cell[5544, 143, 634, 17, 70, 41, 0, "StyleData", "ConnorGray/LiteralHTML", "All",ExpressionUUID->"2410ff1e-28fe-4e75-a435-e39d10bb9b36",
+Cell[5144, 130, 397, 11, 70, 44, 0, "StyleData", "ConnorGray/TabViewSection", "All",ExpressionUUID->"3c0cf7c7-b5cc-4601-937f-163f2a51f5cb"],
+Cell[5544, 143, 667, 18, 70, 41, 0, "StyleData", "ConnorGray/LiteralHTML", "All",ExpressionUUID->"f102ffaa-30d6-4a6b-a810-ae15d72c7f3f",
  MenuSortingValue->2525],
-Cell[6181, 162, 259, 5, 70, 84, 1, "StyleData", "ConnorGray/ComputedHTML", "All",ExpressionUUID->"62bcefc4-f10a-484e-9400-ff416c1a315c",
+Cell[6214, 163, 259, 5, 70, 84, 1, "StyleData", "ConnorGray/ComputedHTML", "All",ExpressionUUID->"9d2b70ca-948d-4aec-8c9e-3ebbd2f5acc8",
  MenuSortingValue->2550],
-Cell[6443, 169, 2341, 58, 70, 45, 0, "StyleData", "ConnorGray/HighlightSyntax", "All",ExpressionUUID->"2f99434b-6781-42ca-a396-fc3d0298ac2c",
+Cell[6476, 170, 2523, 62, 70, 45, 0, "StyleData", "ConnorGray/HighlightSyntax", "All",ExpressionUUID->"3b3b8829-5d9a-4de3-86bc-4764f3753a03",
  MenuSortingValue->2575],
-Cell[8787, 229, 482, 11, 70, 45, 0, "StyleData", "ConnorGray/DynamicIconLink", "All",ExpressionUUID->"99d7b22e-8c6b-4d16-8211-36b4e527fa00"],
-Cell[9272, 242, 410, 10, 70, 40, 0, "StyleData", "ConnorGray/GitHubLink", "All",ExpressionUUID->"0e9c1d69-6d93-4efb-8fcf-55610957ca50"],
-Cell[9685, 254, 409, 10, 70, 40, 0, "StyleData", "ConnorGray/PacletLink", "All",ExpressionUUID->"7d416b33-a1bc-40ee-87fc-ba993aef2b7e"],
-Cell[10097, 266, 411, 10, 70, 43, 0, "StyleData", "ConnorGray/RustCrateLink", "All",ExpressionUUID->"12bae6c6-098a-4150-88de-97fb52ba289c"],
-Cell[10511, 278, 1427, 29, 70, 66, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelButtonTemplate", "All",ExpressionUUID->"a4ed7f23-3d0e-4b38-bc8f-87893b49ebc0"],
-Cell[11941, 309, 1505, 30, 70, 68, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelDropdownTemplate", "All",ExpressionUUID->"9c0a516c-8962-4b39-b443-6fe9d4dd861c"],
-Cell[13449, 341, 576, 12, 70, 47, 0, "StyleData", "ConnorGray/MenuItemDelimiter", "All",ExpressionUUID->"66fed13e-4e39-4175-a6e2-fb97caee9b47"],
-Cell[14028, 355, 948, 20, 70, 44, 0, "StyleData", "ConnorGray/ButtonMenuItem", "All",ExpressionUUID->"bfae4cab-65c8-467b-932e-7e0cfc28f25d"],
-Cell[14979, 377, 954, 22, 70, 44, 0, "StyleData", "ConnorGray/ActionMenuItem", "All",ExpressionUUID->"5fd8405c-e6fd-4a90-b801-61243db5189b"],
-Cell[15936, 401, 462, 11, 70, 44, 0, "StyleData", "ConnorGray/FramedMenuItem", "All",ExpressionUUID->"d6a54afd-5fe3-4a69-93cd-c86e55f5f4ac"],
-Cell[16401, 414, 364, 5, 70, 41, 0, "StyleData", "ConnorGray/MenuSection", "All",ExpressionUUID->"5ea0e7c8-2c2b-4bfc-8e42-d832e42964d4"],
-Cell[16768, 421, 233, 7, 70, 39, 0, "StyleData", "ConnorGray/MenuLabel", "All",ExpressionUUID->"ba6ec9cc-2960-49b2-8e99-a096fa4f6533"],
-Cell[17004, 430, 205, 4, 70, 103, 1, "StyleData", "ConnorGray/MenuSectionLabel", "All",ExpressionUUID->"1948d6ed-98e3-4053-a9ed-19128d09fb5c"]
+Cell[9002, 234, 482, 11, 70, 45, 0, "StyleData", "ConnorGray/DynamicIconLink", "All",ExpressionUUID->"27c6b44d-cb05-4863-8996-efa777cb5236"],
+Cell[9487, 247, 410, 10, 70, 40, 0, "StyleData", "ConnorGray/GitHubLink", "All",ExpressionUUID->"cfdf210d-a7cd-41a8-a6a6-946c58fa5848"],
+Cell[9900, 259, 409, 10, 70, 40, 0, "StyleData", "ConnorGray/PacletLink", "All",ExpressionUUID->"69c8627d-f16d-4cbf-82f1-4b7cbde21a37"],
+Cell[10312, 271, 411, 10, 70, 43, 0, "StyleData", "ConnorGray/RustCrateLink", "All",ExpressionUUID->"cef7a7fc-d9b9-4183-b03e-b6fd12a1fbf2"],
+Cell[10726, 283, 1427, 29, 70, 66, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelButtonTemplate", "All",ExpressionUUID->"615ee370-d772-4ce1-956e-fcc330eaaea2"],
+Cell[12156, 314, 1505, 30, 70, 68, 0, "StyleData", "NotebookWebsiteTools:IconAndLabelDropdownTemplate", "All",ExpressionUUID->"4dc109a5-af1a-404b-9ade-53522eb2adce"],
+Cell[13664, 346, 576, 12, 70, 47, 0, "StyleData", "ConnorGray/MenuItemDelimiter", "All",ExpressionUUID->"e1fb17f3-df74-4a4d-b09b-a33800c8d755"],
+Cell[14243, 360, 948, 20, 70, 44, 0, "StyleData", "ConnorGray/ButtonMenuItem", "All",ExpressionUUID->"20d1c711-756e-4f8a-a7ec-f2a698a169cc"],
+Cell[15194, 382, 954, 22, 70, 44, 0, "StyleData", "ConnorGray/ActionMenuItem", "All",ExpressionUUID->"5d322969-d7fa-4a64-bb53-8153fcde108a"],
+Cell[16151, 406, 462, 11, 70, 44, 0, "StyleData", "ConnorGray/FramedMenuItem", "All",ExpressionUUID->"1baa72f0-18cd-48e6-bc5b-389e390b9ad5"],
+Cell[16616, 419, 364, 5, 70, 41, 0, "StyleData", "ConnorGray/MenuSection", "All",ExpressionUUID->"925d8162-e93c-4223-826f-0470d0c8d8ea"],
+Cell[16983, 426, 233, 7, 70, 39, 0, "StyleData", "ConnorGray/MenuLabel", "All",ExpressionUUID->"a7289aa9-1d96-410e-9a75-a6ddef9c5b15"],
+Cell[17219, 435, 205, 4, 70, 103, 1, "StyleData", "ConnorGray/MenuSectionLabel", "All",ExpressionUUID->"f6b41937-305c-46ab-b484-0a3c097f3bcc"]
 }
 ]
 *)

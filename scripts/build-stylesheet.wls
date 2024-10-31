@@ -404,6 +404,9 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 		CellFrame -> {{3, False}, {False, False}},
 		CellFrameColor -> GrayLevel[0.8],
 		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False],
+		(* Don't word wrap content in LiteralHTML cells, which is
+			typically pre-formatted code input. *)
+		PageWidth -> Infinity,
 		(* Copied from Default.nb "Program" cells: *)
 		StripStyleOnPaste -> True,
 		CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
