@@ -166,7 +166,7 @@ ShowPreview[
 	(* Build the temporary website    *)
 	(*--------------------------------*)
 
-	result = EchoTiming @ NotebookWebsiteBuild[
+	result = NotebookWebsiteBuild[
 		tmpWebsiteDir,
 		"IncludeDrafts" -> OptionValue["IncludeDrafts"]
 	];
