@@ -127,6 +127,12 @@ pre.nb-Program {
     background: #e5e5e5;
 }
 
+/* Prevent a scrollbar from being shown in HighlightSyntax cells, which looks
+    ugly, takes up space, and doesn't signify much. */
+pre::-webkit-scrollbar {
+    display: none;
+}
+
 /*====================================*/
 /* Textual Styles                     */
 /*====================================*/
