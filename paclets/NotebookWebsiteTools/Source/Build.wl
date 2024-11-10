@@ -602,75 +602,13 @@ ConvertToHtml[expr_] := Replace[expr, {
 		secondaryStylesSeq___?StringQ,
 		options0___?OptionQ
 	] :> UsingFrontEnd @ Module[{
-		$rasterResolution = 270,
-		(* The native PPI resolution of the FrontEnd on this device. This is
-		   typically 144 on HiDPI computers. *)
-		$frontEndResolution,
-		$frontEndScale,
 		image,
-		imageRelativeUrl,
 		imageCSSPixelDimensions
 	},
-		{$frontEndResolution, $frontEndScale} = Replace[CurrentValue["ConnectedDisplays"], {
-			{
-				KeyValuePattern[{
-					"Resolution" -> resolution_?NumberQ,
-					"Scale" -> scale_?NumberQ
-				}],
-				___
-			} :> {resolution, scale},
-			other_ :> Raise[
-				NotebookWebsiteError,
-				"Unexpected \"ConnectedDisplays\" value: ``",
-				InputForm[other]
-			]
-		}];
-
-		RaiseAssert[NumberQ[$frontEndResolution]];
-
-		RaiseAssert[
-			$frontEndResolution == 144 || $frontEndResolution == 72,
-			"Unexpected FrontEnd resolution: ``", $frontEndResolution
-		];
-
-		image = Rasterize[
+		{image, imageCSSPixelDimensions} = Rasterize2[
 			cell,
-			ImageResolution -> $rasterResolution,
-			Background -> ColorConvert[Transparent, "RGB"]
+			{"Image", "CSSPixelSize"}
 		];
-
-		RaiseAssert[
-			ImageQ[image],
-			"expected cell Rasterize result to be Image, got: ``",
-			InputForm[image]
-		];
-
-		(*------------------------------------------------------------------*)
-		(* Calculate the image dimensions in CSS pixels that will result in *)
-		(* the cell image having the same physical on-screen size as when   *)
-		(* viewed  in a notebook. When viewing the notebook next to the web *)
-		(* page at the same magnification, the two should appear identical  *)
-		(* in size.                                                         *)
-		(*------------------------------------------------------------------*)
-
-		(* These are the dimensions `image` would have if `image` was rasterized
-		   at the default front end resolution. *)
-		imageCSSPixelDimensions =
-			ImageDimensions[image] / ($rasterResolution / $frontEndResolution);
-
-		(* Account for the fact that HTML pixels are defined as 1/96th of an inch,
-		   so they already compensate for the DPI scale; meaning we need to
-		   divide the physical dimensions of the image by the scaling factor of
-		   the FE they were rendered by. *)
-		imageCSSPixelDimensions /= $frontEndScale;
-
-		imageCSSPixelDimensions //= Round;
-
-		RaiseAssert[MatchQ[imageCSSPixelDimensions, {_?IntegerQ, _?IntegerQ}]];
-
-		(*-------------------------*)
-		(* Return the HTML element *)
-		(*-------------------------*)
 
 		imageRelativeUrl = AddSupportFile[primaryCellStyle, image];
 

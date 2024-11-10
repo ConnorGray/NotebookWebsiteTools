@@ -9,6 +9,8 @@ CreateCacheDirectory
 RelativePath
 UniqueContext
 PrefixListsToRules
+OutputElementsQ
+ConstructOutputElements
 
 (*---------------------*)
 (* FrontEnd Operations *)
@@ -16,6 +18,7 @@ PrefixListsToRules
 ConvertToString
 NotebookCells
 CellDataQ
+Rasterize2
 
 (*------*)
 (* HTML *)
@@ -276,6 +279,61 @@ PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
 ]
 
 (*========================================================*)
+
+(*
+	NOTE: Copied from Diagrams
+*)
+
+SetFallthroughError[OutputElementsQ]
+
+OutputElementsQ[expr_] :=
+	MatchQ[expr, _?StringQ | {___?StringQ} | Automatic]
+
+(*====================================*)
+
+(*
+	NOTE: Copied from Diagrams
+*)
+
+SetFallthroughError[ConstructOutputElements]
+
+ConstructOutputElements[
+	outputElems: _?OutputElementsQ,
+	default: _?StringQ,
+	(* A list of rules or a function. *)
+	getOutputElement0_
+] := Module[{
+	getOutputElement = getOutputElement0
+},
+	If[ListQ[getOutputElement0],
+		getOutputElement = ({elem} |-> ConfirmReplace[
+			elem,
+			Append[
+				getOutputElement0,
+				other_ :> Raise[
+					DiagramError,
+					"Unrecognized output element requested: ``",
+					InputForm[other]
+				]
+			]
+		]);
+	];
+
+	(*--------------------------------*)
+
+	ConfirmReplace[outputElems, {
+		Automatic :> getOutputElement[default],
+		element_?StringQ :> getOutputElement[element],
+		elements:{___?StringQ} :> Map[getOutputElement, elements],
+		other_ :> Raise[
+			DiagramError,
+			"Unrecognized output elements specification: ``",
+			InputForm[other]
+		]
+	}]
+]
+
+(*========================================================*)
 (* FrontEnd Operations                                    *)
 (*========================================================*)
 
@@ -365,6 +423,93 @@ CellDataQ[expr_] :=
 		TextData[_],
 		BoxData[_]
 	]]
+
+(*====================================*)
+
+SetFallthroughError[Rasterize2]
+
+Rasterize2[
+	expr: _,
+	outputElems: _?OutputElementsQ : Automatic
+] := Module[{
+	$rasterResolution = 270,
+	(* The native PPI resolution of the FrontEnd on this device. This is
+		typically 144 on HiDPI computers. *)
+	$frontEndResolution,
+	$frontEndScale,
+	image,
+	imageRelativeUrl,
+	imageCSSPixelSize
+},
+	{$frontEndResolution, $frontEndScale} = Replace[
+		CurrentValue["ConnectedDisplays"],
+		{
+			{
+				KeyValuePattern[{
+					"Resolution" -> resolution: _?NumberQ,
+					"Scale" -> scale: _?NumberQ
+				}],
+				___
+			} :> {resolution, scale},
+			other: _ :> Raise[
+				NotebookWebsiteError,
+				"Unexpected \"ConnectedDisplays\" value: ``",
+				InputForm[other]
+			]
+		}
+	];
+
+	RaiseAssert[NumberQ[$frontEndResolution]];
+
+	RaiseAssert[
+		$frontEndResolution == 144 || $frontEndResolution == 72,
+		"Unexpected FrontEnd resolution: ``", $frontEndResolution
+	];
+
+	image = Rasterize[
+		expr,
+		ImageResolution -> $rasterResolution,
+		Background -> ColorConvert[Transparent, "RGB"]
+	];
+
+	RaiseAssert[
+		ImageQ[image],
+		"expected cell Rasterize result to be Image, got: ``",
+		InputForm[image]
+	];
+
+	(*------------------------------------------------------------------*)
+	(* Calculate the image dimensions in CSS pixels that will result in *)
+	(* the cell image having the same physical on-screen size as when   *)
+	(* viewed in a notebook. When viewing the notebook next to the web  *)
+	(* page at the same magnification, the two should appear identical  *)
+	(* in size.                                                         *)
+	(*------------------------------------------------------------------*)
+
+	(* These are the dimensions `image` would have if `image` was rasterized
+		at the default front end resolution. *)
+	imageCSSPixelSize =
+		ImageDimensions[image] / ($rasterResolution / $frontEndResolution);
+
+	(* Account for the fact that HTML pixels are defined as 1/96th of an inch,
+		so they already compensate for the DPI scale; meaning we need to
+		divide the physical dimensions of the image by the scaling factor of
+		the FE they were rendered by. *)
+	imageCSSPixelSize /= $frontEndScale;
+
+	imageCSSPixelSize //= Round;
+
+	RaiseAssert[MatchQ[imageCSSPixelSize, {_?IntegerQ, _?IntegerQ}]];
+
+	ConstructOutputElements[
+		outputElems,
+		"Image",
+		{
+			"Image" :> image,
+			"CSSPixelSize" :> imageCSSPixelSize
+		}
+	]
+]
 
 (*========================================================*)
 (* HTML                                                   *)
