@@ -86,7 +86,8 @@ Options[NotebookWebsiteBuild] = {
 
 		Embedding images makes it easier to distribute stand-alone HTML.
 	*)
-	"EmbedImages" -> False
+	"EmbedImages" -> False,
+	"EmbedCSS" -> False
 }
 
 NotebookWebsiteBuild[
@@ -109,6 +110,7 @@ Block[{
 		(* TODO: RaiseConfirmMatch[.., _?BooleanQ] this. *)
 		"IncludeDrafts" -> TrueQ[OptionValue["IncludeDrafts"]],
 		"EmbedImages" -> TrueQ[OptionValue["EmbedImages"]],
+		"EmbedCSS" -> TrueQ[OptionValue["EmbedCSS"]],
 		(* Initialized below if the notebook website has a valid
 			NotebookWebsite.wl configuration file. *)
 		"Configuration" -> <||>
@@ -294,12 +296,13 @@ buildWebNotebook[
 	contentDir: _?StringQ,
 	buildDir: _?StringQ
 ] := Module[{
-	relativeWebAssetsLocation,
 	nbFileRelative = RelativePath[contentDir, nbFile],
 	nb,
 	metadata,
 	documentType,
 	nbHtml,
+	htmlHead,
+	htmlBody,
 	html,
 	htmlString,
 	htmlFile
@@ -381,22 +384,54 @@ Block[{
 	(* Generate the symbolic HTML output *)
 	(*-----------------------------------*)
 
-	(* Determine the appropriate relative URL to point to the
-	   web_assets directory. *)
-	relativeWebAssetsLocation = notebookRelativeWebAssetsURL[$CurrentNotebookRelativeURL];
+	(* Default HTML <head> and <body> content. *)
+	htmlHead = {
+		(* Make scaling work on mobile correctly. *)
+		XML`RawXML["
+			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+		"]
+	};
+	htmlBody = {
+		nbHtml
+	};
+
+	ConfirmReplace[Lookup[$BuildSettings, "EmbedCSS"], {
+		False :> Module[{
+			(* Determine the appropriate relative URL to point to the
+			web_assets directory. *)
+			relativeWebAssetsLocation = notebookRelativeWebAssetsURL[
+				$CurrentNotebookRelativeURL
+			]
+		},
+			AppendTo[
+				htmlHead,
+				XMLElement["link", {
+					"rel" -> "stylesheet",
+					"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
+				}, {}]
+			];
+		],
+		True :> Module[{
+			webAssetsSource = PacletObject["ConnorGray/NotebookWebsiteTools"][
+				"AssetLocation",
+				"web_assets"
+			],
+			cssContents
+		},
+			cssContents = RaiseConfirm @ Import[
+				FileNameJoin[{webAssetsSource, "notebook-website-default.css"}],
+				"String"
+			];
+
+			RaiseAssert[StringQ[cssContents]];
+
+			PrependTo[htmlBody, XMLElement["style", {}, {XML`RawXML[cssContents]}]];
+		]
+	}];
 
 	html = XMLElement["html", {}, {
-		XMLElement["head", {}, {
-			XMLElement["link", {
-				"rel" -> "stylesheet",
-				"href" -> URLBuild[{relativeWebAssetsLocation, "notebook-website-default.css"}]
-			}, {}],
-			(* Make scaling work on mobile correctly. *)
-			XML`RawXML["
-				<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-			"]
-		}],
-		XMLElement["body", {}, {nbHtml}]
+		XMLElement["head", {}, htmlHead],
+		XMLElement["body", {}, htmlBody]
 	}];
 
 	(*-------------------------------------------------------*)
