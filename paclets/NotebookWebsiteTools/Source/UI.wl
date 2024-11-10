@@ -80,14 +80,15 @@ ToggleDraft[nb_NotebookObject] := Module[{
 (*====================================*)
 
 Options[ShowPreview] = {
-	"IncludeDrafts" -> False
+	"IncludeDrafts" -> False,
+	"EmbedImages" -> False
 }
 
 SetFallthroughError[ShowPreview]
 
 ShowPreview[
 	nbObj0: _NotebookObject,
-	OptionsPattern[]
+	opts:OptionsPattern[]
 ] := Module[{
 	nbPath = NotebookFileName[nbObj0],
 	nbObj,
@@ -168,7 +169,7 @@ ShowPreview[
 
 	result = NotebookWebsiteBuild[
 		tmpWebsiteDir,
-		"IncludeDrafts" -> OptionValue["IncludeDrafts"]
+		ForwardOptions[opts]
 	];
 
 	(* Print[result]; *)

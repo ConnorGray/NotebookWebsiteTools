@@ -77,7 +77,16 @@ $BuildCache := Raise[NotebookWebsiteError, "Unexpected use of $BuildCache: no bu
 (*====================================*)
 
 Options[NotebookWebsiteBuild] = {
-	"IncludeDrafts" -> False
+	"IncludeDrafts" -> False,
+
+	(*
+		Whether images derived form notebook content should be embedded
+		directory in the HTML, or generated as separate files that are linked
+		to.
+
+		Embedding images makes it easier to distribute stand-alone HTML.
+	*)
+	"EmbedImages" -> False
 }
 
 NotebookWebsiteBuild[
@@ -90,8 +99,6 @@ NotebookWebsiteBuild[
 		RaiseConfirm @ ExpandFileName[inputDir0],
 		File[dir_?StringQ] :> dir
 	],
-	(* TODO: RaiseConfirmMatch[.., _?BooleanQ] this. *)
-	includeDrafts = OptionValue["IncludeDrafts"],
 	buildDir,
 	contentDir,
 	notebooks,
@@ -99,7 +106,9 @@ NotebookWebsiteBuild[
 },
 Block[{
 	$BuildSettings = <|
-		"IncludeDrafts" -> TrueQ[includeDrafts],
+		(* TODO: RaiseConfirmMatch[.., _?BooleanQ] this. *)
+		"IncludeDrafts" -> TrueQ[OptionValue["IncludeDrafts"]],
+		"EmbedImages" -> TrueQ[OptionValue["EmbedImages"]],
 		(* Initialized below if the notebook website has a valid
 			NotebookWebsite.wl configuration file. *)
 		"Configuration" -> <||>
@@ -610,10 +619,20 @@ ConvertToHtml[expr_] := Replace[expr, {
 			{"Image", "CSSPixelSize"}
 		];
 
-		imageRelativeUrl = AddSupportFile[primaryCellStyle, image];
+		imageUrl = ConfirmReplace[Lookup[$BuildSettings, "EmbedImages"], {
+			False :> (
+				AddSupportFile[primaryCellStyle, image]
+			),
+			True :> (
+				StringJoin[
+					"data:image/png;base64,",
+					BaseEncode[ExportByteArray[image, "PNG"]]
+				]
+			)
+		}];
 
 		XMLElement["img", {
-			"src" -> imageRelativeUrl,
+			"src" -> imageUrl,
 			"width" -> ToString @ imageCSSPixelDimensions[[1]],
 			"height" -> ToString @ imageCSSPixelDimensions[[2]],
 			"style" -> "display: block; padding: 4pt 0 4pt 0;"

@@ -268,6 +268,21 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 										ButtonNotebook[],
 										"IncludeDrafts" -> True
 									];
+								),
+								ToBoxes["Published \[LongDash] Single File"] :> (
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+										ButtonNotebook[],
+										"EmbedImages" -> True
+									];
+								),
+								ToBoxes["Draft \[LongDash] Single File"] :> (
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+										ButtonNotebook[],
+										"IncludeDrafts" -> True,
+										"EmbedImages" -> True
+									];
 								)
 							},
 							"Queued",
