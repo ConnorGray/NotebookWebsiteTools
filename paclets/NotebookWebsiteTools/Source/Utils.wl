@@ -2,20 +2,42 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`Utils`"]
 
 Needs["GeneralUtilities`" -> "GU`"]
 
+(*--------------*)
+(* Developer UX *)
+(*--------------*)
+CreateCacheDirectory
 RelativePath
+UniqueContext
+PrefixListsToRules
 
+(*---------------------*)
+(* FrontEnd Operations *)
+(*---------------------*)
 ConvertToString
+NotebookCells
+CellDataQ
 
-UniqueContext::usage = "UniqueContext[stem] generates a unique context name beginning with stem."
+(*------*)
+(* HTML *)
+(*------*)
+HTMLEscape
+HTMLFragmentQ
+GetWebsiteFavicon
 
-NotebookCells::usage = "NotebookCells[notebook] returns a list of all top-level cells in notebook, after flattening out cell groups."
+(*------------------------------*)
+(* Compuational Essay Authoring *)
+(*------------------------------*)
+CodeSyntaxHighlight
+DeleteDelimitedLines
 
-HTMLEscape::usage = "HTMLEscape[string] escapes string so that it can be embedded in HTML as regular text."
+Begin["`Private`"]
 
-GU`SetUsage[CellDataQ, "CellDataQ[expr$] returns True if expr$ is a valid cell content type, typically a string, TextData[$$] or BoxData[$$].
-* Box expressions are not considered valid cell data, as they cannot validly appear as the first\
-  argument of Cell[$$].
-"]
+Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
+Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
+
+(*========================================================*)
+(* Developer UX                                           *)
+(*========================================================*)
 
 GU`SetUsage[CreateCacheDirectory, "
 CreateCacheDirectory[path$] creates or confirms the existence of a cache directory at the specified path$.
@@ -44,37 +66,6 @@ files other than CACHEDIR.TAG will be deleted. If path$ did not exist or was an
 empty directory, it will be initialized as valid cache directory containing
 only a CACHEDIR.TAG file.
 "]
-
-GU`SetUsage[HTMLFragmentQ, "
-HTMLFragmentQ[expr$] returns True if expr$ can validlty appear as an element in a list that is a 3rd argument of XMLElement."]
-
-GU`SetUsage[PrefixListsToRules, "
-PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitable for use with RulesTree.
-"]
-
-GU`SetUsage[GetWebsiteFavicon, "
-GetWebsiteFavicon[url$] attempts to retrieve the favicon of a website as an
-Image or Graphics expression.
-"]
-
-GU`SetUsage[CodeSyntaxHighlight, "
-CodeSyntaxHighlight[code$, syntax$, theme$] returns styling directives rendering
-code$ using syntax rules for the specified programming language syntax$, in the
-color theme theme$.
-
-CodeSyntaxHighlight[code$, syntax$, theme$, custom$] returns styled output with
-the specified custom$ styling applied to spans of the input.
-"]
-
-GU`SetUsage[DeleteDelimitedLines, "
-DeleteDelimitedLines[text$, {start$, end$}] returns a string where runs of lines"]
-
-Begin["`Private`"]
-
-Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
-Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
-
-(*========================================================*)
 
 SetFallthroughError[CreateCacheDirectory]
 
@@ -249,6 +240,47 @@ RelativePath[
 
 (*========================================================*)
 
+GU`SetUsage[UniqueContext, "
+UniqueContext[stem$] generates a unique context name beginning with stem$.
+"]
+
+UniqueContext[stem_?StringQ] := Module[{ctx},
+	If[!TrueQ[Internal`SymbolNameQ[stem]],
+		Return[Failure["UniqueContext", <|
+			"MessageTemplate" -> "Invalid non-Symbol stem: ``"|>,
+			"MessageParameters" -> {stem}
+		]];
+	];
+
+	ctx = stem <> "$" <> ToString[$ModuleNumber] <> "`";
+	$ModuleNumber += 1;
+
+	ctx
+]
+
+(*========================================================*)
+
+GU`SetUsage[PrefixListsToRules, "
+PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitable for use with RulesTree.
+"]
+
+SetFallthroughError[PrefixListsToRules]
+
+PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
+	rules = Normal @ Map[
+		inner |-> PrefixListsToRules[DeleteCases[inner, {}]],
+		GroupBy[prefixes, First -> Rest]
+	];
+
+	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
+]
+
+(*========================================================*)
+(* FrontEnd Operations                                    *)
+(*========================================================*)
+
+SetFallthroughError[ConvertToString]
+
 ConvertToString[expr_] := Replace[expr, {
 	string_?StringQ /; StringMatchQ[string, "\"" ~~ ___ ~~ "\""] :> ToExpression[string],
 	string_?StringQ :> string,
@@ -281,25 +313,14 @@ ConvertToString[expr_] := Replace[expr, {
 	other_ :> Raise[NotebookWebsiteError, "no rule to convert form to string: ``", InputForm[other]]
 }]
 
-SetFallthroughError[ConvertToString]
-
 (*========================================================*)
 
-UniqueContext[stem_?StringQ] := Module[{ctx},
-	If[!TrueQ[Internal`SymbolNameQ[stem]],
-		Return[Failure["UniqueContext", <|
-			"MessageTemplate" -> "Invalid non-Symbol stem: ``"|>,
-			"MessageParameters" -> {stem}
-		]];
-	];
+GU`SetUsage[NotebookCells, "
+NotebookCells[notebook$] returns a list of all top-level cells in notebook,
+after flattening out cell groups.
+"]
 
-	ctx = stem <> "$" <> ToString[$ModuleNumber] <> "`";
-	$ModuleNumber += 1;
-
-	ctx
-]
-
-(*========================================================*)
+SetFallthroughError[NotebookCells]
 
 NotebookCells[
 	Notebook[cells:{___Cell}, ___?OptionQ]
@@ -325,21 +346,17 @@ flattenCellGroups[cells: {___Cell}] :=
 		cells
 	]
 
-SetFallthroughError[NotebookCells]
-
 (*========================================================*)
 
-(* NOTE: This function is required because exporting an XMLElement[..] using the
-	"XML" format escapes '<' and '>' characters in `text`, but exporting as
-	using the "HTMLFragment" format does not escape those characters. *)
-HTMLEscape[text_?StringQ] := StringReplace[
-	ExportString[XMLElement["Text", {}, {text}], "XML"],
-	StartOfString ~~ "<Text>" ~~ content___ ~~ "</Text>" ~~ EndOfString :> content
-]
+GU`SetUsage[CellDataQ, "
+CellDataQ[expr$] returns True if expr$ is a valid cell content type, typically a
+string, TextData[$$] or BoxData[$$].
 
-SetFallthroughError[HTMLEscape]
+* Box expressions are not considered valid cell data, as they cannot validly
+  appear as the first argument of Cell[$$].
+"]
 
-(*========================================================*)
+SetFallthroughError[CellDataQ]
 
 CellDataQ[expr_] :=
 	(* TODO: More obscure or deprecated forms. e.g. GraphicsData or OutputFormData? *)
@@ -349,9 +366,31 @@ CellDataQ[expr_] :=
 		BoxData[_]
 	]]
 
-SetFallthroughError[CellDataQ]
+(*========================================================*)
+(* HTML                                                   *)
+(*========================================================*)
+
+GU`SetUsage[HTMLEscape, "
+HTMLEscape[string$] escapes string so that it can be embedded in HTML as regular
+text.
+"]
+
+SetFallthroughError[HTMLEscape]
+
+(* NOTE: This function is required because exporting an XMLElement[..] using the
+	"XML" format escapes '<' and '>' characters in `text`, but exporting as
+	using the "HTMLFragment" format does not escape those characters. *)
+HTMLEscape[text_?StringQ] := StringReplace[
+	ExportString[XMLElement["Text", {}, {text}], "XML"],
+	StartOfString ~~ "<Text>" ~~ content___ ~~ "</Text>" ~~ EndOfString :> content
+]
 
 (*========================================================*)
+
+GU`SetUsage[HTMLFragmentQ, "
+HTMLFragmentQ[expr$] returns True if expr$ can validly appear as an element in a
+list that is a 3rd argument of XMLElement.
+"]
 
 (* TODO: Include XML`RawXML["..."] here? *)
 HTMLFragmentQ[expr_] :=
@@ -359,18 +398,10 @@ HTMLFragmentQ[expr_] :=
 
 (*========================================================*)
 
-PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
-	rules = Normal @ Map[
-		inner |-> PrefixListsToRules[DeleteCases[inner, {}]],
-		GroupBy[prefixes, First -> Rest]
-	];
-
-	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
-]
-
-SetFallthroughError[PrefixListsToRules]
-
-(*========================================================*)
+GU`SetUsage[GetWebsiteFavicon, "
+GetWebsiteFavicon[url$] attempts to retrieve the favicon of a website as an
+Image or Graphics expression.
+"]
 
 GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
 	domain,
@@ -438,6 +469,17 @@ GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
 ]
 
 (*========================================================*)
+(* Compuational Essay Authoring *)
+(*========================================================*)
+
+GU`SetUsage[CodeSyntaxHighlight, "
+	CodeSyntaxHighlight[code$, syntax$, theme$] returns styling directives rendering
+	code$ using syntax rules for the specified programming language syntax$, in the
+	color theme theme$.
+
+	CodeSyntaxHighlight[code$, syntax$, theme$, custom$] returns styled output with
+	the specified custom$ styling applied to spans of the input.
+"]
 
 SetFallthroughError[CodeSyntaxHighlight]
 
@@ -462,6 +504,10 @@ CodeSyntaxHighlight[
 ]
 
 (*========================================================*)
+
+GU`SetUsage[DeleteDelimitedLines, "
+	DeleteDelimitedLines[text$, {start$, end$}] returns a string where runs of lines
+"]
 
 SetFallthroughError[DeleteDelimitedLines]
 
