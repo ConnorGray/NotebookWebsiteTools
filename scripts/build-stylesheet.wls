@@ -235,6 +235,29 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									RGBColor[0.6, 0.4, 0.2] (* Draft color *)
 								},
 								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+							],
+							TemplateBox[
+								{
+									GraphicsBox[{
+										InsetBox[
+											FormBox["\"\"", TraditionalForm],
+											{0, 0}
+										]
+									}, {
+										ImageSize -> 15,
+										BaselinePosition -> Center
+									}],
+									"Tab View",
+									"Toggle whether the selected cell is a tab view section.",
+									Function[
+										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+										ConnorGray`NotebookWebsiteTools`UI`ToggleTabViewSection[ButtonNotebook[]]
+									],
+									"Queued",
+									GrayLevel[0.9],
+									GrayLevel[0.4]
+								},
+								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
 							]
 						}}],
 						(* Force this item to take up the maximum possible width. This
