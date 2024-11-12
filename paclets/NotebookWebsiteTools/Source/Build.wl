@@ -1273,7 +1273,7 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 	*)
 	Replace[ImportString[htmlString, {"HTML", "XMLObject"}], {
 		XMLObject["Document"][
-			{XMLObject["Declaration"]["Version" -> "1.0", "Standalone" -> "yes"]},
+			{XMLObject["Declaration"][___?OptionQ]},
 			XMLElement[
 				"html",
 				{{"http://www.w3.org/2000/xmlns/", "xmlns"} -> "http://www.w3.org/1999/xhtml"},
