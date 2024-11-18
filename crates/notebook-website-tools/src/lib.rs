@@ -30,7 +30,25 @@ fn load_library_functions(args: Vec<Expr>) -> Expr {
 // Syntax Highlighting
 //==========================================================
 
-static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(|| SyntaxSet::load_defaults_newlines());
+static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(|| {
+    let mut builder = SyntaxSet::load_defaults_newlines().into_builder();
+
+    // Fake a Mojo syntax from the Python syntax.
+
+    let mut mojo = builder
+        .syntaxes()
+        .iter()
+        .find(|syntax_def| syntax_def.name == "Python")
+        .expect("unable to locate builtin Python syntax")
+        .clone();
+
+    mojo.name = String::from("Mojo");
+    mojo.file_extensions = vec![String::from("mojo"), String::from("🔥")];
+
+    builder.add(mojo);
+
+    builder.build()
+});
 static THEME_SET: Lazy<ThemeSet> = Lazy::new(|| ThemeSet::load_defaults());
 
 /// Highlights the input source string and returns an HTML string.
