@@ -94,6 +94,9 @@ listItemForGroup[
 		contents. *)
 	Cell[___, "Input", ___] /; children === {} -> Nothing,
 
+	(* Prevent tab view sections from showing up in the table of contents. *)
+	Cell[___, "ConnorGray/TabViewSection", ___] -> Nothing,
+
 	Cell[cellData_, ___] :> Module[{
 		contentString = ConvertToString[cellData],
 		contentSlug
