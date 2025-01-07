@@ -23,3 +23,20 @@ VerificationTest[
 		|>
 	]
 ]
+
+VerificationTest[
+	makeAnchorContentSlug["This is a heading"],
+	"this-is-a-heading"
+]
+
+(* Punctuation should be dropped. *)
+VerificationTest[
+	makeAnchorContentSlug["John Smith's Website."],
+	"john-smiths-website"
+]
+
+(* Special case: Anchors starting with dates should anchor to just the date. *)
+VerificationTest[
+	makeAnchorContentSlug["2024-01-01 — This is a heading"],
+	"2024-01-01"
+]

@@ -1204,9 +1204,27 @@ makeAnchorContentSlug[content_] := Module[{
 		InputForm[contentString]
 	];
 
+	(*	Use just the date as the anchor in headers of the form
+			"2024-01-01 — Some title"
+		This is used by e.g. my Project Log on connorgray.com, but also useful
+		for any other date-entry based page where you want anchors to be simple
+		and consistent.
+	*)
+	If[
+		StringStartsQ[
+			contentString,
+			RegularExpression["[0-9]{4}-[0-9]{2}-[0-9]{2} \[LongDash] "]
+		],
+		Return[StringTake[contentString, 10], Module];
+	];
+
 	StringReplace[contentString, {
 		c:LetterCharacter :> ToLowerCase[c],
 		WhitespaceCharacter.. -> "-",
+		digit: DigitCharacter :> digit,
+		(* Leave hyphens untouched. *)
+		"-" -> "-",
+		(* Remove everything else. *)
 		_ -> ""
 	}]
 ]
