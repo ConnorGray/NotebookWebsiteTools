@@ -40,6 +40,8 @@ KnownHighlightChoices
 
 Begin["`Private`"]
 
+Needs["ConnorGray`Utilities`"]
+
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]

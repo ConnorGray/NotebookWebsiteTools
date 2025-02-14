@@ -27,6 +27,7 @@ PacletObject[<|
 		}
 	},
 	"Dependencies" -> {
-		"Wolfram/ErrorTools"
+		"Wolfram/ErrorTools",
+		"ConnorGray/Utilities"
 	}
 |>]

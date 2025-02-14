@@ -8,6 +8,8 @@ LinkDashboard::usage = "LinkDashboard[links] generates an XMLElement displaying 
 
 Begin["`Private`"]
 
+Needs["ConnorGray`Utilities`"]
+
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]

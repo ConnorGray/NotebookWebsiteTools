@@ -6,12 +6,8 @@ Needs["GeneralUtilities`" -> "GU`"]
 (* Developer UX *)
 (*--------------*)
 CreateCacheDirectory
-RelativePath
 UniqueContext
 PrefixListsToRules
-OutputElementsQ
-ConstructOutputElements
-ForwardOptions
 
 (*---------------------*)
 (* FrontEnd Operations *)
@@ -35,6 +31,8 @@ CodeSyntaxHighlight
 DeleteDelimitedLines
 
 Begin["`Private`"]
+
+Needs["ConnorGray`Utilities`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
@@ -219,34 +217,6 @@ validTagFileContentsQ[contents_?StringQ] :=
 
 (*========================================================*)
 
-SetFallthroughError[RelativePath]
-
-GU`SetUsage[RelativePath, "
-RelativePath[root$, path$] returns the portion of path$ which is relative to \
-root$.
-
-If path$ is not relative to root$, a failure is returned.
-"]
-(*
-	TODO: What should this return if `root` and `path` are the same?
-*)
-RelativePath[
-	root_?StringQ,
-	path_?StringQ
-] := Module[{
-	rootParts = FileNameSplit[root],
-	pathParts = FileNameSplit[path]
-},
-	(* Ensure that `path` is a subdirectory of `root`. If it is, return the component
-	of the path which is relative to `root`. *)
-	If[! MatchQ[pathParts, {Sequence @@ rootParts, ___}],
-		$Failed,
-		FileNameJoin[pathParts[[Length[rootParts] + 1 ;;]]]
-	]
-]
-
-(*========================================================*)
-
 GU`SetUsage[UniqueContext, "
 UniqueContext[stem$] generates a unique context name beginning with stem$.
 "]
@@ -281,87 +251,6 @@ PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
 
 	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
 ]
-
-(*========================================================*)
-
-(*
-	NOTE: Copied from Diagrams
-*)
-
-SetFallthroughError[OutputElementsQ]
-
-OutputElementsQ[expr_] :=
-	MatchQ[expr, _?StringQ | {___?StringQ} | Automatic]
-
-(*====================================*)
-
-(*
-	NOTE: Copied from Diagrams
-*)
-
-SetFallthroughError[ConstructOutputElements]
-
-ConstructOutputElements[
-	outputElems: _?OutputElementsQ,
-	default: _?StringQ,
-	(* A list of rules or a function. *)
-	getOutputElement0_
-] := Module[{
-	getOutputElement = getOutputElement0
-},
-	If[ListQ[getOutputElement0],
-		getOutputElement = ({elem} |-> ConfirmReplace[
-			elem,
-			Append[
-				getOutputElement0,
-				other_ :> Raise[
-					DiagramError,
-					"Unrecognized output element requested: ``",
-					InputForm[other]
-				]
-			]
-		]);
-	];
-
-	(*--------------------------------*)
-
-	ConfirmReplace[outputElems, {
-		Automatic :> getOutputElement[default],
-		element_?StringQ :> getOutputElement[element],
-		elements:{___?StringQ} :> Map[getOutputElement, elements],
-		other_ :> Raise[
-			DiagramError,
-			"Unrecognized output elements specification: ``",
-			InputForm[other]
-		]
-	}]
-]
-
-(*====================================*)
-
-(*
-	NOTE: Copied from Diagrams
-*)
-
-GU`SetUsage[ForwardOptions, "
-ForwardOptions[opts$$] can be used to pass down a sequence of options,
-passing only the subset of options accepted by the callee, discarding those
-options that were only relevant in the context of the caller function.
-
-ForwardOptions must be the last argument to a function to work.
-"]
-
-ClearAll[ForwardOptions];
-
-ForwardOptions /: head_Symbol[
-	args___,
-	ForwardOptions[opts___?OptionQ]
-] := (
-	head[
-		args,
-		Sequence @@ Flatten@FilterRules[{opts}, Options[head]]
-	]
-)
 
 (*========================================================*)
 (* FrontEnd Operations                                    *)

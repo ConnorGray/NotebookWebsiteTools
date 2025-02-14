@@ -52,6 +52,8 @@ The latter is not a valid XMLElement.
 
 Begin["`Private`"]
 
+Needs["ConnorGray`Utilities`"]
+
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
