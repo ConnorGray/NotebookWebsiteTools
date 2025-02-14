@@ -6,7 +6,6 @@ Needs["GeneralUtilities`" -> "GU`"]
 (* Developer UX *)
 (*--------------*)
 CreateCacheDirectory
-UniqueContext
 PrefixListsToRules
 
 (*---------------------*)
@@ -214,26 +213,6 @@ SetFallthroughError[validTagFileContentsQ]
 
 validTagFileContentsQ[contents_?StringQ] :=
 	StringStartsQ[contents, "Signature: 8a477f597d28d172789f06886806bc55"]
-
-(*========================================================*)
-
-GU`SetUsage[UniqueContext, "
-UniqueContext[stem$] generates a unique context name beginning with stem$.
-"]
-
-UniqueContext[stem_?StringQ] := Module[{ctx},
-	If[!TrueQ[Internal`SymbolNameQ[stem]],
-		Return[Failure["UniqueContext", <|
-			"MessageTemplate" -> "Invalid non-Symbol stem: ``"|>,
-			"MessageParameters" -> {stem}
-		]];
-	];
-
-	ctx = stem <> "$" <> ToString[$ModuleNumber] <> "`";
-	$ModuleNumber += 1;
-
-	ctx
-]
 
 (*========================================================*)
 
