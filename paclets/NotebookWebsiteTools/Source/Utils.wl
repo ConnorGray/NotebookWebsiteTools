@@ -6,7 +6,6 @@ Needs["GeneralUtilities`" -> "GU`"]
 (* Developer UX *)
 (*--------------*)
 CreateCacheDirectory
-PrefixListsToRules
 
 (*---------------------*)
 (* FrontEnd Operations *)
@@ -213,23 +212,6 @@ SetFallthroughError[validTagFileContentsQ]
 
 validTagFileContentsQ[contents_?StringQ] :=
 	StringStartsQ[contents, "Signature: 8a477f597d28d172789f06886806bc55"]
-
-(*========================================================*)
-
-GU`SetUsage[PrefixListsToRules, "
-PrefixListsToRules[lists$] turns a list of prefix lists into nested rules suitable for use with RulesTree.
-"]
-
-SetFallthroughError[PrefixListsToRules]
-
-PrefixListsToRules[prefixes : {{Except[_?ListQ] ...} ...}] := Module[{rules},
-	rules = Normal @ Map[
-		inner |-> PrefixListsToRules[DeleteCases[inner, {}]],
-		GroupBy[prefixes, First -> Rest]
-	];
-
-	Replace[rules, (lhs_ -> {}) :> lhs, {1}]
-]
 
 (*========================================================*)
 (* FrontEnd Operations                                    *)
