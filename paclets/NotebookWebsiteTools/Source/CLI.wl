@@ -42,7 +42,7 @@ HandleNotebookWebsiteSubcommand[
 
 			handleNew[fileName, openFlag]
 		),
-		other_ :> Raise[NotebookWebsiteError, "Unexpected command line arguments: ``", other]
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected command line arguments: ``", other]
 	}]
 ]
 
@@ -63,21 +63,21 @@ handleBuild[
 	];
 
 	Replace[result, {
-		success_Success :> (
+		success: _Success :> (
 			If[TrueQ[openFlag],
 				(* Assume that the first file in "OutputHTMLFiles" is the most
 				   interesting to open. *)
 				Replace[success, {
 					Success["NotebookWebsiteBuild", KeyValuePattern[{
-						"OutputHTMLFiles" -> {first_, ___}
+						"OutputHTMLFiles" -> {first: _, ___}
 					}]] :> UsingFrontEnd @ SystemOpen[first]
 				}]
 			];
 		),
-		failure_Failure :> (
+		failure: _Failure :> (
 			Print[Format[failure, CLI`TerminalForm]];
 		),
-		other_ :> (
+		other: _ :> (
 			Raise[NotebookWebsiteError, "Unexpected NotebookWebsiteBuild result: ``", InputForm[other]]
 		)
 	}]
@@ -99,7 +99,7 @@ handleNew[
 		"" :> (
 			fileName = fileName <> ".nb";
 		),
-		other_?StringQ :> Raise[
+		other: _?StringQ :> Raise[
 			NotebookWebsiteError,
 			"unsupported file extension specified for new website notebook file path: ``",
 			fileName
@@ -128,7 +128,7 @@ SetFallthroughError[handleNew]
 (*======================================*)
 
 (* TODO: Replace this with better declarative argument parsing. *)
-ArgQ[expr_] := StringQ[expr] && !StringStartsQ[expr, "-"]
+ArgQ[expr: _] := StringQ[expr] && !StringStartsQ[expr, "-"]
 
 
 End[]

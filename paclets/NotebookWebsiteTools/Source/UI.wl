@@ -50,7 +50,7 @@ Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
 
 (*====================================*)
 
-ToggleExcluded[nb_NotebookObject] := Module[{
+ToggleExcluded[nb: _NotebookObject] := Module[{
 	cells = SelectedCells[nb]
 },
 	RaiseAssert[MatchQ[cells, {___CellObject}]];
@@ -67,7 +67,7 @@ SetFallthroughError[ToggleExcluded]
 
 SetFallthroughError[ToggleDraft]
 
-ToggleDraft[nb_NotebookObject] := Module[{
+ToggleDraft[nb: _NotebookObject] := Module[{
 	cells = SelectedCells[nb]
 },
 	RaiseAssert[MatchQ[cells, {___CellObject}]];
@@ -334,19 +334,19 @@ RedrawHighlightSyntaxCell[cellObj: _CellObject] := Module[{
 	(*---------------------------------------------------*)
 
 	position = Replace[Developer`CellInformation[cellObj], {
-		KeyValuePattern[{"CursorPosition" -> {c_, c_}}] :> c,
+		KeyValuePattern[{"CursorPosition" -> {c: _, c: _}}] :> c,
 		KeyValuePattern[{
 			"CursorPosition" -> None | "AboveCell" | "BelowCell"
 		}] :> None,
-		other_ :> Raise[NotebookWebsiteError, "Unexpected cell information: ``", InputForm@other]
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected cell information: ``", InputForm@other]
 	}];
 
 	{syntax, theme} = getHighlightSyntaxCellSyntaxAndTheme[cellObj];
 
 	originalCell = NotebookRead[cellObj];
 	plainTextContent = Replace[originalCell, {
-		Cell[content_, ___] :> ConvertToString[content],
-		other_ :> Raise[NotebookWebsiteError, "Unexpected NotebookRead result: ``", InputForm@other]
+		Cell[content: _, ___] :> ConvertToString[content],
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected NotebookRead result: ``", InputForm@other]
 	}];
 
 	RaiseAssert[StringQ[plainTextContent]];
@@ -372,14 +372,14 @@ RedrawHighlightSyntaxCell[cellObj: _CellObject] := Module[{
 	highlightedContent = Flatten[highlightedContent, 1];
 
 	newCell = Replace[originalCell, {
-		Cell[_, args___] :> (
+		Cell[_, args: ___] :> (
 			Cell[
 				TextData[highlightedContent],
 				Background -> background,
 				args
 			]
 		),
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Unexpected HighlightSyntax cell structure: ``",
 			InputForm[originalCell]
@@ -445,9 +445,9 @@ getHighlightSyntaxCellSyntaxAndTheme[
 ] := Module[{},
 	syntaxOptions = Replace[AbsoluteCurrentValue[cellObj, {TaggingRules, "HighlightSyntaxOptions"}], {
 		Inherited -> <||>,
-		opts_?ListQ :> Association[opts],
-		assoc_?AssociationQ :> assoc,
-		other_ :> Raise[
+		opts: _?ListQ :> Association[opts],
+		assoc: _?AssociationQ :> assoc,
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"HighlightSyntax cell has invalid non-Association value for \"HighlightSyntaxOptions\": ``",
 			InputForm[other]
@@ -477,7 +477,7 @@ toggleCellStyle[cell : _CellObject, style : _?StringQ] := Module[{
 	*)
 	currentStyles = RaiseConfirm @ Lookup[Options[cell, StyleNames], StyleNames]
 },
-	currentStyles = Replace[currentStyles, s_?StringQ :> {s}];
+	currentStyles = Replace[currentStyles, s: _?StringQ :> {s}];
 
 	RaiseAssert[MatchQ[currentStyles, {___?StringQ}], "currentStyles: ``", InputForm @ currentStyles];
 

@@ -20,7 +20,7 @@ Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 
 TableOfContentsHtml[] := TableOfContentsHtml[$CurrentNotebook]
 
-TableOfContentsHtml[nb_Notebook] := Module[{
+TableOfContentsHtml[nb: _Notebook] := Module[{
 	cells,
 	headings
 },
@@ -31,7 +31,7 @@ TableOfContentsHtml[nb_Notebook] := Module[{
 	headings = extractCellGroupHeadings[cells];
 
 	headings = Replace[headings, {
-		{Cell[_, "Title", ___] -> children_?ListQ} :> children
+		{Cell[_, "Title", ___] -> children: _?ListQ} :> children
 	}];
 
 	XMLElement["nav", {"class" -> "TableOfContents"}, {makeTableOfContentsHtml[headings]}]
@@ -99,7 +99,7 @@ listItemForGroup[
 	(* Prevent tab view sections from showing up in the table of contents. *)
 	Cell[___, "ConnorGray/TabViewSection", ___] -> Nothing,
 
-	Cell[cellData_, ___] :> Module[{
+	Cell[cellData: _, ___] :> Module[{
 		contentString = ConvertToString[cellData],
 		contentSlug
 	},
@@ -115,7 +115,7 @@ listItemForGroup[
 		}]
 	],
 
-	other_ :> Raise[
+	other: _ :> Raise[
 		NotebookWebsiteError,
 		"Unexpected cell headings structure: ``",
 		other
@@ -134,16 +134,16 @@ listItemForGroup[
 	}
 *)
 
-extractCellGroupHeadings[cells:{___Cell}] := Module[{},
+extractCellGroupHeadings[cells: {___Cell}] := Module[{},
 	Map[
 		Replace[{
-			Cell[CellGroupData[inner:{heading_, ___Cell}, _]] :> (
+			Cell[CellGroupData[inner:{heading: _, ___Cell}, _]] :> (
 				heading -> extractCellGroupHeadings[inner]
 			),
 			(* TODO: What about Chapter/Section/Subsection/etc. cell sections
 				that are empty? *)
 			Cell[Except[_CellGroupData], ___] -> Nothing,
-			other_ :> Raise[
+			other: _ :> Raise[
 				NotebookWebsiteError,
 				"Error constructing table of contents: Unexpected Notebook cell structure: ``",
 				InputForm[other]
@@ -163,7 +163,7 @@ PagesSummaryListHtml[
 ] := Module[{
 	websiteDir = Replace[
 		Replace[websiteDir0, Automatic :> $CurrentNotebookWebsiteDirectory],
-		File[dir_?StringQ] :> dir
+		File[dir: _?StringQ] :> dir
 	],
 	contentDir,
 	notebooks,
@@ -198,10 +198,10 @@ PagesSummaryListHtml[
 			(*--------------------------------------------------------*)
 
 			status = Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
-				status_?StringQ :> status,
+				status: _?StringQ :> status,
 				(* Don't list non-website notebooks in the page list. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
-				other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 			}];
 
 			(* Don't include non-built files in the summary list. *)
@@ -209,7 +209,7 @@ PagesSummaryListHtml[
 				"Build" -> Null,
 				(* Documents with this status should be skipped, so skip it. *)
 				"Skip" :> Return[Nothing, Module],
-				other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 			}];
 
 			If[filterFunc =!= Automatic,
@@ -272,7 +272,7 @@ VisualSiteMapHtml[
 ] := Module[{
 	websiteDir = Replace[
 		Replace[websiteDir0, Automatic :> $CurrentNotebookWebsiteDirectory],
-		File[dir_?StringQ] :> dir
+		File[dir: _?StringQ] :> dir
 	],
 	contentDir,
 	notebooks,
@@ -297,10 +297,10 @@ VisualSiteMapHtml[
 			(*--------------------------------------------------------*)
 
 			status = Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
-				status_?StringQ :> status,
+				status: _?StringQ :> status,
 				(* Don't list non-website notebooks. *)
 				Missing["KeyAbsent", "DocumentStatus"] :> Return[Nothing, Module],
-				other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 			}];
 
 			(* Don't include non-built files in the list. *)
@@ -308,7 +308,7 @@ VisualSiteMapHtml[
 				"Build" -> Null,
 				(* Documents with this status should be skipped, so skip it. *)
 				"Skip" :> Return[Nothing, Module],
-				other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 			}];
 
 			(*------------------------------------------------------------------*)
@@ -351,13 +351,13 @@ VisualSiteMapHtml[
 
 SetFallthroughError[makeSiteMapHtml]
 
-makeSiteMapHtml[node_] := Replace[node, {
+makeSiteMapHtml[node: _] := Replace[node, {
 	Tree[
 		KeyValuePattern[{
-			"NotebookFile" -> nbFile_File,
-			"DocumentStatus" -> status_?StringQ,
-			"Title" -> title_?StringQ,
-			"URL" -> url_URL
+			"NotebookFile" -> nbFile: _File,
+			"DocumentStatus" -> status: _?StringQ,
+			"Title" -> title: _?StringQ,
+			"URL" -> url: _URL
 		}],
 		None
 	] :> Module[{},
@@ -365,13 +365,13 @@ makeSiteMapHtml[node_] := Replace[node, {
 			createDocumentTitleLinkHtml[nbFile, url]
 		}]
 	],
-	Tree[component_?StringQ, children:{___Tree}] :> (
+	Tree[component: _?StringQ, children: {___Tree}] :> (
 		XMLElement["li", {}, {
 			component,
 			XMLElement["ul", {}, Map[makeSiteMapHtml, children]]
 		}]
 	),
-	other_ :> (
+	other: _ :> (
 		Raise[
 			NotebookWebsiteError,
 			"Unexpected site map HTML Tree[..] content: ``",
@@ -384,15 +384,15 @@ makeSiteMapHtml[node_] := Replace[node, {
 
 SetFallthroughError[createDocumentTitleLinkHtml]
 
-createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
+createDocumentTitleLinkHtml[nbFile: _File, URL[url: _?StringQ]] := Module[{
 	status,
 	statusBadge
 },
 	status = Replace[GetBuildValue[{nbFile, WebsiteNotebookStatus}], {
-		status_?StringQ :> status,
+		status: _?StringQ :> status,
 		(* Don't list non-website notebooks in the page list. *)
 		missing:Missing["KeyAbsent", "DocumentStatus"] :> Return[missing, Module],
-		other_ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+		other: _ :> Raise[NotebookWebsiteError, "unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	(* If this is a Draft page, show a pill-shaped badge next to the
@@ -423,7 +423,7 @@ createDocumentTitleLinkHtml[nbFile_File, URL[url_?StringQ]] := Module[{
 
 SetFallthroughError[LinkDashboard]
 
-LinkDashboard[linkGroups0_List] := Module[{
+LinkDashboard[linkGroups0: _List] := Module[{
 	linkGroups = linkGroups0
 },
 	linkGroups = Map[
@@ -440,21 +440,21 @@ LinkDashboard[linkGroups0_List] := Module[{
 
 			itemsHtml = Map[
 				item0 |-> ConfirmReplace[item0, {
-					heading_?StringQ :> (
+					heading: _?StringQ :> (
 						XMLElement["div", {"class" -> "header"}, {heading}]
 					),
 					Delimiter :> (
 						XMLElement["hr", {}, {}]
 					),
-					Hyperlink[uri_?StringQ] :> (
+					Hyperlink[uri: _?StringQ] :> (
 						XMLElement["a", {"href" -> uri}, {uri}]
 					),
-					Hyperlink[label_, uri_?StringQ] :> (
+					Hyperlink[label: _, uri: _?StringQ] :> (
 						XMLElement["a", {"href" -> uri, "class" -> "IconLink"}, {
 							(* FIXME: Only do for https links, e.g. not file: links *)
 							Handle[
 								getWebsiteFaviconAsEmbeddedImg[uri],
-								f_Failure :> (
+								f: _Failure :> (
 									Print["WARNING: ", f];
 									Splice[{}]
 								)
@@ -462,7 +462,7 @@ LinkDashboard[linkGroups0_List] := Module[{
 							ConvertToHTML[label]
 						}]
 					),
-					other_ :> Raise[
+					other: _ :> Raise[
 						NotebookWebsiteError,
 						"Unexpected link display item: ``",
 						InputForm[other]
@@ -493,7 +493,7 @@ LinkDashboard[linkGroups0_List] := Module[{
 
 (*========================================================*)
 
-getWebsiteFaviconAsEmbeddedImg[url_?StringQ] := WrapRaised[
+getWebsiteFaviconAsEmbeddedImg[url: _?StringQ] := WrapRaised[
 	NotebookWebsiteError,
 	"Error getting favicon for URL to embed in link: ``",
 	InputForm[url]

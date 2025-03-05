@@ -52,14 +52,14 @@ SetFallthroughError[CreateWebsiteNotebook]
 (*========================================================*)
 
 WebsiteNotebookTitle[
-	Notebook[cells:{___Cell}, ___?OptionQ]
+	Notebook[cells: {___Cell}, ___?OptionQ]
 ] := Module[{
 	cellData,
 	title
 },
 	cellData = FirstCase[
 		cells,
-		Cell[data_, ___, "Title", ___] :> data,
+		Cell[data: _, ___, "Title", ___] :> data,
 		Missing["NotFound"],
 		Infinity
 	];
@@ -67,7 +67,7 @@ WebsiteNotebookTitle[
 	title = Replace[cellData, {
 		Missing["NotFound"] :> Return[cellData, Module],
 		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Error getting website notebook title: unexpected \"Title\" cell data: ``",
 			InputForm[other]
@@ -84,15 +84,15 @@ SetFallthroughError[WebsiteNotebookTitle]
 (*========================================================*)
 
 WebsiteNotebookStatus[
-	Notebook[_?ListQ, options0___?OptionQ]
+	Notebook[_?ListQ, options0: ___?OptionQ]
 ] := Replace[{options0}, {
 	KeyValuePattern[{TaggingRules -> KeyValuePattern[{
 		"ConnorGray/NotebookWebsiteTools" -> KeyValuePattern[{
-			"DocumentStatus" -> status0_
+			"DocumentStatus" -> status0: _
 		}]
 	}]}] :> Replace[status0, {
 		_?StringQ :> status0,
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Invalid website notebook \"DocumentStatus\" value: ``. Expected string.",
 			InputForm[other]
@@ -121,13 +121,13 @@ WebsiteNotebookSnippet[
 },
 	cellData = FirstCase[
 		cells,
-		Cell[data_, ___, "Text", ___] :> data
+		Cell[data: _, ___, "Text", ___] :> data
 	];
 
 	firstText = Replace[cellData, {
 		Missing["NotFound"] :> Return[cellData, Module],
 		_?StringQ | TextData[_] | BoxData[_] :> ConvertToString[cellData],
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Error getting website notebook snippet: unexpected \"Text\" cell data: ``",
 			InputForm[other]

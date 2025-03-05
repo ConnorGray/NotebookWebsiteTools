@@ -100,7 +100,7 @@ NotebookWebsiteBuild[
 	(* Note: Make sure inputDir is always StringQ, so that FileNameJoin works. *)
 	inputDir = Replace[
 		RaiseConfirm @ ExpandFileName[inputDir0],
-		File[dir_?StringQ] :> dir
+		File[dir: _?StringQ] :> dir
 	],
 	buildDir,
 	contentDir,
@@ -156,10 +156,10 @@ Block[{
 			];
 
 			ConfirmReplace[config, {
-				NotebookWebsite[assoc_?AssociationQ] :> (
+				NotebookWebsite[assoc: _?AssociationQ] :> (
 					$BuildSettings["Configuration"] = assoc;
 				),
-				other_ :> Raise[
+				other: _ :> Raise[
 					NotebookWebsiteError,
 					"Website configuration file must contain a "
 					<> "NotebookWebsite[<| ... |>] object. Got: ``",
@@ -179,15 +179,15 @@ Block[{
 	(*--------------------------------*)
 
 	buildDir = Replace[buildDir0, {
-		s_?StringQ :> RaiseConfirm @ ExpandFileName[s],
+		s: _?StringQ :> RaiseConfirm @ ExpandFileName[s],
 		Automatic :> FileNameJoin[{inputDir, "build"}]
 	}];
 
 	(* TODO(cleanup): Use RaiseConfirm/RaiseConfirmMatch here. *)
 	buildDir = Replace[CreateCacheDirectory[buildDir, DeleteContents -> True], {
-		path_?StringQ :> path,
-		err_Failure :> Return[err, Module],
-		other_ :> Raise[NotebookWebsiteError, "Unexpected cache directory result: ``", InputForm[other]]
+		path: _?StringQ :> path,
+		err: _Failure :> Return[err, Module],
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected cache directory result: ``", InputForm[other]]
 	}];
 
 	contentDir = FileNameJoin[{inputDir, "Content"}];
@@ -253,7 +253,7 @@ Block[{
 
 SetFallthroughError[populateBuildCacheHandlers]
 
-populateBuildCacheHandlers[cache_CacheSpecifier] := Module[{},
+populateBuildCacheHandlers[cache: _CacheSpecifier] := Module[{},
 	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], Notebook}] :> Handle[_Failure] @ Module[{
 		result
 	},
@@ -328,30 +328,32 @@ Block[{
 	RaiseAssert[MatchQ[$CurrentNotebookRelativeURL, URL[_?StringQ]]];
 
 	nb = Replace[GetBuildValue[{File[nbFile], Notebook}], {
-		nb_Notebook :> nb,
-		other_ :> Raise[NotebookWebsiteError, "Error importing notebook at ``: ``", nbFile, InputForm[other]]
+		nb: _Notebook :> nb,
+		other: _ :> Raise[NotebookWebsiteError, "Error importing notebook at ``: ``", nbFile, InputForm[other]]
 	}];
 
 	Replace[GetBuildValue[{File[nbFile], WebsiteNotebookStatus}], {
-		status_?StringQ :> Replace[DetermineStatusAction[status], {
+		status: _?StringQ :> Replace[DetermineStatusAction[status], {
 			(* Proceed normally. *)
 			"Build" -> Null,
 			(* Documents with this status should be skipped, so skip it. *)
 			"Skip" :> Return[Missing["Skipped", status], Module],
-			other_ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
+			other: _ :> Raise[NotebookWebsiteError, "Unhandled status action value: ``", InputForm[other]]
 		}],
 		(* All website notebooks should have their status set by their author. *)
 		Missing["KeyAbsent", "DocumentStatus"] :> (
 			Raise[NotebookWebsiteError, "Website notebook is missing a value for the DocumentStatus tagging rule."];
 		),
-		other_ :> Raise[NotebookWebsiteError, "Unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected WebsiteNotebookStatus result: ``", InputForm[other]]
 	}];
 
 	$CurrentNotebook = nb;
 
 	metadata = Replace[Options[nb, TaggingRules], {
-		KeyValuePattern[TaggingRules -> KeyValuePattern["ConnorGray/NotebookWebsiteTools" -> value_]] :> value,
-		other_ :> Raise[
+		KeyValuePattern[TaggingRules -> KeyValuePattern[
+			"ConnorGray/NotebookWebsiteTools" -> value: _
+		]] :> value,
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Notebook at `` does not have the expected TaggingRules needed to process web page notebook: ``",
 			nbFileRelative,
@@ -361,8 +363,8 @@ Block[{
 
 	(* TODO: Use documentType? *)
 	documentType = Replace[metadata, {
-		KeyValuePattern["DocumentType" -> type_?StringQ] :> type,
-		other_ :> Raise[
+		KeyValuePattern["DocumentType" -> type: _?StringQ] :> type,
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Notebook at `` does not have the expected metadata \"DocumentType\" field: ``",
 			nbFileRelative,
@@ -489,7 +491,7 @@ Block[{
 				parentDir,
 				type
 			],
-			other_ :> Raise[
+			other: _ :> Raise[
 				NotebookWebsiteError,
 				"Unexpected FileType during for expected HTML file parent directory: ``: ``",
 				parentDir,
@@ -515,7 +517,7 @@ Block[{
 		},
 			filePath = FileNameJoin[{
 				FileNameDrop[htmlFile],
-				Replace[relativeFilePath, File[s_?StringQ] :> s]
+				Replace[relativeFilePath, File[s: _?StringQ] :> s]
 			}];
 
 			RaiseAssert[StringQ[filePath]];
@@ -552,8 +554,8 @@ SetFallthroughError[ConvertToHTML]
 
 (*
 *)
-ConvertToHTML[expr_] := Replace[expr, {
-	Notebook[cells_?ListQ, options0___?OptionQ] :> (
+ConvertToHTML[expr: _] := Replace[expr, {
+	Notebook[cells: _?ListQ, options0: ___?OptionQ] :> (
 		(* TODO: Handle relevant `options0`. *)
 		XMLElement[
 			"article",
@@ -577,11 +579,11 @@ ConvertToHTML[expr_] := Replace[expr, {
 				the tab labels become descriptive. *)
 			tabSectionHeader:Cell[
 				_,
-				stylesSeq___?StringQ /;
+				stylesSeq: ___?StringQ /;
 					MemberQ[{stylesSeq}, "ConnorGray/TabViewSection"],
 				___?OptionQ
 			],
-			tabContentsSeq__Cell
+			tabContentsSeq: __Cell
 		},
 		Open | Closed | {_?IntegerQ}
 	] :> (
@@ -601,7 +603,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
 	Cell[CellGroupData[
-		cells_?ListQ,
+		cells: _?ListQ,
 		Open | Closed | {_?IntegerQ}
 	]] :> Splice @ Map[ConvertToHTML, cells],
 
@@ -615,7 +617,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 
 	Cell[
 		_,
-		stylesSeq___?StringQ,
+		stylesSeq: ___?StringQ,
 		___?OptionQ
 	] /; IntersectingQ[
 		{stylesSeq},
@@ -637,7 +639,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 	(* Always remove Excluded cells *)
 	(* TID:240601/1: Draft applied to textual _converted_ cell *)
 	(* TID:240601/2: Draft applied to box (rasterized) cell *)
-	cell_Cell /; FilteredCellQ[cell] :> (
+	cell: _Cell /; FilteredCellQ[cell] :> (
 		(* TODO: Better sentinel value for 'nothing' HTML? *)
 		Nothing
 	),
@@ -652,8 +654,8 @@ ConvertToHTML[expr_] := Replace[expr, {
 			"Input" | "Output"
 		),
 		(* FIXME: Handle these secondary styles *)
-		secondaryStylesSeq___?StringQ,
-		options0___?OptionQ
+		secondaryStylesSeq: ___?StringQ,
+		options0: ___?OptionQ
 	] :> UsingFrontEnd @ Module[{
 		image,
 		imageCSSPixelDimensions
@@ -687,7 +689,11 @@ ConvertToHTML[expr_] := Replace[expr, {
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
-	cell0: Cell[content_, styles0__?StringQ, options0___?OptionQ] :> WrapRaised[
+	cell0: Cell[
+		content: _,
+		styles0: __?StringQ,
+		options0: ___?OptionQ
+	] :> WrapRaised[
 		NotebookWebsiteError,
 		"Error converting `` style cell: ``",
 		InputForm[First[{styles0}]],
@@ -704,14 +710,14 @@ ConvertToHTML[expr_] := Replace[expr, {
 				(*---------------------------------------------------------------*)
 
 				inputLines = Replace[content, {
-					BoxData[boxes0_] :> Replace[boxes0, b:Except[_?ListQ] :> {b}],
+					BoxData[boxes0: _] :> Replace[boxes0, b:Except[_?ListQ] :> {b}],
 					(* TODO: What if content is not BoxData? *)
 					TextData[_] :> Raise[
 						NotebookWebsiteError,
 						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
 						content
 					],
-					other_ :> Raise[
+					other: _ :> Raise[
 						NotebookWebsiteError,
 						"Malformed ComputedHTML cell: expected BoxData: ",
 						InputForm[other]
@@ -746,7 +752,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 						"Malformed XMLElement returned from \"ConnorGray/ComputedHTML\" cell: ``",
 						InputForm[xml]
 					],
-					other_ :> Raise[
+					other: _ :> Raise[
 						NotebookWebsiteError,
 						"Expected evaluation of \"ConnorGray/ComputedHTML\" to return XMLElement; got: ``",
 						InputForm[other]
@@ -777,12 +783,12 @@ ConvertToHTML[expr_] := Replace[expr, {
 	(* Text                           *)
 	(*--------------------------------*)
 
-	plainText_?StringQ :> plainText,
+	plainText: _?StringQ :> plainText,
 
-	TextData[inline_?ListQ] :> Splice @ Map[ConvertToHTML, inline],
-	TextData[content_] :> ConvertToHTML[content],
+	TextData[inline: _?ListQ] :> Splice @ Map[ConvertToHTML, inline],
+	TextData[content: _] :> ConvertToHTML[content],
 
-	StyleBox[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
+	StyleBox[content: _, styles0: ___?StringQ, options0: ___?OptionQ] :> Module[{
 		styles = {styles0},
 		options = {options0},
 		element
@@ -792,7 +798,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 				(* TID:240602/1: Inline "Code" or "Program" StyleBox's *)
 				"Code" | "Program" :> XMLElement["code", {}, {elem}],
 				(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
-				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],
 			ConvertToHTML[content],
 			styles
@@ -800,22 +806,22 @@ ConvertToHTML[expr_] := Replace[expr, {
 
 		element = Fold[
 			{elem, option} |-> Replace[option, {
-				(FontWeight -> weight_) :> Replace[weight, {
+				(FontWeight -> weight: _) :> Replace[weight, {
 					"Bold" | Bold :> XMLElement["b", {}, {elem}],
-					other_ :> Raise[NotebookWebsiteError, "Unhandled FontWeight option value: ``", InputForm[weight]]
+					other: _ :> Raise[NotebookWebsiteError, "Unhandled FontWeight option value: ``", InputForm[weight]]
 				}],
-				(FontSlant -> slant_) :> Replace[slant, {
+				(FontSlant -> slant: _) :> Replace[slant, {
 					"Italic" | Italic :> XMLElement["i", {}, {elem}],
-					other_ :> Raise[NotebookWebsiteError, "Unhandled FontSlant option value: ``", InputForm[slant]]
+					other: _ :> Raise[NotebookWebsiteError, "Unhandled FontSlant option value: ``", InputForm[slant]]
 				}],
-				(FontColor -> color_) :> Replace[color, {
-					RGBColor[r_, g_, b_] :> XMLElement[
+				(FontColor -> color: _) :> Replace[color, {
+					RGBColor[r: _, g: _, b: _] :> XMLElement[
 						"span",
 						{"style" -> TemplateApply["color: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
 						{elem}
 					],
 					(* TID:240526/1: FontColor -> GrayLevel[..] handling. *)
-					GrayLevel[value_?NumberQ] :> XMLElement[
+					GrayLevel[value: _?NumberQ] :> XMLElement[
 						"span",
 						{"style" -> TemplateApply[
 							"color: rgb(``%, ``%, ``%)",
@@ -823,15 +829,15 @@ ConvertToHTML[expr_] := Replace[expr, {
 						]},
 						{elem}
 					],
-					other_ :> Raise[NotebookWebsiteError, "Unhandled FontColor option value: ``", InputForm[other]]
+					other: _ :> Raise[NotebookWebsiteError, "Unhandled FontColor option value: ``", InputForm[other]]
 				}],
-				(FontSize -> size_) :> ConfirmReplace[size, {
+				(FontSize -> size: _) :> ConfirmReplace[size, {
 					_?IntegerQ :> XMLElement[
 						"span",
 						{"style" -> TemplateApply["font-size: ``pt", size]},
 						{elem}
 					],
-					other_ :> Raise[
+					other: _ :> Raise[
 						NotebookWebsiteError,
 						"Unhandled FontSize option value: ``",
 						InputForm[other]
@@ -842,15 +848,15 @@ ConvertToHTML[expr_] := Replace[expr, {
 					{"style" -> "text-decoration: line-through"},
 					{elem}
 				],
-				(Background -> color_) :> Replace[color, {
-					RGBColor[r_, g_, b_] :> XMLElement[
+				(Background -> color: _) :> Replace[color, {
+					RGBColor[r: _, g: _, b: _] :> XMLElement[
 						"span",
 						{"style" -> TemplateApply["background: rgb(``%, ``%, ``%)", IntegerPart[100 * {r, g, b}]]},
 						{elem}
 					],
-					other_ :> Raise[NotebookWebsiteError, "Unhandled Background option value: ``", InputForm[other]]
+					other: _ :> Raise[NotebookWebsiteError, "Unhandled Background option value: ``", InputForm[other]]
 				}],
-				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox option value: ``", InputForm[other]]
+				other: _ :> Raise[NotebookWebsiteError, "Unhandled StyleBox option value: ``", InputForm[other]]
 			}],
 			element,
 			options
@@ -865,9 +871,9 @@ ConvertToHTML[expr_] := Replace[expr, {
 
 	(* Handle hyperlinks. *)
 	ButtonBox[
-		content_,
+		content: _,
 		BaseStyle -> "Hyperlink",
-		ButtonData -> {URL[url_?StringQ], None},
+		ButtonData -> {URL[url: _?StringQ], None},
 		ButtonNote -> _?StringQ
 	] :> XMLElement["a", {"href" -> url}, {ConvertToHTML[content]}],
 
@@ -877,7 +883,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 
 	Cell[
 		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
+			{label: _, url: _?StringQ},
 			"ConnorGray/GitHubLink"
 		],
 		___?OptionQ
@@ -900,7 +906,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 	(* TID:240602/3: Convert inline PacletLink special link *)
 	Cell[
 		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
+			{label: _, url: _?StringQ},
 			"ConnorGray/PacletLink"
 		],
 		___?OptionQ
@@ -922,7 +928,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 
 	Cell[
 		BoxData @ TemplateBox[
-			{label_, url_?StringQ},
+			{label: _, url: _?StringQ},
 			"ConnorGray/RustCrateLink"
 		],
 		___?OptionQ
@@ -942,7 +948,7 @@ ConvertToHTML[expr_] := Replace[expr, {
 		]
 	],
 
-	other_ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
+	other: _ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
 }]
 
 (*======================================*)
@@ -950,8 +956,8 @@ ConvertToHTML[expr_] := Replace[expr, {
 SetFallthroughError[wrapHtmlForStyles]
 
 wrapHtmlForStyles[
-	cellData_?CellDataQ,
-	initialHTML_?HTMLFragmentQ,
+	cellData: _?CellDataQ,
+	initialHTML: _?HTMLFragmentQ,
 	cellStyles:{___?StringQ},
 	cellOptions:{___?OptionQ}
 ] := Module[{
@@ -970,10 +976,10 @@ wrapHtmlForStyles[
 (*======================================*)
 
 wrapHtmlForStyle[
-	cellData_?CellDataQ,
+	cellData: _?CellDataQ,
 	cellOptions:{___?OptionQ},
-	html_,
-	style_?StringQ
+	html: _,
+	style: _?StringQ
 ] := Module[{},
 	Replace[style, {
 		(*===================================*)
@@ -1094,9 +1100,9 @@ wrapHtmlForStyle[
 				(* TODO(feature): Support theme argument here. *)
 				$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
 				{
-					highlightedHtml_?StringQ :> highlightedHtml,
-					error_?FailureQ :> Raise[error],
-					other_ :> Raise[NotebookWebsiteError, "Syntax highlighting returned unexpected result: ``", other]
+					highlightedHtml: _?StringQ :> highlightedHtml,
+					error: _?FailureQ :> Raise[error],
+					other: _ :> Raise[NotebookWebsiteError, "Syntax highlighting returned unexpected result: ``", other]
 				}
 			];
 
@@ -1117,7 +1123,7 @@ wrapHtmlForStyle[
 			XMLElement["div", {"class" -> "nb-Draft"}, {html}]
 		],
 
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Unhandled Cell style: ``: ``",
 			InputForm[other],
@@ -1155,10 +1161,10 @@ AddSupportFile[
 ] @ Module[{
 	name = ConfirmReplace[name0, {
 		Automatic :> ToString[Length[$CurrentNotebookSupportFiles]],
-		stem_?StringQ :> (
+		stem: _?StringQ :> (
 			ToString[Length[$CurrentNotebookSupportFiles]] <> "-" <> stem
 		),
-		Verbatim[filename_?StringQ] :> filename
+		Verbatim[filename: _?StringQ] :> filename
 	}],
 	ext,
 	filePath,
@@ -1177,7 +1183,7 @@ AddSupportFile[
 
 	ext = Replace[content, {
 		_?ImageQ :> ".png",
-		other_ :> Raise[NotebookWebsiteError, "Unsupported support file data: ``", other]
+		other: _ :> Raise[NotebookWebsiteError, "Unsupported support file data: ``", other]
 	}];
 
 	(* FIXME: Validate name or encode so that `filePath` only contains URL-safe
@@ -1204,7 +1210,7 @@ AddSupportFile[
 
 (*======================================*)
 
-makeAnchorContentSlug[content_] := Module[{
+makeAnchorContentSlug[content: _] := Module[{
 	contentString = ConvertToString[content]
 },
 	RaiseAssert[
@@ -1242,7 +1248,7 @@ SetFallthroughError[makeAnchorContentSlug]
 
 (*======================================*)
 
-makeAnchorLinkHtml[content_, html_] := Module[{
+makeAnchorLinkHtml[content: _, html: _] := Module[{
 	contentString = ConvertToString[content],
 	contentSlug
 },
@@ -1315,10 +1321,10 @@ importHTMLFragment[htmlString: _?StringQ] := Module[{},
 		] :> ConfirmReplace[elements, {
 			(* TODO(polish): Support empty LiteralHTML cells. *)
 			{} :> Raise[NotebookWebsiteError, "Unsupported empty LiteralHTML content: ``", InputForm[htmlString]],
-			{one_} :> one,
+			{one: _} :> one,
 			many:{__} :> Raise[NotebookWebsiteError, "Unsupported LiteralHTML cell with multiple top-level tags: ``", many]
 		}],
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Imported HTML had unexpected format: ``: ``",
 			InputForm @ Snippet[htmlString, 3],
@@ -1369,7 +1375,7 @@ makeBreadcrumbs[] := Catch @ Module[{
 			}]
 		),
 		Nothing -> Nothing,
-		other_ :> Raise[
+		other: _ :> Raise[
 			NotebookWebsiteError,
 			"Invalid form for breadcrumb function result. Expected {{name, path}...}, got: ``",
 			InputForm[other]
@@ -1396,8 +1402,8 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 			InputForm[tabPosition]
 		] @ ConfirmReplace[tabCell, {
 			Cell @ CellGroupData[{
-				headerCell_,
-				contentsSeq___Cell
+				headerCell: _,
+				contentsSeq: ___Cell
 			}, Open | Closed] :> Module[{
 				label,
 				contents
@@ -1408,9 +1414,9 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 				];
 
 				label = ConfirmReplace[headerCell, {
-					Cell[label0_?StringQ, __] :> label0,
+					Cell[label0: _?StringQ, __] :> label0,
 					(* TID:240810/3: Tab header with non-String cell data. *)
-					other_ :> Raise[
+					other: _ :> Raise[
 						NotebookWebsiteError,
 						<| "TabHeaderCell" -> headerCell |>,
 						"Tab header cell data expected to be simple String."
@@ -1509,10 +1515,10 @@ GeneralUtilities`SetUsage[FilteredCellQ, "
 
 SetFallthroughError[FilteredCellQ]
 
-FilteredCellQ[cell_] := Replace[cell, {
+FilteredCellQ[cell: _] := Replace[cell, {
 	Cell[
 		_,
-		stylesSeq___?StringQ,
+		stylesSeq: ___?StringQ,
 		___?OptionQ
 	] /; MemberQ[{stylesSeq}, "Excluded" | "ConnorGray/Excluded"] :> (
 		True
@@ -1520,7 +1526,7 @@ FilteredCellQ[cell_] := Replace[cell, {
 
 	Cell[
 		_,
-		stylesSeq___?StringQ,
+		stylesSeq: ___?StringQ,
 		___?OptionQ
 	] /; And[
 		MemberQ[{stylesSeq}, "Draft" | "ConnorGray/Draft"],
@@ -1553,7 +1559,7 @@ Options[DetermineStatusAction] = {
 	"IncludeDrafts" :> TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
 }
 
-DetermineStatusAction[status_?StringQ, OptionsPattern[]] :=
+DetermineStatusAction[status: _?StringQ, OptionsPattern[]] :=
 	Replace[status, {
 		"Published" -> "Build",
 
@@ -1562,21 +1568,21 @@ DetermineStatusAction[status_?StringQ, OptionsPattern[]] :=
 		"Draft" /; TrueQ[OptionValue["IncludeDrafts"]] -> "Build",
 
 		"Draft" | "Excluded" -> "Skip",
-		other_ :> Raise[NotebookWebsiteError, "Unknown document status: ``", InputForm[other]]
+		other: _ :> Raise[NotebookWebsiteError, "Unknown document status: ``", InputForm[other]]
 	}]
 
 (*========================================================*)
 
 SetFallthroughError[GetBuildValue]
 
-GetBuildValue[keyPath_List] := GetCacheValue[$BuildCache, KeyPath[keyPath]]
+GetBuildValue[keyPath: _List] := GetCacheValue[$BuildCache, KeyPath[keyPath]]
 
 
 (*========================================================*)
 (* URL Processing                                         *)
 (*========================================================*)
 
-notebookRelativeFileToURL[path_?StringQ] :=
+notebookRelativeFileToURL[path: _?StringQ] :=
 	URL @ StringReplace[
 		URLBuild[FileNameSplit[path]],
 		".nb" ~~ EndOfString -> ".html"
@@ -1594,7 +1600,7 @@ notebookRelativeWebAssetsURL[nbUrl:URL[_?StringQ]] := Module[{},
 			(* The only component of the URL is the .nb file name itself, so
 			   a relative path to web_assets doesn't need to go up any levels. *)
 			1 -> Nothing,
-			components_Integer :> StringRepeat["../", components - 1]
+			components: _Integer :> StringRepeat["../", components - 1]
 		}],
 		"web_assets"
 	}]

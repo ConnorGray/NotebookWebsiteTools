@@ -52,10 +52,10 @@ MakeStandardWebsiteNotebookToolbar[] := Module[{},
 (*========================================================*)
 
 MakeToolbarButtonBoxes[
-	icon_Graphics,
-	label_?StringQ,
-	tooltip_?StringQ,
-	buttonFunction_Function,
+	icon: _Graphics,
+	label: _?StringQ,
+	tooltip: _?StringQ,
+	buttonFunction: _Function,
 	buttonMethod0 : _?StringQ | Automatic : Automatic,
 	buttonDefaultBackground : _ : White,
 	buttonAccentColor : _ : RGBColor["#60993e"]

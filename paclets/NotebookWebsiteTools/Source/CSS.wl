@@ -85,17 +85,17 @@ Protect[$SupportedCellOptions]
 
 cellOptionToCSSDeclarations[rule: Rule[_, _]] := Replace[rule, {
 	Rule[CounterAssignments, {}] :> {},
-	Rule[CounterAssignments, assignments_?ListQ] :> (
+	Rule[CounterAssignments, assignments: _?ListQ] :> (
 		"counter-reset" -> StringRiffle[
 			Map[
 				Replace[{
-					{name_?StringQ, 0} :> (
+					{name: _?StringQ, 0} :> (
 						styleNameToCSS[name]
 					),
-					{name_?StringQ, value_?IntegerQ} :> (
+					{name: _?StringQ, value: _?IntegerQ} :> (
 						StringJoin[styleNameToCSS[name], " ", ToString[value]]
 					),
-					other_ :> Raise[NotebookWebsiteError, "Unrecognized CounterAssignments value: ``", other]
+					other: _ :> Raise[NotebookWebsiteError, "Unrecognized CounterAssignments value: ``", other]
 				}],
 				assignments
 			],
@@ -103,28 +103,28 @@ cellOptionToCSSDeclarations[rule: Rule[_, _]] := Replace[rule, {
 		]
 	),
 	Rule[CounterIncrements, {}] :> {},
-	Rule[CounterIncrements, name_?StringQ] :> (
+	Rule[CounterIncrements, name: _?StringQ] :> (
 		"counter-increment" -> styleNameToCSS[name]
 	),
-	other_ :> Raise[NotebookWebsiteError, "Unhandled cell style rule: ``", other]
+	other: _ :> Raise[NotebookWebsiteError, "Unhandled cell style rule: ``", other]
 }]
 
 (*========================================================*)
 (* Symbolic CSS To String                                 *)
 (*========================================================*)
 
-CSSToString[CSSRuleset[selectors0_, declarations0_?ListQ]] := Module[{
+CSSToString[CSSRuleset[selectors0: _, declarations0: _?ListQ]] := Module[{
 	selectors = Replace[selectors0, {
-		value_?StringQ :> {value},
-		list_?ListQ :> list,
-		other_ :> Raise[NotebookWebsiteError, "Invalid CSSRuleset selectors: ``", InputForm[other]]
+		value: _?StringQ :> {value},
+		list: _?ListQ :> list,
+		other: _ :> Raise[NotebookWebsiteError, "Invalid CSSRuleset selectors: ``", InputForm[other]]
 	}],
 	declarations = declarations0
 },
 	declarations = Map[
 		Replace[{
-			(property_?StringQ -> value_?StringQ) :> StringJoin[property, ": ", value],
-			other_ :> Raise[NotebookWebsiteError, "Invalid symbolic CSS declaration: ``", other]
+			(property: _?StringQ -> value: _?StringQ) :> StringJoin[property, ": ", value],
+			other: _ :> Raise[NotebookWebsiteError, "Invalid symbolic CSS declaration: ``", other]
 		}],
 		declarations
 	];
@@ -151,7 +151,7 @@ CSSToString[CSSRuleset[selectors0_, declarations0_?ListQ]] := Module[{
 
 (*------------------------------------*)
 
-CSSToString[items:{___CSSRuleset}] :=
+CSSToString[items: {___CSSRuleset}] :=
 	StringRiffle[Map[CSSToString, items], "\n\n"]
 
 SetFallthroughError[CSSToString]
@@ -159,13 +159,13 @@ SetFallthroughError[CSSToString]
 (*====================================*)
 
 (* TODO: Make this return False for invalid CSS selector syntax. *)
-SelectorQ[expr_] := StringQ[expr]
+SelectorQ[expr: _] := StringQ[expr]
 
 SetFallthroughError[SelectorQ]
 
 (*====================================*)
 
-styleNameToCSS[style_?StringQ] := StringJoin["nb-", style]
+styleNameToCSS[style: _?StringQ] := StringJoin["nb-", style]
 
 
 End[]

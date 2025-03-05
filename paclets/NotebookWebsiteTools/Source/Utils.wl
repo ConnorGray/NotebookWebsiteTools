@@ -36,16 +36,16 @@ Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 
 SetFallthroughError[ConvertToString]
 
-ConvertToString[expr_] := Replace[expr, {
-	string_?StringQ /; StringMatchQ[string, "\"" ~~ ___ ~~ "\""] :> ToExpression[string],
-	string_?StringQ :> string,
-	items_?ListQ :> StringJoin[ConvertToString /@ items],
-	TextData[content_] :> ConvertToString[content],
-	StyleBox[content_, ___] :> ConvertToString[content],
-	BoxData[content_] :> ConvertToString[content],
-	RowBox[items_?ListQ] :> StringJoin[ConvertToString /@ items],
-	TemplateBox[items_?ListQ, "RowDefault"] :> StringJoin[ConvertToString /@ items],
-	ButtonBox[content_, ___] :> ConvertToString[content],
+ConvertToString[expr: _] := Replace[expr, {
+	string: _?StringQ /; StringMatchQ[string, "\"" ~~ ___ ~~ "\""] :> ToExpression[string],
+	string: _?StringQ :> string,
+	items: _?ListQ :> StringJoin[ConvertToString /@ items],
+	TextData[content: _] :> ConvertToString[content],
+	StyleBox[content: _, ___] :> ConvertToString[content],
+	BoxData[content: _] :> ConvertToString[content],
+	RowBox[items: _?ListQ] :> StringJoin[ConvertToString /@ items],
+	TemplateBox[items: _?ListQ, "RowDefault"] :> StringJoin[ConvertToString /@ items],
+	ButtonBox[content: _, ___] :> ConvertToString[content],
 
 	(*-------------------------------*)
 	(* NotebookWebsiteTools specific *)
@@ -57,7 +57,7 @@ ConvertToString[expr_] := Replace[expr, {
 		WebsiteNotebookSnippet[nb, "PlainText" | "HTML"]. *)
 	Cell[
 		BoxData @ TemplateBox[
-			{label_?StringQ, url_?StringQ},
+			{label: _?StringQ, url: _?StringQ},
 			"ConnorGray/GitHubLink"
 		],
 		FontWeight -> "Bold",
@@ -65,7 +65,7 @@ ConvertToString[expr_] := Replace[expr, {
 		___?OptionQ
 	] :> label,
 
-	other_ :> Raise[NotebookWebsiteError, "no rule to convert form to string: ``", InputForm[other]]
+	other: _ :> Raise[NotebookWebsiteError, "no rule to convert form to string: ``", InputForm[other]]
 }]
 
 (*========================================================*)
@@ -78,7 +78,7 @@ after flattening out cell groups.
 SetFallthroughError[NotebookCells]
 
 NotebookCells[
-	Notebook[cells:{___Cell}, ___?OptionQ]
+	Notebook[cells: {___Cell}, ___?OptionQ]
 ] := flattenCellGroups[cells]
 
 (*------------------------------------*)
@@ -87,16 +87,16 @@ flattenCellGroups[cells: {___Cell}] :=
 	Flatten @ Map[
 		Replace[{
 			Cell[
-				CellGroupData[groupCells:{___Cell}, ___],
+				CellGroupData[groupCells: {___Cell}, ___],
 				___
 			] :> (
 				flattenCellGroups[groupCells]
 			),
-			Cell[group_CellGroupData, ___] :> (
+			Cell[group: _CellGroupData, ___] :> (
 				Raise[NotebookWebsiteError, "Unexpected CellGroupData structure: ``", group]
 			),
-			normalCell_Cell :> normalCell,
-			other_ :> Raise[NotebookWebsiteError, "Unexpected notebook structure: ``", InputForm[other]]
+			normalCell: _Cell :> normalCell,
+			other: _ :> Raise[NotebookWebsiteError, "Unexpected notebook structure: ``", InputForm[other]]
 		}],
 		cells
 	]
@@ -113,7 +113,7 @@ string, TextData[$$] or BoxData[$$].
 
 SetFallthroughError[CellDataQ]
 
-CellDataQ[expr_] :=
+CellDataQ[expr: _] :=
 	(* TODO: More obscure or deprecated forms. e.g. GraphicsData or OutputFormData? *)
 	MatchQ[expr, Alternatives[
 		_?StringQ,
@@ -222,9 +222,9 @@ SetFallthroughError[HTMLEscape]
 (* NOTE: This function is required because exporting an XMLElement[..] using the
 	"XML" format escapes '<' and '>' characters in `text`, but exporting as
 	using the "HTMLFragment" format does not escape those characters. *)
-HTMLEscape[text_?StringQ] := StringReplace[
+HTMLEscape[text: _?StringQ] := StringReplace[
 	ExportString[XMLElement["Text", {}, {text}], "XML"],
-	StartOfString ~~ "<Text>" ~~ content___ ~~ "</Text>" ~~ EndOfString :> content
+	StartOfString ~~ "<Text>" ~~ content: ___ ~~ "</Text>" ~~ EndOfString :> content
 ]
 
 (*========================================================*)
@@ -235,7 +235,7 @@ list that is a 3rd argument of XMLElement.
 "]
 
 (* TODO: Include XML`RawXML["..."] here? *)
-HTMLFragmentQ[expr_] :=
+HTMLFragmentQ[expr: _] :=
 	MatchQ[expr, _?StringQ | _XMLElement | Nothing | Splice[{___?HTMLFragmentQ}]]
 
 (*========================================================*)
@@ -245,7 +245,7 @@ GetWebsiteFavicon[url$] attempts to retrieve the favicon of a website as an
 Image or Graphics expression.
 "]
 
-GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
+GetWebsiteFavicon[url: _?StringQ | URL[url: _?StringQ]] := Module[{
 	domain,
 	apiUrl,
 	resp
@@ -300,7 +300,7 @@ GetWebsiteFavicon[url_?StringQ | URL[url_?StringQ]] := Module[{
 
 	ConfirmReplace[favicon, {
 		_Image :> favicon,
-		other_ :> (
+		other: _ :> (
 			Raise[
 				NotebookWebsiteError,
 				"Unexpected imported favicon data head: ``",

@@ -38,7 +38,7 @@ $caches = <||>
 
 SetFallthroughError[getCacheObject]
 
-getCacheObject[CacheSpecifier[uuid_?StringQ]] := Module[{obj},
+getCacheObject[CacheSpecifier[uuid: _?StringQ]] := Module[{obj},
 	RaiseAssert[AssociationQ[$caches]];
 
 	obj = RaiseConfirm @ Lookup[$caches, uuid];
@@ -48,7 +48,7 @@ getCacheObject[CacheSpecifier[uuid_?StringQ]] := Module[{obj},
 
 (*====================================*)
 
-CacheObject[spec_CacheSpecifier] := Handle[_Failure] @ getCacheObject[spec]
+CacheObject[spec: _CacheSpecifier] := Handle[_Failure] @ getCacheObject[spec]
 
 (*========================================================*)
 
@@ -70,13 +70,13 @@ CreateCache[] := Module[{
 SetFallthroughError[GetCacheValue]
 
 GetCacheValue[
-	cache_CacheSpecifier,
-	keyPath_List
+	cache: _CacheSpecifier,
+	keyPath: _List
 ] := GetCacheValue[cache, KeyPath[keyPath]]
 
 GetCacheValue[
-	cache_CacheSpecifier,
-	key_?KeyPathQ
+	cache: _CacheSpecifier,
+	key: _?KeyPathQ
 ] := WithCacheObject[cache, obj0 |-> Module[{
 	obj = obj0,
 	$missing,
@@ -84,8 +84,10 @@ GetCacheValue[
 	values, handlers
 },
 	{values, handlers} = Replace[getCacheObject[cache], {
-		CacheObject[values_?AssociationQ, handlers_?ListQ] :> {values, handlers},
-		other_ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
+		CacheObject[values: _?AssociationQ, handlers: _?ListQ] :> (
+			{values, handlers}
+		),
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
 	}];
 
 	result = Lookup[values, key, $missing];
@@ -119,15 +121,17 @@ GetCacheValue[
 SetFallthroughError[InvalidateCache]
 
 InvalidateCache[
-	cache:CacheSpecifier[uuid_?StringQ],
-	key_?KeyPathQ
+	cache:CacheSpecifier[uuid: _?StringQ],
+	key: _?KeyPathQ
 ] := Module[{
 	obj = getCacheObject[cache],
 	values, handlers
 },
 	{values, handlers} = Replace[getCacheObject[cache], {
-		CacheObject[values_?AssociationQ, handlers_?ListQ] :> {values, handlers},
-		other_ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
+		CacheObject[values: _?AssociationQ, handlers: _?ListQ] :> (
+			{values, handlers}
+		),
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
 	}];
 
 	values = AssociationMap[
@@ -148,16 +152,16 @@ InvalidateCache[
 SetFallthroughError[SetCacheHandler]
 
 SetCacheHandler[
-	spec:CacheSpecifier[uuid_?StringQ],
+	spec:CacheSpecifier[uuid: _?StringQ],
 	handler:((Rule|RuleDelayed)[_?KeyPathQ, _])
 ] := Module[{
 	obj = getCacheObject[spec]
 },
 	obj = Replace[obj, {
-		CacheObject[values_?AssociationQ, handlers_?ListQ] :> (
+		CacheObject[values: _?AssociationQ, handlers: _?ListQ] :> (
 			CacheObject[values, Append[handlers, handler]]
 		),
-		other_ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
+		other: _ :> Raise[NotebookWebsiteError, "Unexpected getCacheObject result: ``", InputForm[other]]
 	}];
 
 	RaiseAssert[
@@ -186,7 +190,7 @@ CacheObjectQ[___] := False
 
 SetFallthroughError[WithCacheObject]
 
-WithCacheObject[spec:CacheSpecifier[uuid_?StringQ], func_] := Module[{
+WithCacheObject[spec: CacheSpecifier[uuid: _?StringQ], func: _] := Module[{
 	obj,
 	result
 },

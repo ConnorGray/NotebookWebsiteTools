@@ -27,7 +27,7 @@ $LibraryFunctions := Module[{
 		functions:Association[(_?StringQ -> _)...] :> (
 			$LibraryFunctions = functions;
 		),
-		other_ :> (
+		other: _ :> (
 			$LibraryFunctions := Raise[NotebookWebsiteError, "Library loader function returned unexpected result: ", other];
 		)
 	}];
