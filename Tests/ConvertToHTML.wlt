@@ -5,7 +5,7 @@ Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["Wolfram`ErrorTools`V0`"]
 
 VerificationTest[
-	ConvertToHtml @ StyleBox[
+	ConvertToHTML @ StyleBox[
 		"Hello",
 		FontSize -> 12,
 		FontColor -> Red
@@ -23,7 +23,7 @@ VerificationTest[
 
 (* TID:240526/1: FontColor -> GrayLevel[..] handling. *)
 VerificationTest[
-	ConvertToHtml @ StyleBox[
+	ConvertToHTML @ StyleBox[
 		"Hello",
 		FontColor -> GrayLevel[0.5]
 	],
@@ -36,7 +36,7 @@ VerificationTest[
 
 (* TID:240527/1: "CodeText" cell handling. *)
 VerificationTest[
-	ConvertToHtml @ Cell[
+	ConvertToHTML @ Cell[
 		"This is some text",
 		"CodeText"
 	],
@@ -48,7 +48,7 @@ VerificationTest[
 ]
 
 VerificationTest[
-	ConvertToHtml @ Notebook[{
+	ConvertToHTML @ Notebook[{
 		Cell @ CellGroupData[{
 			Cell[TextData["Title"], "Section"],
 			Cell[TextData["This is some content"], "Text"]
@@ -80,7 +80,7 @@ VerificationTest[
 
 VerificationTest[
 	(* TID:240602/1: Inline "Code" or "Program" StyleBox's *)
-	ConvertToHtml @ Cell[
+	ConvertToHTML @ Cell[
 		TextData[{
 			"Inline code ",
 			StyleBox["code = 5", "Code"],
@@ -105,7 +105,7 @@ VerificationTest[
 
 VerificationTest[
 	(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
-	Handle[_Failure] @ ConvertToHtml @ Cell[
+	Handle[_Failure] @ ConvertToHTML @ Cell[
 		TextData[{
 			"Inline code ",
 			StyleBox["2 + 2", "NotAKnownStyle"],
@@ -188,7 +188,7 @@ With[{
 	},
 		VerificationTest[
 			Block[{$BuildSettings = <| "IncludeDrafts" -> False |>},
-				ConvertToHtml[example]
+				ConvertToHTML[example]
 			],
 			XMLElement[
 				"article",
@@ -224,7 +224,7 @@ With[{
 	},
 		VerificationTest[
 			Block[{$BuildSettings = <| "IncludeDrafts" -> True |>},
-				ConvertToHtml[example]
+				ConvertToHTML[example]
 			],
 			XMLElement[
 				"article",
@@ -268,7 +268,7 @@ VerificationTest[
 		$CurrentNotebookRelativeURL = URL["content/test-file.html"]
 	},
 		(* TID:240602/3: Convert inline PacletLink special link *)
-		ConvertToHtml @ Cell[
+		ConvertToHTML @ Cell[
 			BoxData @ TemplateBox[
 				{"Foo", "https://example.com"},
 				"ConnorGray/PacletLink"
@@ -296,7 +296,7 @@ VerificationTest[
 
 (* TID:240809/2: Handle ConnorGray/TabViewSection cell group. *)
 VerificationTest[
-	ConvertToHtml @ Cell @ CellGroupData[{
+	ConvertToHTML @ Cell @ CellGroupData[{
 		Cell[
 			"Tabbed Content",
 			"Section",
@@ -375,7 +375,7 @@ VerificationTest[
 
 (* TID:240810/1: Tab with empty contents after filtering. *)
 VerificationTest[
-	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+	Handle[_Failure] @ ConvertToHTML @ Cell @ CellGroupData[{
 		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
 		Cell @ CellGroupData[{
 			Cell["Tab One Label", "Subsection"],
@@ -406,7 +406,7 @@ VerificationTest[
 
 (* TID:240810/2: Tab with excluded header cell. *)
 VerificationTest[
-	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+	Handle[_Failure] @ ConvertToHTML @ Cell @ CellGroupData[{
 		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
 		Cell @ CellGroupData[{
 			Cell["Tab One Label", "Subsection", "ConnorGray/Excluded"],
@@ -451,7 +451,7 @@ VerificationTest[
 
 (* TID:240810/3: Tab header with non-String cell data. *)
 VerificationTest[
-	Handle[_Failure] @ ConvertToHtml @ Cell @ CellGroupData[{
+	Handle[_Failure] @ ConvertToHTML @ Cell @ CellGroupData[{
 		Cell["Tabbed Content", "Section", "ConnorGray/TabViewSection"],
 
 		Cell @ CellGroupData[{

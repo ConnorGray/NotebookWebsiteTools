@@ -459,7 +459,7 @@ LinkDashboard[linkGroups0_List] := Module[{
 									Splice[{}]
 								)
 							],
-							ConvertToHtml[label]
+							ConvertToHTML[label]
 						}]
 					),
 					other_ :> Raise[

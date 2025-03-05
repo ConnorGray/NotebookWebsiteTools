@@ -26,8 +26,8 @@ GetBuildValue
 DetermineStatusAction
 FilteredCellQ
 
-GeneralUtilities`SetUsage[ConvertToHtml, "
-ConvertToHtml[expr] converts a Notebook, Cell, or box expression into HTML.
+GeneralUtilities`SetUsage[ConvertToHTML, "
+ConvertToHTML[expr] converts a Notebook, Cell, or box expression into HTML.
 
 The returned HTML expression will always be in one of the following forms:
 
@@ -36,16 +36,16 @@ The returned HTML expression will always be in one of the following forms:
 * String
 * Nothing
 
-such that the result of calling ConvertToHtml will always produce a
+such that the result of calling ConvertToHTML will always produce a
 well-formed XMLElement when called in the 3rd argument list of XMLElement.
 
 VALID:
 
-	XMLElement[\"p\", {}, {ConvertToHtml[expr]}]
+	XMLElement[\"p\", {}, {ConvertToHTML[expr]}]
 
 INVALID:
 
-	XMLElement[\"p\", {}, ConvertToHtml[expr]]
+	XMLElement[\"p\", {}, ConvertToHTML[expr]]
 
 The latter is not a valid XMLElement.
 "]
@@ -374,7 +374,7 @@ Block[{
 	(* Convert the cells to HTML      *)
 	(*--------------------------------*)
 
-	nbHtml = ConvertToHtml[nb];
+	nbHtml = ConvertToHTML[nb];
 
 	RaiseAssert[
 		MatchQ[nbHtml, XMLElement["article", {"class" -> "Notebook"}, _List]],
@@ -548,17 +548,17 @@ Block[{
 	Subsubsubsubsection = ???
 *)
 
-SetFallthroughError[ConvertToHtml]
+SetFallthroughError[ConvertToHTML]
 
 (*
 *)
-ConvertToHtml[expr_] := Replace[expr, {
+ConvertToHTML[expr_] := Replace[expr, {
 	Notebook[cells_?ListQ, options0___?OptionQ] :> (
 		(* TODO: Handle relevant `options0`. *)
 		XMLElement[
 			"article",
 			{"class" -> "Notebook"},
-			Map[ConvertToHtml, cells]
+			Map[ConvertToHTML, cells]
 		]
 	),
 
@@ -603,7 +603,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 	Cell[CellGroupData[
 		cells_?ListQ,
 		Open | Closed | {_?IntegerQ}
-	]] :> Splice @ Map[ConvertToHtml, cells],
+	]] :> Splice @ Map[ConvertToHTML, cells],
 
 	Cell[_CellGroupData, ___] :> (
 		Raise[NotebookWebsiteError, "Unhandled cell group: ``", InputForm[expr]]
@@ -763,7 +763,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 
 		wrapHtmlForStyles[
 			content,
-			ConvertToHtml[content],
+			ConvertToHTML[content],
 			styles,
 			cellOptions
 		]
@@ -779,8 +779,8 @@ ConvertToHtml[expr_] := Replace[expr, {
 
 	plainText_?StringQ :> plainText,
 
-	TextData[inline_?ListQ] :> Splice @ Map[ConvertToHtml, inline],
-	TextData[content_] :> ConvertToHtml[content],
+	TextData[inline_?ListQ] :> Splice @ Map[ConvertToHTML, inline],
+	TextData[content_] :> ConvertToHTML[content],
 
 	StyleBox[content_, styles0___?StringQ, options0___?OptionQ] :> Module[{
 		styles = {styles0},
@@ -794,7 +794,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 				(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
 				other_ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],
-			ConvertToHtml[content],
+			ConvertToHTML[content],
 			styles
 		];
 
@@ -869,7 +869,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 		BaseStyle -> "Hyperlink",
 		ButtonData -> {URL[url_?StringQ], None},
 		ButtonNote -> _?StringQ
-	] :> XMLElement["a", {"href" -> url}, {ConvertToHtml[content]}],
+	] :> XMLElement["a", {"href" -> url}, {ConvertToHTML[content]}],
 
 	(*--------------------------------*)
 	(* Inline special link cells      *)
@@ -892,7 +892,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 						"github-mark.svg"
 					}]
 				}, {}],
-				ConvertToHtml[label]
+				ConvertToHTML[label]
 			}
 		]
 	],
@@ -915,7 +915,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 						"paclet-icon.svg"
 					}]
 				}, {}],
-				ConvertToHtml[label]
+				ConvertToHTML[label]
 			}
 		]
 	],
@@ -937,7 +937,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 						"rust-logo-blk.svg"
 					}]
 				}, {}],
-				ConvertToHtml[label]
+				ConvertToHTML[label]
 			}
 		]
 	],
@@ -999,7 +999,7 @@ wrapHtmlForStyle[
 		(* Textual cells *)
 		(*===============*)
 
-		"Text" :> XMLElement["p", {}, {ConvertToHtml[cellData]}],
+		"Text" :> XMLElement["p", {}, {ConvertToHTML[cellData]}],
 
 		(*-------*)
 		(* Items *)
@@ -1021,7 +1021,7 @@ wrapHtmlForStyle[
 			XMLElement[
 				"div",
 				{"class" -> StringJoin["nb-", style]},
-				{ConvertToHtml[cellData]}
+				{ConvertToHTML[cellData]}
 			]
 		),
 
@@ -1029,7 +1029,7 @@ wrapHtmlForStyle[
 		(* Code cells *)
 		(*============*)
 
-		"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {ConvertToHtml[cellData]}],
+		"Program" :> XMLElement["pre", {"class" -> "nb-Program"}, {ConvertToHTML[cellData]}],
 
 		(*===============*)
 		(* Special cells *)
@@ -1418,7 +1418,7 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 				}];
 
 				(* TID:240809/1: Multi-cell tab contents *)
-				contents = ConfirmReplace[Map[ConvertToHtml, {contentsSeq}], {
+				contents = ConfirmReplace[Map[ConvertToHTML, {contentsSeq}], {
 					(* TID:240810/1: Tab with empty contents after filtering. *)
 					{} :> Raise[
 						NotebookWebsiteError,
