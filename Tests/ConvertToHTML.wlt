@@ -4,6 +4,10 @@ Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
 Needs["Wolfram`ErrorTools`V0`"]
 
+(*============================================*)
+(* Test text data cells and styles conversion *)
+(*============================================*)
+
 VerificationTest[
 	ConvertToHTML @ StyleBox[
 		"Hello",
@@ -136,9 +140,9 @@ VerificationTest[
 	]
 ]
 
-(*--------------------------------*)
-(* Test conversion of Draft cells *)
-(*--------------------------------*)
+(*====================================*)
+(* Test conversion of Draft cells     *)
+(*====================================*)
 
 With[{
 	example = Notebook[{
@@ -262,6 +266,29 @@ With[{
 		];
 	];
 ]
+
+(*====================================*)
+(* Test ComputedHTML cell conversion  *)
+(*====================================*)
+
+(* TID:250305/1: Basic conversion of ComputedHTML cells. *)
+VerificationTest[
+	ConvertToHTML @ Cell[
+		(* XMLElement["p", {}, ToString[Today]] *)
+		BoxData @ RowBox[{
+			"XMLElement", "[",
+			RowBox[{"\"p\"", ",", RowBox[{"{", "}"}], ",",
+				RowBox[{"{", RowBox[{"DateString", "[", "Today", "]"}], "}"}]}],
+			"]"
+		}],
+		"ConnorGray/ComputedHTML"
+	],
+	XMLElement["p", {}, {DateString[Today]}]
+]
+
+(*====================================*)
+(* Test special TemplateBox styles    *)
+(*====================================*)
 
 VerificationTest[
 	Block[{

@@ -686,6 +686,77 @@ ConvertToHTML[expr: _] := Replace[expr, {
 	],
 
 	(*--------------------------------*)
+	(* Special conversion cell types  *)
+	(*--------------------------------*)
+
+	(* TID:250305/1: Basic conversion of ComputedHTML cells. *)
+	Cell[
+		cdata: _,
+		stylesSeq: __?StringQ /; MemberQ[{stylesSeq}, "ConnorGray/ComputedHTML"],
+		options0: ___?OptionQ
+	] :> Module[{
+		inputLines, xml
+	},
+		(*---------------------------------------------------------------*)
+		(* Parse the typeset content of the cell into a held expression. *)
+		(*---------------------------------------------------------------*)
+
+		inputLines = Replace[cdata, {
+			BoxData[boxes0: _] :> (
+				Replace[boxes0, b:Except[_?ListQ] :> {b}]
+			),
+			(* TODO: What if cdata is not BoxData? *)
+			TextData[_] :> Raise[
+				NotebookWebsiteError,
+				"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
+				cdata
+			],
+			other: _ :> Raise[
+				NotebookWebsiteError,
+				"Malformed ComputedHTML cell: expected BoxData: ",
+				InputForm[other]
+			]
+		}];
+
+		RaiseAssert[ListQ[inputLines]];
+
+		(* FIXME: Catch any raised exceptions from these ToExpression
+			evaluation. *)
+		xml = WrapRaised[
+			NotebookWebsiteError,
+			"Error evaluating ComputedHTML cell"
+		] @ Block[{
+			$Context = UniqueContext["NotebookWebsiteBuild"],
+			$ContextPath = {"System`"}
+		},
+			Last @ Map[
+				inputLine |-> ToExpression[inputLine],
+				inputLines
+			]
+		];
+
+		(*------------------------------------------------------------*)
+		(* Validate the result of evaluating the "ComputedHTML" cell. *)
+		(*------------------------------------------------------------*)
+
+		Replace[xml, {
+			XMLElement[_?StringQ, _?ListQ, _?ListQ] :> Null,
+			_XMLElement :> Raise[
+				NotebookWebsiteError,
+				"Malformed XMLElement returned from \"ConnorGray/ComputedHTML\" cell: ``",
+				InputForm[xml]
+			],
+			other: _ :> Raise[
+				NotebookWebsiteError,
+				"Expected evaluation of \"ConnorGray/ComputedHTML\" to return XMLElement; got: ``",
+				InputForm[other]
+			]
+		}];
+
+		xml
+	],
+
+	(*--------------------------------*)
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
@@ -703,66 +774,6 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		cellOptions = {options0},
 		element
 	},
-		If[MemberQ[styles, "ConnorGray/ComputedHTML"],
-			Module[{inputLines, xml},
-				(*---------------------------------------------------------------*)
-				(* Parse the typeset content of the cell into a held expression. *)
-				(*---------------------------------------------------------------*)
-
-				inputLines = Replace[content, {
-					BoxData[boxes0: _] :> Replace[boxes0, b:Except[_?ListQ] :> {b}],
-					(* TODO: What if content is not BoxData? *)
-					TextData[_] :> Raise[
-						NotebookWebsiteError,
-						"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
-						content
-					],
-					other: _ :> Raise[
-						NotebookWebsiteError,
-						"Malformed ComputedHTML cell: expected BoxData: ",
-						InputForm[other]
-					]
-				}];
-
-				RaiseAssert[ListQ[inputLines]];
-
-				(* FIXME: Catch any raised exceptions from these ToExpression
-					evaluation. *)
-				xml = WrapRaised[
-					NotebookWebsiteError,
-					"Error evaluating ComputedHTML cell"
-				] @ Block[{
-					$Context = UniqueContext["NotebookWebsiteBuild"],
-					$ContextPath = {"System`"}
-				},
-					Last @ Map[
-						inputLine |-> ToExpression[inputLine],
-						inputLines
-					]
-				];
-
-				(*------------------------------------------------------------*)
-				(* Validate the result of evaluating the "ComputedHTML" cell. *)
-				(*------------------------------------------------------------*)
-
-				Replace[xml, {
-					XMLElement[_?StringQ, _?ListQ, _?ListQ] :> Null,
-					_XMLElement :> Raise[
-						NotebookWebsiteError,
-						"Malformed XMLElement returned from \"ConnorGray/ComputedHTML\" cell: ``",
-						InputForm[xml]
-					],
-					other: _ :> Raise[
-						NotebookWebsiteError,
-						"Expected evaluation of \"ConnorGray/ComputedHTML\" to return XMLElement; got: ``",
-						InputForm[other]
-					]
-				}];
-
-				Return[xml];
-			]
-		];
-
 		(*------------------------------------------------------------------------*)
 		(* Assume this is a cell whose content can be converted directly to HTML. *)
 		(*------------------------------------------------------------------------*)
