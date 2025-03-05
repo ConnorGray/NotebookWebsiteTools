@@ -244,7 +244,7 @@ With[{
 					],
 					XMLElement["img", {
 						"src" -> "FakeTestNotebook/1-Input.png",
-						"width" -> "126",
+						"width" -> "125",
 						"height" -> "17",
 						"style" -> "display: block; padding: 4pt 0 4pt 0;"
 					}, {}]

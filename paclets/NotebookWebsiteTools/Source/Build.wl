@@ -663,7 +663,7 @@ ConvertToHtml[expr_] := Replace[expr, {
 			{"Image", "CSSPixelSize"}
 		];
 
-		imageUrl = ConfirmReplace[Lookup[$BuildSettings, "EmbedImages"], {
+		imageUrl = ConfirmReplace[Lookup[$BuildSettings, "EmbedImages", False], {
 			False :> (
 				AddSupportFile[primaryCellStyle, image]
 			),
