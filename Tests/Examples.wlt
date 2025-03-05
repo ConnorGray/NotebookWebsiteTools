@@ -33,8 +33,8 @@ VerificationTest[
 VerificationTest[
 	NotebookWebsiteBuild[$examplesDir, $examplesDir]
 	,
-	Failure[NotebookWebsiteError, <|
-		"CausedBy" -> Failure[NotebookWebsiteError, <|
+	Failure[UtilitiesError, <|
+		"CausedBy" -> Failure[UtilitiesError, <|
 			"MessageTemplate" -> "Specified path is an existing non-empty directory without a CACHEDIR.TAG file. This operation may succeed if the existing directory contents are moved or deleted manually.\n\nNOTE: This file path is being used as a location to store cached data or generated files. Data loss WILL occur if you store non-recoverable files in this location.",
 			"MessageParameters" -> {}
 		|>],
@@ -46,8 +46,8 @@ VerificationTest[
 VerificationTest[
 	NotebookWebsiteBuild[$examplesDir, FileNameJoin[{$examplesDir, "Content"}]]
 	,
-	Failure[NotebookWebsiteError, <|
-		"CausedBy" -> Failure[NotebookWebsiteError, <|
+	Failure[UtilitiesError, <|
+		"CausedBy" -> Failure[UtilitiesError, <|
 			"MessageTemplate" -> "Specified path is an existing non-empty directory without a CACHEDIR.TAG file. This operation may succeed if the existing directory contents are moved or deleted manually.\n\nNOTE: This file path is being used as a location to store cached data or generated files. Data loss WILL occur if you store non-recoverable files in this location.",
 			"MessageParameters" -> {}
 		|>],
