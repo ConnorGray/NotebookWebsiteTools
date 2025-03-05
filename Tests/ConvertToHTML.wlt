@@ -2,7 +2,7 @@ Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 
-Needs["Wolfram`ErrorTools`"]
+Needs["Wolfram`ErrorTools`V0`"]
 
 VerificationTest[
 	ConvertToHtml @ StyleBox[

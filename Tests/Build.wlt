@@ -1,7 +1,7 @@
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
 
-Needs["Wolfram`ErrorTools`"]
+Needs["Wolfram`ErrorTools`V0`"]
 
 VerificationTest[
 	Handle[_Failure] @ AddSupportFile[

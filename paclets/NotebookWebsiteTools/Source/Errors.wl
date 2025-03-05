@@ -1,5 +1,5 @@
 BeginPackage["ConnorGray`NotebookWebsiteTools`Errors`", {
-	"Wolfram`ErrorTools`"
+	"Wolfram`ErrorTools`V0`"
 }]
 
 NotebookWebsiteError::usage = "Tags a Failure object indicating an error encountered during the website build process"
