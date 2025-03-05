@@ -502,6 +502,13 @@ Block[{
 	(* Write the support files        *)
 	(*--------------------------------*)
 
+	(* TODO: Try using FileSystemBundleExport here to simplfy this logic:
+		RaiseConfirm @ FileSystemBundleExport[
+			FileNameDrop[htmlFile],
+			FileSystemBundle[$CurrentNotebookSupportFiles]
+		];
+	*)
+
 	KeyValueMap[
 		{relativeFilePath, value} |-> Module[{
 			filePath
