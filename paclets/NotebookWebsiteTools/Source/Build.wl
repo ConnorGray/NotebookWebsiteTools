@@ -701,22 +701,7 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		(* Parse the typeset content of the cell into a held expression. *)
 		(*---------------------------------------------------------------*)
 
-		inputLines = Replace[cdata, {
-			BoxData[boxes0: _] :> (
-				Replace[boxes0, b:Except[_?ListQ] :> {b}]
-			),
-			(* TODO: What if cdata is not BoxData? *)
-			TextData[_] :> Raise[
-				NotebookWebsiteError,
-				"Unimplemented: evaluate \"ComputedHTML\" cells with TextData: ``",
-				cdata
-			],
-			other: _ :> Raise[
-				NotebookWebsiteError,
-				"Malformed ComputedHTML cell: expected BoxData: ",
-				InputForm[other]
-			]
-		}];
+		inputLines = CellDataInputLines[cdata];
 
 		RaiseAssert[ListQ[inputLines]];
 
