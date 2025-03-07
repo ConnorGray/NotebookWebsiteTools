@@ -690,13 +690,22 @@ ConvertToHTML[expr: _] := Replace[expr, {
 	(*--------------------------------*)
 
 	(* TID:250305/1: Basic conversion of ComputedHTML cells. *)
-	Cell[
+	cell: Cell[
 		cdata: _,
-		stylesSeq: __?StringQ /; MemberQ[{stylesSeq}, "ConnorGray/ComputedHTML"],
+		"ConnorGray/ComputedHTML",
+		secondaryStylesSeq: ___?StringQ,
 		options0: ___?OptionQ
 	] :> Module[{
 		inputLines, xml
 	},
+		If[{secondaryStylesSeq} =!= {},
+			Raise[
+				NotebookWebsiteError,
+				<| "Cell" ->  cell |>,
+				"Unimplemented: support secondary styles on ComputedHTML cells"
+			];
+		];
+
 		(*---------------------------------------------------------------*)
 		(* Parse the typeset content of the cell into a held expression. *)
 		(*---------------------------------------------------------------*)
