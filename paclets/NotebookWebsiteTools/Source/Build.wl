@@ -745,6 +745,7 @@ ConvertToHTML[expr: _] := Replace[expr, {
 	(* Converted cell types           *)
 	(*--------------------------------*)
 
+	(* Assume this is a cell whose content can be converted directly to HTML. *)
 	cell0: Cell[
 		content: _,
 		styles0: __?StringQ,
@@ -759,10 +760,6 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		cellOptions = {options0},
 		element
 	},
-		(*------------------------------------------------------------------------*)
-		(* Assume this is a cell whose content can be converted directly to HTML. *)
-		(*------------------------------------------------------------------------*)
-
 		wrapHtmlForStyles[
 			content,
 			ConvertToHTML[content],
