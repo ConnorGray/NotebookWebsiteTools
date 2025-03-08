@@ -185,7 +185,7 @@ ShowPreview[
 	(* Build the temporary website    *)
 	(*--------------------------------*)
 
-	result = NotebookWebsiteBuild[
+	result = RaiseConfirm @ NotebookWebsiteBuild[
 		tmpWebsiteDir,
 		ForwardOptions[opts]
 	];

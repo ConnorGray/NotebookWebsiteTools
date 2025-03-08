@@ -280,35 +280,47 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 							"View a preview of the built webpage.",
 							{
 								ToBoxes["Published"] :> (
+									Needs["ConnorGray`Utilities`" -> None];
 									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
-										ButtonNotebook[]
-									];
+									ConnorGray`Utilities`HandleUIFailure[
+										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+											ButtonNotebook[]
+										]
+									]
 								),
 								ToBoxes["Draft"] :> (
+									Needs["ConnorGray`Utilities`" -> None];
 									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
-										ButtonNotebook[],
-										"IncludeDrafts" -> True
-									];
+									ConnorGray`Utilities`HandleUIFailure[
+										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+											ButtonNotebook[],
+											"IncludeDrafts" -> True
+										]
+									]
 								),
 								Delimiter,
 								ToBoxes["Published \[LongDash] Single File"] :> (
+									Needs["ConnorGray`Utilities`" -> None];
 									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
-										ButtonNotebook[],
-										"EmbedImages" -> True,
-										"EmbedCSS" -> True
-									];
+									ConnorGray`Utilities`HandleUIFailure[
+										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+											ButtonNotebook[],
+											"EmbedImages" -> True,
+											"EmbedCSS" -> True
+										]
+									]
 								),
 								ToBoxes["Draft \[LongDash] Single File"] :> (
+									Needs["ConnorGray`Utilities`" -> None];
 									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-									ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
-										ButtonNotebook[],
-										"IncludeDrafts" -> True,
-										"EmbedImages" -> True,
-										"EmbedCSS" -> True
-									];
+									ConnorGray`Utilities`HandleUIFailure[
+										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
+											ButtonNotebook[],
+											"IncludeDrafts" -> True,
+											"EmbedImages" -> True,
+											"EmbedCSS" -> True
+										]
+									]
 								)
 							},
 							"Queued",
