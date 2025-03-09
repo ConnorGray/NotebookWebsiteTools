@@ -286,6 +286,56 @@ VerificationTest[
 	XMLElement["p", {}, {DateString[Today]}]
 ]
 
+(* TID:250307/1: MakeHTML invalid Video argument error. *)
+VerificationTest[
+	Handle[_Failure] @ ConvertToHTML @ Notebook[{
+		Cell[
+			BoxData @ ToBoxes[Video[10]],
+			"ConnorGray/ComputedHTML"
+		]
+	}],
+	Failure[NotebookWebsiteError, <|
+		"CausedBy" -> Failure[NotebookWebsiteError, <|
+			"MessageTemplate" -> "Unrecognized form for Video source specification: ``. Expected String or URL expression.",
+			"MessageParameters" -> {InputForm[10]}
+		|>],
+		"MessageTemplate" -> "Error using MakeHTML[..] to convert ComputedHTML style cell expression: ``",
+		"MessageParameters" -> {Quiet @ Video[10]}
+	|>],
+	(* For the purposes of this example, this video file doesn't
+		actually need to exist, so quite message about it not
+		existing. *)
+	{Video::badsource, Video::badsource}
+]
+
+(* TID:250308/1: Convert ConnorGray/ComputedHTML cells using MakeHTML. *)
+(* TID:250308/2: Convert Video[..] in ComputedHTML cells. *)
+VerificationTest[
+	Block[{
+		$CurrentNotebookFile = "/private/var/ExampleNotebook.mov"
+	},
+		ConvertToHTML @ Notebook[{
+			Cell[
+				BoxData @ ToBoxes[Video["/private/var/ExampleVideo.mov"]],
+				"ConnorGray/ComputedHTML"
+			]
+		}]
+	],
+	XMLElement["article", {"class" -> "Notebook"}, {
+		XMLElement["video", {
+			"src" -> "ExampleVideo.mov",
+			"loop" -> "true",
+			"controls" -> "true",
+			"autoplay" -> "true",
+			"muted" -> "true"
+		}, {""}]
+	}],
+	(* For the purposes of this example, this video file doesn't
+		actually need to exist, so quite message about it not
+		existing. *)
+	{Video::fnfnd, Video::fnfnd}
+]
+
 (*====================================*)
 (* Test special TemplateBox styles    *)
 (*====================================*)

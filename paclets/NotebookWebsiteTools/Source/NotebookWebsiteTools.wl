@@ -24,6 +24,8 @@ WebsiteNotebookStatus::usage = "WebsiteNotebookStatus[nb] returns the value of t
 WebsiteNotebookSnippet::usage = "WebsiteNotebookSnippet[nb] returns a snippet of text that is intended to be a teaser or summary of the notebook content."
 
 
+MakeHTML::usage = "MakeHTML[expr] is used to convert expressions in ConnorGray/ComputedHTML cells to HTML."
+
 Begin["`Private`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
@@ -32,6 +34,7 @@ Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`"]
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]
 Needs["ConnorGray`NotebookWebsiteTools`Build`"]
+Needs["ConnorGray`NotebookWebsiteTools`MakeHTML`"]
 Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 
 (*======================================*)

@@ -476,6 +476,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 	],
 
 	(* TODO: Better name for this style. Template, plugin, etc? *)
+	(* TODO: Maybe 'OutputHTML'? *)
 	Cell[StyleData["ConnorGray/ComputedHTML", StyleDefinitions -> StyleData["Input"]],
 		MenuSortingValue -> 2500 + 50,
 		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False]

@@ -104,6 +104,7 @@ NotebookWebsiteBuild[
 	],
 	buildDir,
 	contentDir,
+	fileSystemTree,
 	notebooks,
 	htmlFiles
 },
@@ -198,7 +199,7 @@ Block[{
 		Raise[NotebookWebsiteError, "'Content' directory does not exist at expected location: ``",contentDir];
 	];
 
-	notebooks = FileNames["*.nb", contentDir, Infinity];
+	fileSystemTree = FileSystemTree[contentDir];
 
 	(*----------------------------*)
 	(* Copy the common web assets *)
@@ -220,15 +221,62 @@ Block[{
 	(* Build the notebook files *)
 	(*--------------------------*)
 
-	htmlFiles = Map[
-		nbFile |-> Module[{},
-			WrapRaised[NotebookWebsiteError, "Error building notebook ``", nbFile][
-				buildWebNotebook[
-					nbFile, contentDir, buildDir
+	notebooks = {};
+	htmlFiles = {};
+
+	TreeMap[
+		(* FIXME: Don't visit / ignore files that match .gitignore by default. *)
+		filePath |-> Catch @ Module[{
+		},
+			If[FileType[filePath] === Directory,
+				Throw[Null];
+			];
+
+			ConfirmFileType[filePath, File];
+
+			WrapRaised[
+				NotebookWebsiteError,
+				"Error processing file ``",
+				filePath
+			] @ ConfirmReplace[FileExtension[filePath], {
+				"nb" :> Module[{htmlFile},
+					htmlFile = buildWebNotebook[
+						filePath, contentDir, buildDir
+					];
+					AppendTo[notebooks, filePath];
+					AppendTo[htmlFiles, htmlFile];
+				],
+				(* NOTE: Any other file without a recognized extension gets
+					copied to the output directory unchanged. *)
+				_?StringQ | None :> Module[{
+					nbFileRelative = RelativePath[contentDir, filePath],
+					destPath
+				},
+					RaiseAssert[StringQ[nbFileRelative]];
+					destPath = FileNameJoin[{buildDir, nbFileRelative}];
+					(* FIXME: Test: Could happen if source is:
+							foo.nb
+							foo.html
+						We should issue a descriptive error message explaining
+						that a copied file conflicted with a converted file.
+						(Similarly if a converted/copied file conflicts with
+						a generated support file.)
+					*)
+					ConfirmFileType[
+						destPath, None,
+						"File already exists at destination path."
+					];
+					RaiseConfirm @ CopyFile[filePath, destPath];
+				],
+				other: _ :> Raise[
+					NotebookWebsiteError,
+					<| "FilePath" -> filePath |>,
+					"Unexpected file extension result `` for file in notebook website content directory.",
+					other
 				]
-			]
+			}]
 		],
-		notebooks
+		fileSystemTree
 	];
 
 	RaiseAssert[MatchQ[htmlFiles, {(File[_?StringQ] | Missing["Skipped", _])...}]];
@@ -554,7 +602,7 @@ SetFallthroughError[ConvertToHTML]
 
 (*
 *)
-ConvertToHTML[expr: _] := Replace[expr, {
+ConvertToHTML[expr0: _] := Replace[expr0, {
 	Notebook[cells: _?ListQ, options0: ___?OptionQ] :> (
 		(* TODO: Handle relevant `options0`. *)
 		XMLElement[
@@ -607,8 +655,8 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		Open | Closed | {_?IntegerQ}
 	]] :> Splice @ Map[ConvertToHTML, cells],
 
-	Cell[_CellGroupData, ___] :> (
-		Raise[NotebookWebsiteError, "Unhandled cell group: ``", InputForm[expr]]
+	cell: Cell[_CellGroupData, ___] :> (
+		Raise[NotebookWebsiteError, "Unhandled cell group: ``", InputForm[cell]]
 	),
 
 	(*--------------------------------*)
@@ -696,7 +744,7 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		secondaryStylesSeq: ___?StringQ,
 		options0: ___?OptionQ
 	] :> Module[{
-		inputLines, xml
+		inputLines, expr, xml
 	},
 		If[{secondaryStylesSeq} =!= {},
 			Raise[
@@ -706,9 +754,9 @@ ConvertToHTML[expr: _] := Replace[expr, {
 			];
 		];
 
-		(*---------------------------------------------------------------*)
-		(* Parse the typeset content of the cell into a held expression. *)
-		(*---------------------------------------------------------------*)
+		(*------------------------------------------------*)
+		(* Parse and evaluate the box content of the cell *)
+		(*------------------------------------------------*)
 
 		inputLines = CellDataInputLines[cdata];
 
@@ -716,7 +764,7 @@ ConvertToHTML[expr: _] := Replace[expr, {
 
 		(* FIXME: Catch any raised exceptions from these ToExpression
 			evaluation. *)
-		xml = WrapRaised[
+		expr = WrapRaised[
 			NotebookWebsiteError,
 			"Error evaluating ComputedHTML cell"
 		] @ Block[{
@@ -728,6 +776,27 @@ ConvertToHTML[expr: _] := Replace[expr, {
 				inputLines
 			]
 		];
+
+		(*--------------------------------*)
+		(* Convert the expression to HTML *)
+		(*--------------------------------*)
+
+		(* TID:250308/1: Convert ConnorGray/ComputedHTML cells using MakeHTML. *)
+		xml = WrapRaised[
+			NotebookWebsiteError,
+			"Error using MakeHTML[..] to convert ComputedHTML style cell expression: ``",
+			expr
+		] @ ConfirmReplace[MakeHTML[expr], {
+			frag: _?HTMLFragmentQ :> frag,
+			other: _ :> Raise[
+				NotebookWebsiteError,
+				<|
+					"Expression" -> InputForm[expr],
+					"MakeHTMLResult" -> InputForm[other]
+				|>,
+				"Expected evaluation of MakeHTML[..] to return a symbolic HTML fragment."
+			]
+		}];
 
 		(*------------------------------------------------------------*)
 		(* Validate the result of evaluating the "ComputedHTML" cell. *)
@@ -950,7 +1019,11 @@ ConvertToHTML[expr: _] := Replace[expr, {
 		]
 	],
 
-	other: _ :> Raise[NotebookWebsiteError, "Unhandled cell content: ``", InputForm[other]]
+	other: _ :> Raise[
+		NotebookWebsiteError,
+		<| "Expression" -> InputForm[other] |>,
+		"Unhandled cell style or content."
+	]
 }]
 
 (*======================================*)
