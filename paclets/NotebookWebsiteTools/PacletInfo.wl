@@ -11,7 +11,6 @@ PacletObject[<|
 				"ConnorGray`CacheUtils`"
 			}
 		},
-		{"LibraryLink"},
 		{"Asset", "Assets" -> {
 			{"web_assets",  "Assets/web_assets"},
 			{"GitHubIcon",  "Assets/Icons/github-mark.png"},

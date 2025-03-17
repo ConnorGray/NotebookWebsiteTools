@@ -1,8 +1,5 @@
-/target
 /build
 
 .DS_Store
-
-/paclets/NotebookWebsiteTools/LibraryResources/
 
 /Examples/build

@@ -17,7 +17,6 @@ Begin["`Private`"]
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`Toolbar`"]
-Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`UI`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`Notebook`BlogPost`"]

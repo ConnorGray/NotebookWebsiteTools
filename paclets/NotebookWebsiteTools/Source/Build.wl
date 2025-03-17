@@ -55,7 +55,6 @@ Begin["`Private`"]
 Needs["ConnorGray`Utilities`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
-Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
 Needs["ConnorGray`NotebookWebsiteTools`Configuration`"]
 
@@ -1172,8 +1171,10 @@ wrapHtmlForStyle[
 			lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
 
 			syntaxHTMLString = Replace[
-				(* TODO(feature): Support theme argument here. *)
-				$LibraryFunctions["highlight_to_html"][syntaxString, syntaxName, theme, lineNumbering],
+				CodeSyntaxHighlightHTML[
+					syntaxString, syntaxName, theme,
+					"LineNumbering" -> lineNumbering
+				],
 				{
 					highlightedHtml: _?StringQ :> highlightedHtml,
 					error: _?FailureQ :> Raise[error],

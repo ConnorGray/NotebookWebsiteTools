@@ -36,7 +36,6 @@ MakeHighlightSyntaxCellMenu
 HandleHighlightSyntaxCellEvent::usage = "HandleHighlightSyntaxCellEvent[cellObj, event]"
 RedrawHighlightSyntaxCell
 HighlightSyntaxCellDefaultBackground
-KnownHighlightChoices
 
 Begin["`Private`"]
 
@@ -44,7 +43,6 @@ Needs["ConnorGray`Utilities`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
-Needs["ConnorGray`NotebookWebsiteTools`LibraryLink`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
 Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
 
@@ -224,7 +222,7 @@ MakeHighlightSyntaxCellMenu[
 	];
 
 	{syntaxes, themes} = Lookup[
-		KnownHighlightChoices[],
+		SyntaxHighlightData[],
 		{"Syntaxes", "Themes"}
 	];
 
@@ -425,16 +423,14 @@ HighlightSyntaxCellDefaultBackground[] := Module[{
 },
 	RaiseAssert[StringQ[theme]];
 
-	color = RaiseConfirm[GetLibraryFunction["theme_default_background"][theme]];
+	color = RaiseConfirm[
+		SyntaxHighlightData["ThemeDefaultBackground", theme]
+	];
 
 	RaiseAssert[MatchQ[color, _RGBColor | None], "bad color: ``", InputForm@color];
 
 	color
 ]
-
-(*====================================*)
-
-KnownHighlightChoices[] := GetLibraryFunction["known_highlight_choices"][]
 
 (*====================================*)
 

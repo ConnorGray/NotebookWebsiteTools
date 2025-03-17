@@ -18,13 +18,6 @@ args = ["paclet", "install", "build/ConnorGray__NotebookWebsiteTools-0.0.1.pacle
 # Define `$ cargo make paclet`
 #
 [tasks.paclet]
-dependencies = ["build-library-resources"]
-script = { file = "./scripts/build-paclet.wls" }
-
-#---------------------------------------
-# Helper tasks
-#---------------------------------------
-
-[tasks.build-library-resources]
-command = "cargo"
-args = ["build"]
+dependencies = []
+command = "wolfram-cli"
+args = ["paclet", "build", "./paclets/NotebookWebsiteTools", "./build"]

@@ -57,8 +57,6 @@ $ ./scripts/build-stylesheet.wls
 Developing NotebookWebsiteTools requires that the following software be
 installed:
 
-* The Rust programming language, specifically the `cargo` build tool.
-
 * The Wolfram programming language.
 
   The Community Edition of [Wolfram Engine](https://www.wolfram.com/engine/) is
