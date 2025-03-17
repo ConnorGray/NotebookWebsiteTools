@@ -44,7 +44,6 @@ Needs["ConnorGray`Utilities`"]
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`Errors`"]
 Needs["ConnorGray`NotebookWebsiteTools`Utils`"]
-Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
 
 (*====================================*)
 

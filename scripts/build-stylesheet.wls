@@ -8,8 +8,9 @@ $pacletDirectory = FileNameJoin[{
 
 PacletDirectoryLoad[$pacletDirectory]
 
+Needs["ConnorGray`Utilities`" -> "CGUtils`"]
+
 Needs["ConnorGray`NotebookWebsiteTools`UI`"]
-Needs["ConnorGray`NotebookWebsiteTools`UIUtils`"]
 
 Print["INFO: Building using $InstallationDirectory == ", $InstallationDirectory]
 
@@ -183,6 +184,13 @@ $iconAndLabelDropdownTemplate = Function[
 
 notebookWebsiteToolsStylesheetNotebook = Notebook[{
 	Cell[StyleData[StyleDefinitions -> "Default.nb"]],
+
+	(* Depend on ConnorGray/Utilities styles. *)
+	Cell[StyleData[StyleDefinitions -> FrontEnd`FileName[
+		{"ConnorGray"},
+		"Utilities.nb",
+		CharacterEncoding -> "UTF-8"
+	]]],
 
 	Cell[StyleData["Notebook"],
 		DockedCells -> {
@@ -490,7 +498,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 		(* Overridden whenever the user changes the syntax coloring theme. *)
 		Background -> HighlightSyntaxCellDefaultBackground[],
 		CellDingbat -> Cell[
-			BoxData @ ToBoxes @ MakeMenuCellDingbat[
+			BoxData @ ToBoxes @ CGUtils`MakeMenuCellDingbat[
 				Graphics @ {
 					Text @ Style["{}", FontSize -> 16, FontFamily -> "PT Mono"]
 				},
@@ -676,13 +684,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 		TemplateBoxOptions -> {
 			DisplayFunction -> $iconAndLabelDropdownTemplate
 		}
-	],
-
-	(*================================*)
-	(* Generic UIUtils Styles         *)
-	(*================================*)
-
-	Splice[UIUtilsStyleDefinitions[]]
+	]
 },
 	StyleDefinitions -> "PrivateStylesheetFormatting.nb"
 ]

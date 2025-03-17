@@ -70,8 +70,3 @@ develop NotebookWebsiteTools.
 * The implementation of CSS-only tabs is based on this public CodePen by Michał
   Pawełczyk, [licensed under](https://blog.codepen.io/documentation/licensing/)
   the MIT license: https://codepen.io/MPDoctor/pen/mpJdYe
-
-* The UIUtils subpackage menu implementation is based on code from the
-  Wolfram Chatbook paclet,
-  [licensed under](https://github.com/WolframResearch/Chatbook/blob/7bbdef31fda7dda69fd0ac3ce9315e3d59d973c3/LICENSE#L1)
-  the MIT license.
