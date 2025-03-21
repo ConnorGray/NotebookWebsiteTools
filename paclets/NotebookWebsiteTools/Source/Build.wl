@@ -53,6 +53,7 @@ The latter is not a valid XMLElement.
 Begin["`Private`"]
 
 Needs["ConnorGray`Utilities`"]
+Needs["ConnorGray`Utilities`UI`" -> "CGUtilsUI`"]
 
 Needs["ConnorGray`NotebookWebsiteTools`"]
 Needs["ConnorGray`NotebookWebsiteTools`CurrentBuild`"]
@@ -1166,8 +1167,8 @@ wrapHtmlForStyle[
 			(* TODO(polish): If using default for both syntax and theme,
 				use a gray colored background instead of Solarized. Defaulting
 				for both should look much like a Program cell. *)
-			syntaxName = Lookup[highlightOptions, "Syntax", $DefaultSyntax];
-			theme = Lookup[highlightOptions, "Theme", $DefaultTheme];
+			syntaxName = Lookup[highlightOptions, "Syntax", CGUtilsUI`$DefaultSyntax];
+			theme = Lookup[highlightOptions, "Theme", CGUtilsUI`$DefaultTheme];
 			lineNumbering = Lookup[highlightOptions, "LineNumbering", False];
 
 			syntaxHTMLString = Replace[

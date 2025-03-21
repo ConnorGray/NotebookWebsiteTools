@@ -6,14 +6,6 @@ CreateWebsiteNotebook::usage = "CreateWebsiteNotebook[type, title] creates a new
 
 NotebookWebsiteBuild::usage = "NotebookWebsiteBuild[dir] builds the notebook website in dir."
 
-
-(* Defaults for syntax highlighting on HighlightSyntax cells that don't
-	otherwise have explicit "Syntax" or "Theme" option values. *)
-$DefaultSyntax = "Plain Text"
-$DefaultTheme = "Solarized (light)"
-
-Protect[{$DefaultSyntax, $DefaultTheme}]
-
 (*----------------------------*)
 (* Querying Website Notebooks *)
 (*----------------------------*)

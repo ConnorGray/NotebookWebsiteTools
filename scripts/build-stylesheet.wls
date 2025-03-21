@@ -490,59 +490,6 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 		CellDingbat -> StyleBox["\"</>\"", Bold, GrayLevel[0.6], ShowStringCharacters -> False]
 	],
 
-	Cell[StyleData["ConnorGray/HighlightSyntax"],
-		MenuSortingValue -> 2500 + 75,
-		CellMargins->{{66, 10}, {8, 8}},
-		CellFrame -> {{3, False}, {False, False}},
-		CellFrameColor -> GrayLevel[0.8],
-		(* Overridden whenever the user changes the syntax coloring theme. *)
-		Background -> HighlightSyntaxCellDefaultBackground[],
-		CellDingbat -> Cell[
-			BoxData @ ToBoxes @ CGUtils`MakeMenuCellDingbat[
-				Graphics @ {
-					Text @ Style["{}", FontSize -> 16, FontFamily -> "PT Mono"]
-				},
-				Function[
-					Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-					ConnorGray`NotebookWebsiteTools`UI`MakeHighlightSyntaxCellMenu[##]
-				],
-				AutoAction -> True
-			],
-			Background -> White
-		],
-		(* Copied from Default.nb "Program" cells: *)
-		StripStyleOnPaste -> True,
-		CodeAssistOptions -> {"AutoDetectHyperlinks" -> False},
-		Hyphenation -> False,
-		AutoQuoteCharacters -> {},
-		PasteAutoQuoteCharacters -> {},
-		LanguageCategory -> None,
-		FontFamily -> Dynamic[
-			AbsoluteCurrentValue[
-				EvaluationCell[],
-				{StyleHints, "CodeFont"}
-			]
-		],
-		(* Don't word wrap content in HighlightSyntax cells, which is
-			typically pre-formatted code input. *)
-		PageWidth -> Infinity,
-		CellEventActions -> {
-			PassEventsDown -> True,
-			(* Note: This undocumented option causes the cell event handler
-				actions to be run AFTER the default FE behavior for the
-				event runs (the default is that user-specified event handlers
-				are run before the default FE ones).
-
-				We want this because we need the character the user typed to
-				be added to the content of the cell before we read the
-				contents of the cell in our "KeyDown" event hander. *)
-			EvaluationOrder -> After,
-			"KeyDown" :> (
-				ConnorGray`NotebookWebsiteTools`UI`HandleHighlightSyntaxCellEvent[EvaluationCell[], "KeyDown"]
-			)
-		}
-	],
-
 	(*=====================================*)
 	(* Inline Icon Link TemplateBox styles *)
 	(*=====================================*)
