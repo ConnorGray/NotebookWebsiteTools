@@ -266,6 +266,17 @@ Block[{
 						destPath, None,
 						"File already exists at destination path."
 					];
+					(* TID:250329/1: Create parent directory of copied file. *)
+					ConfirmFileType[
+						FileNameDrop[destPath], None | Directory,
+						"Copied file destination parent path exists and is not a directory."
+					];
+					If[!FileExistsQ[FileNameDrop[destPath]],
+						RaiseConfirm @ CreateDirectory[
+							FileNameDrop[destPath],
+							CreateIntermediateDirectories -> True
+						];
+					];
 					RaiseConfirm @ CopyFile[filePath, destPath];
 				],
 				other: _ :> Raise[
