@@ -6,9 +6,9 @@ default_to_workspace = false
 #---------------------------------------
 
 #
-# Define `$ cargo make install`
+# Define `$ cargo make paclet-install`
 #
-[tasks.install]
+[tasks.paclet-install]
 dependencies = ["paclet"]
 command = "wolfram-cli"
 # TODO: Fix this hard-coded version number.
