@@ -22,162 +22,6 @@ Print["INFO: Building using $InstallationDirectory == ", $InstallationDirectory]
 (* Generic UI Utilities               *)
 (*====================================*)
 
-(*
-	Parameters: {
-		icon, label, tooltip, action,
-		buttonMethod, buttonDefaultBackground, buttonAccentColor
-	}
-
-	(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-	very basic evaluator doesn't not support named Function parameters.)
-*)
-$iconAndLabelButtonTemplate = Function[
-	DynamicModuleBox[{state = "default"},
-		TagBox[
-			ButtonBox[
-				FrameBox[
-					GridBox[
-						{{
-							StyleBox[
-								#1,
-								GraphicsBoxOptions -> {
-									BaseStyle -> Dynamic[
-										Switch[state,
-											"hovered", White,
-											_, #7
-										]
-									]
-								}
-							],
-							PaneBox[#2]
-						}},
-						GridBoxAlignment -> {
-							"Columns" -> {{Left}},
-							"Rows" -> {{Center}}
-						}
-					],
-					BaseStyle -> {
-						FontSize -> 10,
-						FontWeight -> Automatic,
-						FontColor -> Dynamic[Switch[state,
-							"hovered", White,
-							_, #7
-						]]
-					},
-					FrameMargins -> {{2, 2}, {2, 1}},
-					FrameStyle -> Directive[Thickness[1], #7],
-					Background -> Dynamic[Switch[state,
-						"default",
-							#6,
-						"hovered",
-							RGBColor[1, 0.5, 0],
-						"pressed",
-							Gray
-					]],
-					RoundingRadius -> 3
-				],
-				Appearance -> None,
-				ButtonFunction :> #4,
-				Method -> #5,
-				Evaluator -> Automatic
-			],
-			EventHandlerTag[{
-				"MouseEntered" :> (state = "hovered"),
-				"MouseExited" :> (state = "default"),
-				{"MouseDown", 1} :> (state = "pressed"),
-				{"MouseUp", 1} :> (state = "hovered"),
-				PassEventsDown -> True,
-				PassEventsUp -> True,
-				Method -> "Preemptive"
-			}]
-		],
-		DynamicModuleValues :> {}
-	]
-]
-
-(*------------------------------------*)
-
-(*
-	Parameters: {
-		icon, label, tooltip,
-		choiceActions, buttonMethod,
-		buttonDefaultBackground, buttonAccentColor
-	}
-
-	(TemplateBox DisplayFunction's are 'evaluated' by the FrontEnd, whose
-	very basic evaluator doesn't not support named Function parameters.)
-*)
-$iconAndLabelDropdownTemplate = Function[
-	DynamicModuleBox[{state = "default"},
-		TagBox[
-			ActionMenuBox[
-				FrameBox[
-					GridBox[
-						{{
-							StyleBox[
-								#1,
-								GraphicsBoxOptions -> {
-									BaseStyle -> Dynamic[
-										Switch[state,
-											"hovered", White,
-											_, #7
-										]
-									]
-								}
-							],
-							TemplateBox[
-								{
-									#2,
-									"\"\[ThinSpace]\[ThinSpace]\[FilledDownTriangle]\""
-								},
-								"RowDefault"
-							]
-						}},
-						GridBoxAlignment -> {
-							"Columns" -> {{Left}},
-							"Rows" -> {{Center}}
-						}
-					],
-					BaseStyle -> {
-						FontSize -> 10,
-						FontWeight -> Automatic,
-						FontColor -> Dynamic[Switch[state,
-							"hovered", White,
-							_, #7
-						]]
-					},
-					FrameMargins -> {{2, 2}, {2, 1}},
-					FrameStyle -> Directive[Thickness[1], #7],
-					Background -> Dynamic[Switch[state,
-						"default",
-							#6,
-						"hovered",
-							RGBColor[1, 0.5, 0],
-						"pressed",
-							Gray
-					]],
-					RoundingRadius -> 3
-				],
-				#4,
-				Appearance -> None,
-				Method -> #5,
-				Evaluator -> Automatic
-			],
-			EventHandlerTag[{
-				"MouseEntered" :> (state = "hovered"),
-				"MouseExited" :> (state = "default"),
-				{"MouseDown", 1} :> (state = "pressed"),
-				{"MouseUp", 1} :> (state = "hovered"),
-				PassEventsDown -> True,
-				PassEventsUp -> True,
-				Method -> "Preemptive"
-			}]
-		],
-		DynamicModuleValues :> {}
-	]
-]
-
-
 (*========================================================*)
 (* Create the stylesheet Notebook expression              *)
 (*========================================================*)
@@ -219,7 +63,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
 									RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
 								},
-								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+								"ConnorGray/IconAndLabelButtonTemplate"
 							],
 							TemplateBox[
 								{
@@ -242,7 +86,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
 									RGBColor[0.6, 0.4, 0.2] (* Draft color *)
 								},
-								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+								"ConnorGray/IconAndLabelButtonTemplate"
 							],
 							TemplateBox[
 								{
@@ -265,7 +109,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									GrayLevel[0.9],
 									GrayLevel[0.4]
 								},
-								"NotebookWebsiteTools:IconAndLabelButtonTemplate"
+								"ConnorGray/IconAndLabelButtonTemplate"
 							]
 						}}],
 						(* Force this item to take up the maximum possible width. This
@@ -335,7 +179,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 							RGBColor["#8ecae6"],
 							RGBColor["#023047"]
 						},
-						"NotebookWebsiteTools:IconAndLabelDropdownTemplate"
+						"ConnorGray/IconAndLabelDropdownTemplate"
 					],
 					ToBoxes @ Spacer[5],
 					StyleBox[
@@ -613,23 +457,6 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 					#2
 				}, "ConnorGray/DynamicIconLink"]
 			]
-		}
-	],
-
-	(*===========================================*)
-	(* Generic toolbar button TemplateBox styles *)
-	(*===========================================*)
-
-	Cell[
-		StyleData["NotebookWebsiteTools:IconAndLabelButtonTemplate"],
-		TemplateBoxOptions -> {
-			DisplayFunction -> $iconAndLabelButtonTemplate
-		}
-	],
-	Cell[
-		StyleData["NotebookWebsiteTools:IconAndLabelDropdownTemplate"],
-		TemplateBoxOptions -> {
-			DisplayFunction -> $iconAndLabelDropdownTemplate
 		}
 	]
 },
