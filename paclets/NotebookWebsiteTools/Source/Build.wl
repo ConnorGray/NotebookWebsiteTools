@@ -248,10 +248,15 @@ Block[{
 				],
 				(* NOTE: Any other file without a recognized extension gets
 					copied to the output directory unchanged. *)
-				_?StringQ | None :> Module[{
+				_?StringQ | None :> Catch @ Module[{
 					nbFileRelative = RelativePath[contentDir, filePath],
 					destPath
 				},
+					(* TID:250330/1: Don't copy hidden files to build output. *)
+					If[HiddenFileNameQ[nbFileRelative],
+						Throw[Null];
+					];
+
 					RaiseAssert[StringQ[nbFileRelative]];
 					destPath = FileNameJoin[{buildDir, nbFileRelative}];
 					(* FIXME: Test: Could happen if source is:

@@ -77,3 +77,37 @@ Module[{
 		SameTest -> MatchQ
 	];
 ];
+
+(* TID:250330/1: Don't copy hidden files to build output. *)
+Module[{
+	dir = FileSystemBundleExport[FileSystemBundle @ <|
+		"Content/okay.csv" -> "1,2,3",
+		(* Known metadata files should not be copied. *)
+		"Content/.DS_Store" -> "",
+		(* Unrecognized hidden files should not be copied. *)
+		"Content/.hidden" -> "",
+		(* Hidden directories and their contents should not be copied. *)
+		"Content/.foo/config.toml" -> "[config]"
+	|>]
+},
+	VerificationTest[
+		NotebookWebsiteBuild[dir],
+		Success["NotebookWebsiteBuild", <|
+			"ProcessedNotebooks" -> {},
+			"OutputHTMLFiles" -> {}
+		|>]
+	];
+
+	VerificationTest[
+		Map[
+			path |-> RelativePath[FileNameJoin[{dir, "build"}], path],
+			FileNames[All, FileNameJoin[{dir, "build"}], Infinity]
+		],
+		{
+			"CACHEDIR.TAG",
+			"okay.csv",
+			Repeated @ PatternTest[_?StringQ, f |-> StringStartsQ[f, "web_assets"]]
+		},
+		SameTest -> MatchQ
+	];
+];
