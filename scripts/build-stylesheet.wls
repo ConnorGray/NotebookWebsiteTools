@@ -42,74 +42,55 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 				BoxData @ GridBox[{{
 					ItemBox[
 						GridBox[{{
-							TemplateBox[
+							CGUtils`ToolbarButtonBoxes[
+								"Exclude",
+								Function[
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
+								],
 								{
-									GraphicsBox[{
-										InsetBox[
-											FormBox["\"TD\"", TraditionalForm],
-											{0, 0}
-										]
-									}, {
-										ImageSize -> 15,
-										BaselinePosition -> Center
-									}],
-									"Exclude",
-									"Toggle whether the selected cells are marked as Excluded.",
-									Function[
-										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-										ConnorGray`NotebookWebsiteTools`UI`ToggleExcluded[ButtonNotebook[]]
-									],
-									"Queued",
-									RGBColor[1, 0.85, 0.85], (* $ExcludedColor = LightRed *)
-									RGBColor[0.8, 0, 0] (* $ExcludedAccentColor = Darker[Red, 0.2] *)
+									RGBColor[0.8, 0, 0], (* $ExcludedAccentColor = Darker[Red, 0.2] *)
+									RGBColor[1, 0.85, 0.85] (* $ExcludedColor = LightRed *)
 								},
-								"ConnorGray/IconAndLabelButtonTemplate"
+								Method -> "Queued",
+								Tooltip -> "Toggle whether the selected cells are marked as Excluded."
 							],
-							TemplateBox[
+							CGUtils`ToolbarButtonBoxes[
+								"Draft",
+								Function[
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[ButtonNotebook[]]
+								],
 								{
-									GraphicsBox[{
-										InsetBox[
-											FormBox["\"\"", TraditionalForm],
-											{0, 0}
-										]
-									}, {
-										ImageSize -> 15,
-										BaselinePosition -> Center
-									}],
-									"Draft",
-									"Toggle whether the selected cells are marked as Draft.",
-									Function[
-										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-										ConnorGray`NotebookWebsiteTools`UI`ToggleDraft[ButtonNotebook[]]
-									],
-									"Queued",
-									RGBColor[1, 0.8, 0.6], (* Lighter draft color *)
-									RGBColor[0.6, 0.4, 0.2] (* Draft color *)
+									RGBColor[0.6, 0.4, 0.2], (* Draft color *)
+									RGBColor[1, 0.8, 0.6] (* Lighter draft color *)
 								},
-								"ConnorGray/IconAndLabelButtonTemplate"
+								Method -> "Queued",
+								Tooltip -> "Toggle whether the selected cells are marked as Draft."
 							],
-							TemplateBox[
+							CGUtils`ToolbarButtonBoxes[
 								{
-									GraphicsBox[{
-										InsetBox[
-											FormBox["\"\"", TraditionalForm],
-											{0, 0}
-										]
-									}, {
-										ImageSize -> 15,
-										BaselinePosition -> Center
-									}],
-									"Tab View",
-									"Toggle whether the selected cell is a tab view section.",
-									Function[
-										Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
-										ConnorGray`NotebookWebsiteTools`UI`ToggleTabViewSection[ButtonNotebook[]]
+									Image[
+										Import[
+											PacletObject["ConnorGray/NotebookWebsiteTools"][
+												"AssetLocation", "TabViewIcon"
+											]
+										],
+										ImageSize -> 18,
+										BaselinePosition -> Scaled[0]
 									],
-									"Queued",
-									GrayLevel[0.9],
-									GrayLevel[0.4]
+									"Tab View"
 								},
-								"ConnorGray/IconAndLabelButtonTemplate"
+								Function[
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ToggleTabViewSection[ButtonNotebook[]]
+								],
+								{
+									GrayLevel[0.4],
+									GrayLevel[0.9]
+								},
+								Method -> "Queued",
+								Tooltip -> "Toggle whether the selected cell is a tab view section."
 							]
 						}}],
 						(* Force this item to take up the maximum possible width. This
