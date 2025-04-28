@@ -117,7 +117,10 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
 									ConnorGray`Utilities`HandleUIFailure[
 										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
-											ButtonNotebook[]
+											ButtonNotebook[],
+											(* Ensure this notebook is built as if it
+												was 'Published', even if it is 'Draft'. *)
+											"BuildType" -> "PreviewDraftsAsPublished"
 										]
 									]
 								),
@@ -127,7 +130,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									ConnorGray`Utilities`HandleUIFailure[
 										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
 											ButtonNotebook[],
-											"IncludeDrafts" -> True
+											"BuildType" -> "Drafts"
 										]
 									]
 								),
@@ -149,7 +152,7 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 									ConnorGray`Utilities`HandleUIFailure[
 										ConnorGray`NotebookWebsiteTools`UI`ShowPreview[
 											ButtonNotebook[],
-											"IncludeDrafts" -> True,
+											"BuildType" -> "Drafts",
 											"EmbedImages" -> True,
 											"EmbedCSS" -> True
 										]

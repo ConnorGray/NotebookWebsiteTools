@@ -183,7 +183,7 @@ With[{
 	}]
 },
 	(*-----------------------------*)
-	(* With IncludeDrafts -> False *)
+	(* With BuildType -> Published *)
 	(*-----------------------------*)
 
 	Block[{
@@ -191,7 +191,7 @@ With[{
 		$CurrentNotebookFile = "/tmp/FakeTestNotebook.nb"
 	},
 		VerificationTest[
-			Block[{$BuildSettings = <| "IncludeDrafts" -> False |>},
+			Block[{$BuildSettings = <| "BuildType" -> "Published" |>},
 				ConvertToHTML[example]
 			],
 			XMLElement[
@@ -219,7 +219,7 @@ With[{
 	];
 
 	(*-----------------------------*)
-	(* With IncludeDrafts -> True *)
+	(* With BuildType -> Drafts    *)
 	(*-----------------------------*)
 
 	Block[{
@@ -227,7 +227,7 @@ With[{
 		$CurrentNotebookFile = "/tmp/FakeTestNotebook.nb"
 	},
 		VerificationTest[
-			Block[{$BuildSettings = <| "IncludeDrafts" -> True |>},
+			Block[{$BuildSettings = <| "BuildType" -> "Drafts" |>},
 				ConvertToHTML[example]
 			],
 			XMLElement[

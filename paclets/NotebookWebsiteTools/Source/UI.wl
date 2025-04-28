@@ -85,7 +85,7 @@ ToggleTabViewSection[nb: _NotebookObject] := Module[{
 (*====================================*)
 
 Options[ShowPreview] = {
-	"IncludeDrafts" -> False,
+	"BuildType" -> "PreviewDraftsAsPublished",
 	"EmbedImages" -> False
 }
 
@@ -99,81 +99,36 @@ ShowPreview[
 	nbObj,
 	originalWebsiteDir,
 	relativePath,
-	configFile,
-	tmpWebsiteDir,
+	tmpBuildDir,
 	result
 },
 	{originalWebsiteDir, relativePath} = ConfirmReplace[FileNameSplit[nbPath], {
 		{path: ___, "Content", rel: ___} :> {
 			FileNameJoin[{path}],
-			FileNameJoin[{"Content", rel}]
+			FileNameJoin[{rel}]
 		}
 	}];
 
 	RaiseAssert[DirectoryQ[originalWebsiteDir]];
 
-	configFile = FileNameJoin[{originalWebsiteDir, "NotebookWebsite.wl"}];
-
-	(*---------------------------------------*)
-	(* Populate temporary website directory. *)
-	(*---------------------------------------*)
-
-	tmpWebsiteDir = RaiseConfirm @ CreateDirectory[];
-
-	(* Create parent directory of the saved temporary notebook. *)
-	RaiseConfirm @ CreateDirectory[
-		FileNameJoin[{tmpWebsiteDir, FileNameDrop @ relativePath}],
-		CreateIntermediateDirectories -> True
-	];
-
-	(*
-		Create an entirely indepedent NotebookObject. This has two advantages:
-
-		1. We can modify this copy without modifying the original notebook.
-		2. We preview the latest in-memory changes, which we wouldn't get if
-			we used CopyFile to copy only the latest _saved_ changes to the
-			temp build directory.
-	*)
-	nbObj = NotebookPut[NotebookGet[nbObj0], Visible -> False];
-
-	RaiseAssert[MatchQ[nbObj, _NotebookObject]];
-
-	(* Pretend that the document is in the "Published" status, so that
-		using the 'Preview /> Published' menu item shows the state of the
-		document "as if" it was Published (even if the document as a whole is
-		still in "Draft" mode) in the current state, with Draft cells not
-		included. *)
-	CurrentValue[
-		nbObj,
-		{TaggingRules, "ConnorGray/NotebookWebsiteTools", "DocumentStatus"}
-	] = "Published";
-
-	(* Save the temporary notebook out to disk in the temporary directory. *)
-	RaiseConfirm @ NotebookSave[
-		nbObj,
-		FileNameJoin[{tmpWebsiteDir, relativePath}]
-	];
-	NotebookClose[nbObj];
-
-	If[FileExistsQ[configFile],
-		RaiseConfirm @ CopyFile[
-			configFile,
-			FileNameJoin[{tmpWebsiteDir, "NotebookWebsite.wl"}]
-		];
-	];
-
-	(* Print @ Diagrams`FileSystemTreeDiagram[
-		tmpWebsiteDir,
-		"ASCIIGraphics",
-		ItemDisplayFunction -> FileNameTake @* Last
-	]; *)
-
 	(*--------------------------------*)
 	(* Build the temporary website    *)
 	(*--------------------------------*)
 
+	tmpBuildDir = CreateDirectory[];
+
 	result = RaiseConfirm @ NotebookWebsiteBuild[
-		tmpWebsiteDir,
+		originalWebsiteDir,
+		tmpBuildDir,
+		"FileFilterFunction" -> Function[{assoc},
+			(* Include all non-nb asset files, but make the only notebook
+				we build be the current notebook. *)
+			If[FileExtension[assoc["RelativePath"]] =!= "nb",
+				True
+				,
+				assoc["RelativePath"] === relativePath
+			]
+		],
 		ForwardOptions[opts]
 	];
 

@@ -59,7 +59,11 @@ handleBuild[
 },
 	result = NotebookWebsiteBuild[
 		inputDir,
-		"IncludeDrafts" -> includeDrafts
+		(* TODO: Support a way from the CLI to use the preview drafts build type. *)
+		"BuildType" -> If[includeDrafts,
+			"Drafts",
+			"Published"
+		]
 	];
 
 	Replace[result, {

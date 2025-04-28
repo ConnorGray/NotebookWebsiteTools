@@ -79,7 +79,24 @@ $BuildCache := Raise[NotebookWebsiteError, "Unexpected use of $BuildCache: no bu
 (*====================================*)
 
 Options[NotebookWebsiteBuild] = {
-	"IncludeDrafts" -> False,
+	(* The allowed build types are:
+
+		* "Published" -- only includes files with the "Published" status
+
+		* "Drafts" -- includes files and cells with the "Draft" status/style
+
+		* "PreviousDraftsAsPublished" includes files marked as "Draft" but not
+		  cells marked as Draft. Used by the 'Preview > Published' UI buttom.
+
+		  Pretend that the document is in the "Published" status, so that
+		  using the 'Preview /> Published' menu item shows the state of the
+		  document "as if" it was Published (even if the document as a whole is
+		  still in "Draft" mode) in the current state, with Draft cells not
+		  included.
+	*)
+	"BuildType" -> "Published",
+
+	"FileFilterFunction" -> None,
 
 	(*
 		Whether images derived form notebook content should be embedded
@@ -105,13 +122,14 @@ NotebookWebsiteBuild[
 	buildDir,
 	contentDir,
 	fileSystemTree,
+	fileFilterFunction = OptionValue["FileFilterFunction"],
 	notebooks,
 	htmlFiles
 },
 Block[{
 	$BuildSettings = <|
+		"BuildType" -> OptionValue["BuildType"],
 		(* TODO: RaiseConfirmMatch[.., _?BooleanQ] this. *)
-		"IncludeDrafts" -> TrueQ[OptionValue["IncludeDrafts"]],
 		"EmbedImages" -> TrueQ[OptionValue["EmbedImages"]],
 		"EmbedCSS" -> TrueQ[OptionValue["EmbedCSS"]],
 		(* Initialized below if the notebook website has a valid
@@ -228,19 +246,40 @@ Block[{
 
 	TreeMap[
 		(* FIXME: Don't visit / ignore files that match .gitignore by default. *)
-		filePath |-> Catch @ Module[{
+		filePath |-> Catch @ WrapRaised[
+			NotebookWebsiteError,
+			"Error processing file ``",
+			filePath
+		] @ Module[{
+			relativePath = RelativePath[contentDir, filePath]
 		},
 			If[FileType[filePath] === Directory,
 				Throw[Null];
 			];
 
+			If[fileFilterFunction =!= None, Module[{
+				filterResult = fileFilterFunction[<|
+					"RelativePath" -> relativePath
+				|>]
+			},
+				ConfirmReplace[filterResult, {
+					True -> None,
+					(* Skip this file. *)
+					False :> Throw[Null],
+					other: _ :> Raise[
+						NotebookWebsiteError,
+						<|
+							"FileFilterFunction" -> fileFilterFunction,
+							"FilterResult" -> filterResult
+						|>,
+						"Function specified by 'FileFilterFunction' option did not return a boolean value."
+					]
+				}];
+			]];
+
 			ConfirmFileType[filePath, File];
 
-			WrapRaised[
-				NotebookWebsiteError,
-				"Error processing file ``",
-				filePath
-			] @ ConfirmReplace[FileExtension[filePath], {
+			ConfirmReplace[FileExtension[filePath], {
 				"nb" :> Module[{htmlFile},
 					htmlFile = buildWebNotebook[
 						filePath, contentDir, buildDir
@@ -251,16 +290,15 @@ Block[{
 				(* NOTE: Any other file without a recognized extension gets
 					copied to the output directory unchanged. *)
 				_?StringQ | None :> Catch @ Module[{
-					nbFileRelative = RelativePath[contentDir, filePath],
 					destPath
 				},
 					(* TID:250330/1: Don't copy hidden files to build output. *)
-					If[HiddenFileNameQ[nbFileRelative],
+					If[HiddenFileNameQ[relativePath],
 						Throw[Null];
 					];
 
-					RaiseAssert[StringQ[nbFileRelative]];
-					destPath = FileNameJoin[{buildDir, nbFileRelative}];
+					RaiseAssert[StringQ[relativePath]];
+					destPath = FileNameJoin[{buildDir, relativePath}];
 					(* FIXME: Test: Could happen if source is:
 							foo.nb
 							foo.html
@@ -1207,12 +1245,11 @@ wrapHtmlForStyle[
 		],
 
 		"ConnorGray/Draft" :> Module[{},
-			If[!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]],
-				Raise[
-					NotebookWebsiteError,
-					"Uexpected attempt to convert cell marked as Draft: ``",
-					cellData
-				];
+			(* Sanity check that we're in a build that that is allowed to
+				include cells marked as Draft. *)
+			RaiseConfirmMatch[
+				Lookup[$BuildSettings, "BuildType"],
+				"Drafts"
 			];
 
 			XMLElement["div", {"class" -> "nb-Draft"}, {html}]
@@ -1605,7 +1642,7 @@ GeneralUtilities`SetUsage[FilteredCellQ, "
 	should not be included in the current build configuration.
 
 	Excluded cells are always filtered. Draft cells are filtered if the
-	\"IncludeDrafts\" build setting is not enabled.
+	\"BuildType\" setting is not a build type that includes draft cells.
 "]
 
 SetFallthroughError[FilteredCellQ]
@@ -1625,7 +1662,7 @@ FilteredCellQ[cell: _] := Replace[cell, {
 		___?OptionQ
 	] /; And[
 		MemberQ[{stylesSeq}, "Draft" | "ConnorGray/Draft"],
-		!TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
+		Lookup[$BuildSettings, "BuildType"] =!= "Drafts"
 	] :> (
 		True
 	),
@@ -1644,26 +1681,38 @@ GeneralUtilities`SetUsage[DetermineStatusAction, "
 	* 'Build'
 	* 'Skip'
 
-	If the 'IncludeDrafts' option is set to True in $BuildSettings, then 'Draft'
-	statuses will result in 'Build' instead of 'Skip'.
+	The action returned for notebooks with the 'Draft' status will depend on the
+	'BuildType' in $BuildSettings:
+
+	* 'Published' -> 'Skip'
+	* 'Drafts' -> 'Build'
+	* 'PreviousDraftsAsPublished' -> 'Build'
 "]
 
 SetFallthroughError[DetermineStatusAction]
 
 Options[DetermineStatusAction] = {
-	"IncludeDrafts" :> TrueQ[Lookup[$BuildSettings, "IncludeDrafts"]]
+	"BuildType" :> Lookup[$BuildSettings, "BuildType"]
 }
 
 DetermineStatusAction[status: _?StringQ, OptionsPattern[]] :=
 	Replace[status, {
 		"Published" -> "Build",
 
-		(* If the document status is "Draft" and `"IncludeDrafts" -> True` option
-			was set, then include this file. *)
-		"Draft" /; TrueQ[OptionValue["IncludeDrafts"]] -> "Build",
+		(* Only include 'Draft' notebooks when the 'BuildType' setting is
+			one of the two build types that includes drafts. *)
+		"Draft" :> ConfirmReplace[OptionValue["BuildType"], {
+			"Published" -> "Skip",
+			"Drafts" | "PreviewDraftsAsPublished" -> "Build"
+		}],
 
-		"Draft" | "Excluded" -> "Skip",
-		other: _ :> Raise[NotebookWebsiteError, "Unknown document status: ``", InputForm[other]]
+		"Excluded" -> "Skip",
+
+		other: _ :> Raise[
+			NotebookWebsiteError,
+			"Unknown document status: ``",
+			InputForm[other]
+		]
 	}]
 
 (*========================================================*)
