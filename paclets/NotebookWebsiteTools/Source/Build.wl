@@ -195,8 +195,10 @@ Block[{
 
 	RaiseAssert[StringQ[inputDir]];
 
-	If[!DirectoryQ[contentDir],
-		Raise[NotebookWebsiteError, "'Content' directory does not exist at expected location: ``",contentDir];
+	ConfirmFileType[
+		contentDir,
+		Directory,
+		"'Content' directory does not exist at expected location"
 	];
 
 	fileSystemTree = FileSystemTree[contentDir];
