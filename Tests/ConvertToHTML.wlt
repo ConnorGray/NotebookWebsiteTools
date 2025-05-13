@@ -323,6 +323,7 @@ VerificationTest[
 	],
 	XMLElement["article", {"class" -> "Notebook"}, {
 		XMLElement["video", {
+			"style" -> "max-width: 100%",
 			"src" -> "ExampleVideo.mov",
 			"loop" -> "true",
 			"controls" -> "true",

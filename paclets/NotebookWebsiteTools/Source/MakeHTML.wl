@@ -84,6 +84,8 @@ MakeHTML[
 		generation of `<video ...></video>` instead of `<video ... />`.
 	*)
 	XMLElement["video", {
+		(* Ensure the video is not wider than the notebook <article> content. *)
+		"style" -> "max-width: 100%",
 		"src" -> src,
 		"loop" -> "true",
 		"controls" -> "true",
