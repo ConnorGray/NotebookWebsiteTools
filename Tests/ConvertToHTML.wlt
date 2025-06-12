@@ -412,14 +412,14 @@ VerificationTest[
 
 		XMLElement["input", {
 			"type" -> "radio",
-			"id" -> "tab1",
-			"name" -> "css-tabs",
+			"id" -> "tab-1-2edad004",
+			"name" -> "css-tabs-2edad004",
 			"checked" -> "true"
 		}, {}],
 		XMLElement["input", {
 			"type" -> "radio",
-			"id" -> "tab2",
-			"name" -> "css-tabs"
+			"id" -> "tab-2-2edad004",
+			"name" -> "css-tabs-2edad004"
 		}, {}],
 
 		(*------------------*)
@@ -428,10 +428,10 @@ VerificationTest[
 
 		XMLElement["ul", {"class" -> "tabs"}, {
 			XMLElement["li", {"class" -> "tab"}, {
-				XMLElement["label", {"for" -> "tab1"}, {"Tab One Label"}]
+				XMLElement["label", {"for" -> "tab-1-2edad004"}, {"Tab One Label"}]
 			}],
 			XMLElement["li", {"class" -> "tab"}, {
-				XMLElement["label", {"for" -> "tab2"}, {"Tab Two Label"}]
+				XMLElement["label", {"for" -> "tab-2-2edad004"}, {"Tab Two Label"}]
 			}]
 		}],
 
@@ -511,8 +511,8 @@ VerificationTest[
 
 		XMLElement["input", {
 			"type" -> "radio",
-			"id" -> "tab1",
-			"name" -> "css-tabs",
+			"id" -> "tab-1-df99fdb0",
+			"name" -> "css-tabs-df99fdb0",
 			"checked" -> "true"
 		}, {}],
 
@@ -522,7 +522,7 @@ VerificationTest[
 
 		XMLElement["ul", {"class" -> "tabs"}, {
 			XMLElement["li", {"class" -> "tab"}, {
-				XMLElement["label", {"for" -> "tab1"}, {"Tab Two Label"}]
+				XMLElement["label", {"for" -> "tab-1-df99fdb0"}, {"Tab Two Label"}]
 			}]
 		}],
 

@@ -1529,10 +1529,21 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 	NotebookWebsiteError,
 	"Error processing tabbed content"
 ] @ Module[{
+	(* Avoid tab buttons from different tab groups from conflicting.
+		Without this, only the first tab group in a document displays correctly.
+		The tab content from subsequent groups is never visible. *)
+	groupID = StringTake[IntegerString[Hash[tabContentsCells], 16], -8],
+	getTabID,
 	tabContents,
 	tabLabels,
 	tabCount
 },
+	SetFallthroughError[getTabID];
+
+	getTabID[id: _?IntegerQ] :=
+		StringJoin["tab-", ToString[id], "-", groupID];
+
+	(*--------------------------------*)
 	tabContents = MapIndexed[
 		{tabCell, tabPosition} |-> WrapRaised[
 			NotebookWebsiteError,
@@ -1604,11 +1615,11 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 		Splice @ Table[
 			XMLElement["input", {
 				"type" -> "radio",
-				"id" -> StringJoin["tab", ToString[tabIndex]],
+				"id" -> getTabID[tabIndex],
 				(* NOTE: This name is required to be the same for all
 					generated <input> elements, but the choice of name is
 					arbitrary. *)
-				"name" -> "css-tabs",
+				"name" -> StringJoin["css-tabs-", groupID],
 				If[tabIndex === 1,
 					"checked" -> "true",
 					Splice[{}]
@@ -1625,7 +1636,7 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 				XMLElement["li", {"class" -> "tab"}, {
 					XMLElement[
 						"label",
-						{"for" -> StringJoin["tab", ToString[tabIndex]]},
+						{"for" -> getTabID[tabIndex]},
 						{tabLabels[[tabIndex]]}
 					]
 				}],
