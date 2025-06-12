@@ -38,6 +38,15 @@ VerificationTest[
 	]
 ]
 
+(* TID:250612/1: FontVariations -> {"Underline" -> True} handling. *)
+VerificationTest[
+	ConvertToHTML @ StyleBox[
+		"Click & Drag",
+		FontVariations -> {"Underline" -> True}
+	],
+	XMLElement["u", {}, {"Click & Drag"}]
+]
+
 (* TID:240527/1: "CodeText" cell handling. *)
 VerificationTest[
 	ConvertToHTML @ Cell[

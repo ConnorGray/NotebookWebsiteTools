@@ -975,6 +975,12 @@ ConvertToHTML[expr0: _] := Replace[expr0, {
 					{"style" -> "text-decoration: line-through"},
 					{elem}
 				],
+				(* TID:250612/1: FontVariations -> {"Underline" -> True} handling. *)
+				(FontVariations -> {"Underline" -> True}) :> XMLElement[
+					"u",
+					{},
+					{elem}
+				],
 				(Background -> color: _) :> Replace[color, {
 					RGBColor[r: _, g: _, b: _] :> XMLElement[
 						"span",
