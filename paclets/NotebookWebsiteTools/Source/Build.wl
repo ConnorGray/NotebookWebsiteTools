@@ -802,7 +802,7 @@ ConvertToHTML[expr0: _] := Replace[expr0, {
 	] :> Module[{
 		inputLines, expr, xml
 	},
-		If[{secondaryStylesSeq} =!= {},
+		If[DeleteCases[{secondaryStylesSeq}, "ConnorGray/Draft"] =!= {},
 			Raise[
 				NotebookWebsiteError,
 				<| "Cell" ->  cell |>,
