@@ -212,6 +212,19 @@ article.Notebook div.nb-CodeText {
     font-size: 12pt;
 }
 
+article.Notebook blockquote.nb-BlockQuote {
+    border-left: 4px solid gray;
+    padding-left: 1.5em;
+    padding-bottom: 1em;
+    margin-left: 0.5em;
+    background-color: #F0F0F0;
+    /* Makes the top margin of a <p> element that is first in a blockquote
+       not collapse with the top margin of the blockquote itself, incorrectly
+       leading to the <p> content touching up against the top edge of the block
+       quote. */
+    display: flow-root;
+}
+
 /*====================================*/
 /* Item styles                        */
 /*====================================*/

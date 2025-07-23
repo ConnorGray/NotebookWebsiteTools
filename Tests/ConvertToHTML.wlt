@@ -60,6 +60,19 @@ VerificationTest[
 	]
 ]
 
+(* TID:250713/1: "ConnorGray/BlockQuote" cell handling. *)
+VerificationTest[
+	ConvertToHTML @ Cell[
+		"This is some quoted text.",
+		"ConnorGray/BlockQuote"
+	],
+	XMLElement[
+		"blockquote",
+		{"class" -> "nb-BlockQuote"},
+		{"This is some quoted text."}
+	]
+]
+
 VerificationTest[
 	ConvertToHTML @ Notebook[{
 		Cell @ CellGroupData[{

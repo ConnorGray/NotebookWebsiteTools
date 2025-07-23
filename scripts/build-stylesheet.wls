@@ -203,6 +203,19 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 	],
 
 	(*================================*)
+	(* Common Markup *)
+	(*================================*)
+
+	Cell[
+		StyleData[
+			"ConnorGray/BlockQuote",
+			StyleDefinitions -> StyleData["Text"]
+		],
+		Background -> GrayLevel[0.9],
+		MenuSortingValue -> 2500 + 75
+	],
+
+	(*================================*)
 	(* Deprecated cell styles         *)
 	(*================================*)
 

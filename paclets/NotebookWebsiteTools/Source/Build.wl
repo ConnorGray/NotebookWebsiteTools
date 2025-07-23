@@ -1168,6 +1168,15 @@ wrapHtmlForStyle[
 			]
 		),
 
+		(* TID:250713/1: "ConnorGray/BlockQuote" cell handling. *)
+		"ConnorGray/BlockQuote" :> (
+			XMLElement[
+				"blockquote",
+				{"class" -> "nb-BlockQuote"},
+				{ConvertToHTML[cellData]}
+			]
+		),
+
 		(*============*)
 		(* Code cells *)
 		(*============*)
