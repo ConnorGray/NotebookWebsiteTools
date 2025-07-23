@@ -85,7 +85,7 @@ Options[NotebookWebsiteBuild] = {
 
 		* "Drafts" -- includes files and cells with the "Draft" status/style
 
-		* "PreviousDraftsAsPublished" includes files marked as "Draft" but not
+		* "PreviewDraftsAsPublished" includes files marked as "Draft" but not
 		  cells marked as Draft. Used by the 'Preview > Published' UI buttom.
 
 		  Pretend that the document is in the "Published" status, so that
@@ -1712,7 +1712,7 @@ GeneralUtilities`SetUsage[DetermineStatusAction, "
 
 	* 'Published' -> 'Skip'
 	* 'Drafts' -> 'Build'
-	* 'PreviousDraftsAsPublished' -> 'Build'
+	* 'PreviewDraftsAsPublished' -> 'Build'
 "]
 
 SetFallthroughError[DetermineStatusAction]
