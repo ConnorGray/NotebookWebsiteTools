@@ -30,6 +30,8 @@ Needs["ConnorGray`NotebookWebsiteTools`MakeHTML`"]
 
 (*======================================*)
 
+SetFallthroughError[CreateWebsiteNotebook]
+
 CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := Handle[_Failure] @ Module[{nb},
 	nb = Replace[type, {
 		"BlogPost" :> CreateBlogPostNotebook[title],
@@ -41,9 +43,9 @@ CreateWebsiteNotebook[type: _?StringQ, title: _?StringQ] := Handle[_Failure] @ M
 	NotebookPut[nb]
 ]
 
-SetFallthroughError[CreateWebsiteNotebook]
-
 (*========================================================*)
+
+SetFallthroughError[WebsiteNotebookTitle]
 
 WebsiteNotebookTitle[
 	Notebook[cells: {___Cell}, ___?OptionQ]
@@ -73,9 +75,9 @@ WebsiteNotebookTitle[
 	title
 ]
 
-SetFallthroughError[WebsiteNotebookTitle]
-
 (*========================================================*)
+
+SetFallthroughError[WebsiteNotebookStatus]
 
 WebsiteNotebookStatus[
 	Notebook[_?ListQ, options0: ___?OptionQ]
@@ -96,8 +98,6 @@ WebsiteNotebookStatus[
 	   documents with this status as a "normal" document. *)
 	_ :> Missing["KeyAbsent", "DocumentStatus"]
 }]
-
-SetFallthroughError[WebsiteNotebookStatus]
 
 (*========================================================*)
 
