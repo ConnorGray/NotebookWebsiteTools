@@ -21,6 +21,7 @@ GetCacheValue
 SetCacheHandler
 InvalidateCache
 
+KeyPath
 KeyPathQ
 CacheObjectQ
 

@@ -213,7 +213,7 @@ PagesSummaryListHtml[
 			}];
 
 			If[filterFunc =!= Automatic,
-				If[!TrueQ[filterFunc[nbFileRelative]],
+				If[!TrueQ[filterFunc[nbFileRelative, nbFile]],
 					Return[Nothing, Module];
 				];
 			];

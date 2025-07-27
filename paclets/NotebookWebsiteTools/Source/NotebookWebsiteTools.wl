@@ -14,6 +14,7 @@ WebsiteNotebookTitle::usage = "WebsiteNotebookTitle[nb] returns the title of the
 	The title is defined as the textual content of the first cell with style \"Title\"."
 WebsiteNotebookStatus::usage = "WebsiteNotebookStatus[nb] returns the value of the \"DocumentStatus\" metadata field for the specified notebook."
 WebsiteNotebookSnippet::usage = "WebsiteNotebookSnippet[nb] returns a snippet of text that is intended to be a teaser or summary of the notebook content."
+WebsiteNotebookTags::usage = "WebsiteNotebookTags[nb] returns a list of the content tags applied to the overall website notebook document."
 
 
 MakeHTML::usage = "MakeHTML[expr] is used to convert expressions in ConnorGray/ComputedHTML cells to HTML."
@@ -131,6 +132,47 @@ WebsiteNotebookSnippet[
 	RaiseAssert[StringQ[firstText]];
 
 	firstText
+]
+
+(*========================================================*)
+
+SetFallthroughError[WebsiteNotebookTags]
+
+WebsiteNotebookTags[
+	nb: Notebook[
+		{___Cell},
+		nbOpts: ___?OptionQ
+	]
+] := WrapRaised[
+	NotebookWebsiteError,
+	"Error getting website notebook content tags."
+] @ Module[{
+	nbOptsAssoc = Association[nbOpts],
+	tags
+},
+	If[!AssociationQ[nbOptsAssoc],
+		Raise[
+			NotebookWebsiteError,
+			<| "NotebookOptions" -> {nbOpts} |>,
+			"Notebook options sequence did not form a valid Association"
+		];
+	];
+
+	(* TID:250723/1: WebsiteNotebookTags extraction of notebook tags. *)
+	tags = ResourceFunction["NestedLookup"][
+		nbOptsAssoc,
+		{TaggingRules, "ConnorGray/NotebookWebsiteTools", "ContentTags"}
+	];
+
+	ConfirmReplace[tags, {
+		missing: _?MissingQ :> missing,
+		tags1: {___} :> tags1,
+		other: _ :> Raise[
+			NotebookWebsiteError,
+			"Error getting website notebook tags: unexpected tags form: ``",
+			InputForm[other]
+		]
+	}]
 ]
 
 (*========================================================*)

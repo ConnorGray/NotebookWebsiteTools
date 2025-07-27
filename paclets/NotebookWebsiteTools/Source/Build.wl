@@ -391,6 +391,12 @@ populateBuildCacheHandlers[cache: _CacheSpecifier] := Module[{},
 	},
 		WebsiteNotebookSnippet[nb]
 	]];
+
+	SetCacheHandler[cache, KeyPath[{file:File[_?StringQ], WebsiteNotebookTags}] :> Handle[_Failure] @ Module[{
+		nb = RaiseConfirm @ GetCacheValue[cache, {file, Notebook}]
+	},
+		WebsiteNotebookTags[nb]
+	]];
 ]
 
 (*======================================*)
