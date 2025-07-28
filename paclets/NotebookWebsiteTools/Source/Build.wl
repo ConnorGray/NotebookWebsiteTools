@@ -709,6 +709,32 @@ ConvertToHTML[expr0: _] := Replace[expr0, {
 		createTabViewSectionHTML[{tabContentsSeq}]
 	),
 
+	(* TID:250727/1: Handle ConnorGray/DetailsViewSection cell group. *)
+	Cell @ CellGroupData[
+		{
+			(* NOTE: The main details view header just kind of evaporates(?) *)
+			detailsSectionHeader:Cell[
+				_,
+				stylesSeq: ___?StringQ /;
+					MemberQ[{stylesSeq}, "ConnorGray/DetailsViewSection"],
+				___?OptionQ
+			],
+			detailsContentsSeq: __Cell
+		},
+		Open | Closed | {_?IntegerQ}
+	] :> (
+		(* Note: Warn about misleading filters applied to details section header
+			cells. The cells themselves are not converted anyway, and the header
+			being excluded does not prevent the overall details contents from
+			being included. *)
+		If[FilteredCellQ[detailsSectionHeader],
+			Print["warning: Applying filtered style to details view section header "
+				<> "cell does nothing."];
+		];
+
+		createDetailsViewSectionHTML[{detailsContentsSeq}]
+	),
+
 	(* TODO(cleanup): Is this "class" -> "cell-group" used for anything? Is this
 		<div> wrapper used for anything? Why not just flatten these inline? *)
 	(* Cell[CellGroupData[cells_?ListQ, Open]] :> XMLElement["div", {"class" -> "cell-group"}, Map[convertToHtml, cells]], *)
@@ -1664,6 +1690,82 @@ createTabViewSectionHTML[tabContentsCells:{___Cell}] := WrapRaised[
 			XMLElement["div", {"class" -> "tab-content"}, {Splice @ tabContent}],
 			{tabContent, tabContents}
 		]
+	}]
+]
+
+(*====================================*)
+
+SetFallthroughError[createDetailsViewSectionHTML]
+
+createDetailsViewSectionHTML[detailsContentsCells:{___Cell}] := WrapRaised[
+	NotebookWebsiteError,
+	"Error processing details content"
+] @ Catch @ Module[{
+	summaryCellGroup, detailsBodyCellGroup,
+	summaryHTML,
+	detailsBodyHTML
+},
+	ConfirmReplace[detailsContentsCells, {
+		{first: _Cell, second: _Cell} :> (
+			summaryCellGroup = first;
+			detailsBodyCellGroup = second;
+		)
+	}];
+
+	{summaryHTML, detailsBodyHTML} = Map[
+		cellGroup |-> ConfirmReplace[cellGroup, {
+			Cell @ CellGroupData[{
+				headerCell: _,
+				contentsSeq: ___Cell
+			}, Open | Closed] :> Module[{
+				label,
+				contents
+			},
+				(* TID:250727/3: Filtered details view subheader cell. *)
+				If[FilteredCellQ[headerCell],
+					(* NOTE:
+						Applying a cell filter to either of the 'Details' or
+						'Summary' headers in a Details View will cause the
+						entire opener view to be removed. I can't think of
+						alternative semantics that are "fail safe" and
+						intuitive. *)
+					Throw[Nothing];
+				];
+
+				If[!MatchQ[headerCell, Cell["Details" | "Summary", __]],
+					Raise[
+						NotebookWebsiteError,
+						<| "DetailsHeaderCell" -> headerCell |>,
+						"Details header cell data expected to be either 'Details' or 'Summary'."
+					];
+				];
+
+				(* TID:250727/2: Multi-cell details contents. *)
+				contents = ConfirmReplace[Map[ConvertToHTML, {contentsSeq}], {
+					(* TID:250727/4: Details section with empty contents after filtering. *)
+					{} :> Raise[
+						NotebookWebsiteError,
+						"Empty details section contents (after filtering) are not supported"
+					],
+					contents0:{__} :> contents0
+				}];
+
+				contents
+			],
+			_ :> Raise[
+				NotebookWebsiteError,
+				"Unexpected structure for tab contents cell: ``",
+				InputForm[tabCell]
+			]
+		}],
+		{summaryCellGroup, detailsBodyCellGroup}
+	];
+
+	XMLElement["details", {"class" -> "nb-DetailsViewSection"}, {
+		XMLElement["summary", {}, {Splice @ summaryHTML}],
+		XMLElement["article", {}, {
+			Splice @ detailsBodyHTML
+		}]
 	}]
 ]
 

@@ -91,6 +91,22 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 								},
 								Method -> "Queued",
 								Tooltip -> "Toggle whether the selected cell is a tab view section."
+							],
+							CGUtils`ToolbarButtonBoxes[
+								{
+									Graphics @ Text @ Style["\[FilledRightTriangle]", 12],
+									"Details View"
+								},
+								Function[
+									Needs["ConnorGray`NotebookWebsiteTools`UI`" -> None];
+									ConnorGray`NotebookWebsiteTools`UI`ToggleDetailsViewSection[ButtonNotebook[]]
+								],
+								{
+									GrayLevel[0.4],
+									GrayLevel[0.9]
+								},
+								Method -> "Queued",
+								Tooltip -> "Toggle whether the selected cell is a details view section."
 							]
 						}}],
 						(* Force this item to take up the maximum possible width. This
@@ -291,6 +307,14 @@ notebookWebsiteToolsStylesheetNotebook = Notebook[{
 					],
 					StandardForm
 				]
+			]
+		)
+	],
+
+	Cell[StyleData["ConnorGray/DetailsViewSection"],
+		CellDingbat -> (
+			Cell @ BoxData @ ToBoxes[
+				Style["\[FilledRightTriangle]", 14, ShowStringCharacters -> False]
 			]
 		)
 	],

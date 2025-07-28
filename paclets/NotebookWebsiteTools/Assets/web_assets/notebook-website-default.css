@@ -551,6 +551,44 @@ a.IconLink img {
 	display: block;
 }
 
+/*====================================*/
+/* Details View Sections              */
+/*====================================*/
+
+/* Based on:
+    https://www.sitepoint.com/style-html-details-element/
+    https://codepen.io/SitePoint/pen/wvNwrwZ
+*/
+
+details.nb-DetailsViewSection > summary > p:first-of-type,
+details.nb-DetailsViewSection > summary > div.nb-CodeText:first-of-type {
+    /* Ensure that the '▶' appears inline with the initial text content of
+       the summary element. */
+    display: inline;
+}
+
+details.nb-DetailsViewSection > summary {
+    background: #F5F5F5;
+    padding: 10px;
+    /* Signify to the user that this element affords clicking to expand. */
+    cursor: pointer;
+}
+
+details.nb-DetailsViewSection {
+    background: #E9E9E9;
+    border: 1px solid gray;
+}
+
+details.nb-DetailsViewSection > article {
+    padding: 10px;
+    margin: 0;
+
+    /* For content in the details section, overflow should turn into
+        horizontal scrolling, not "spilling" out of the container. */
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
 /*========================================================*/
 /* Built-In Widgets                                       */
 /*========================================================*/

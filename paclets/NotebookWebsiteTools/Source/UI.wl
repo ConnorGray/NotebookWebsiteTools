@@ -19,6 +19,7 @@ BeginPackage["ConnorGray`NotebookWebsiteTools`UI`"]
 ToggleExcluded::usage = "ToggleExcluded toggles the Excluded status of selected cells."
 ToggleDraft::usage = "ToggleDraft toggles the Draft status of selected cells."
 ToggleTabViewSection
+ToggleDetailsViewSection
 
 ShowPreview
 
@@ -77,6 +78,21 @@ ToggleTabViewSection[nb: _NotebookObject] := Module[{
 	RaiseAssert[MatchQ[cells, {___CellObject}]];
 
 	Scan[cell |-> toggleCellStyle[cell, "ConnorGray/TabViewSection"], cells];
+
+	(* Return the cells that we modified. *)
+	cells
+]
+
+(*====================================*)
+
+SetFallthroughError[ToggleDetailsViewSection]
+
+ToggleDetailsViewSection[nb: _NotebookObject] := Module[{
+	cells = SelectedCells[nb]
+},
+	RaiseAssert[MatchQ[cells, {___CellObject}]];
+
+	Scan[cell |-> toggleCellStyle[cell, "ConnorGray/DetailsViewSection"], cells];
 
 	(* Return the cells that we modified. *)
 	cells

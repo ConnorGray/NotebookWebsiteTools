@@ -588,3 +588,86 @@ VerificationTest[
 		"MessageParameters" -> {}
 	|>]
 ]
+
+(*====================================*)
+(* Test conversion of details content *)
+(*====================================*)
+
+(* TID:250727/1: Handle ConnorGray/DetailsViewSection cell group. *)
+VerificationTest[
+	ConvertToHTML @ Cell @ CellGroupData[{
+		Cell[
+			"Details: Content",
+			"Section",
+			"ConnorGray/DetailsViewSection"
+		],
+		Cell @ CellGroupData[{
+			Cell["Summary", "Subsection"],
+			Cell["This is some content in the <summary> area.", "Text"]
+		}, Open],
+		Cell @ CellGroupData[{
+			Cell["Details", "Subsection"],
+			Cell["This is some content in the details area.", "Text"],
+			(* TID:250727/2: Multi-cell details contents. *)
+			Cell["This details section has multiple cells.", "Text"]
+		}, Open]
+	}, Open]
+	,
+	XMLElement["details", {"class" -> "nb-DetailsViewSection"}, {
+		XMLElement["summary", {}, {
+			XMLElement["p", {}, {"This is some content in the <summary> area."}]
+
+		}],
+		XMLElement["p", {}, {"This is some content in the details area."}],
+		XMLElement["p", {}, {"This details section has multiple cells."}]
+	}]
+]
+
+(* TID:250727/3: Filtered details view subheader cell. *)
+VerificationTest[
+	ConvertToHTML @ Cell @ CellGroupData[{
+		Cell[
+			"Details: Content",
+			"Section",
+			"ConnorGray/DetailsViewSection"
+		],
+		Cell @ CellGroupData[{
+			Cell["Summary", "Subsection", "ConnorGray/Excluded"],
+			Cell["Foo.", "Text"]
+		}, Open],
+		Cell @ CellGroupData[{
+			Cell["Details", "Subsection"],
+			Cell["Bar.", "Text"]
+		}, Open]
+	}, Open]
+	,
+	Nothing
+]
+
+(* TID:250727/4: Details section with empty contents after filtering. *)
+VerificationTest[
+	Handle[_Failure] @ ConvertToHTML @ Cell @ CellGroupData[{
+		Cell[
+			"Details: Content",
+			"Section",
+			"ConnorGray/DetailsViewSection"
+		],
+		Cell @ CellGroupData[{
+			Cell["Summary", "Subsection"],
+			Cell["Foo.", "Text"]
+		}, Open],
+		Cell @ CellGroupData[{
+			Cell["Details", "Subsection"],
+			Cell["Bar.", "Text", "ConnorGray/Excluded"]
+		}, Open]
+	}, Open]
+	,
+	Failure[NotebookWebsiteError, <|
+		"CausedBy" -> Failure[NotebookWebsiteError, <|
+			"MessageTemplate" -> "Empty details section contents (after filtering) are not supported",
+			"MessageParameters" -> {}
+		|>],
+		"MessageTemplate" -> "Error processing details content",
+		"MessageParameters" -> {}
+	|>]
+]

@@ -99,6 +99,9 @@ listItemForGroup[
 	(* Prevent tab view sections from showing up in the table of contents. *)
 	Cell[___, "ConnorGray/TabViewSection", ___] -> Nothing,
 
+	(* Prevent details view sections from showing up in the table of contents. *)
+	Cell[___, "ConnorGray/DetailsViewSection", ___] -> Nothing,
+
 	Cell[cellData: _, ___] :> Module[{
 		contentString = ConvertToString[cellData],
 		contentSlug
