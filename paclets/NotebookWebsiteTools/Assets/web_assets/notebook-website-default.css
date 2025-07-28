@@ -549,6 +549,9 @@ a.IconLink img {
 .tabbed [type="radio"]:nth-of-type(7):checked ~ .tab-content:nth-of-type(7),
 .tabbed [type="radio"]:nth-of-type(8):checked ~ .tab-content:nth-of-type(8) {
 	display: block;
+    /* Tabs that have large content should be horizontally scrollable so that
+       content doesn't get chopped off. */
+    overflow-y: scroll;
 }
 
 /*====================================*/
