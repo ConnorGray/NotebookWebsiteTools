@@ -483,9 +483,15 @@ a.IconLink img {
 
 .tabbed {
 	overflow-x: hidden; /* so we could easily hide the radio inputs */
-	margin: 32px 0;
-	padding-bottom: 16px;
-	border-bottom: 1px solid #ccc;
+    margin: 1em 0;
+    /* padding-bottom: 16px; */
+    /* border-bottom: 1px solid #ccc; */
+}
+
+/* The <ul> inside of the outer <div> doesn't need to add any margin. That can
+   from the top-level div.tabbed if the user desires it. */
+div.tabbed > ul.tabs {
+    margin-top: 0;
 }
 
 .tabbed [type="radio"] {
@@ -499,6 +505,7 @@ a.IconLink img {
 	list-style: none;
 	padding: 0;
 	border-bottom: 1px solid #ccc;
+    margin-bottom: 0;
 }
 .tab > label {
 	display: block;
@@ -522,6 +529,8 @@ a.IconLink img {
 .tab-content {
 	display: none;
 	color: #777;
+    background: #F3F3F3;
+    padding: 10px;
 }
 
 /* As we cannot replace the numbers with variables or calls to element properties, the number of this selector parts is our tab count limit */
