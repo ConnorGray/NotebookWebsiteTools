@@ -592,7 +592,10 @@ details.nb-DetailsViewSection {
 }
 
 details.nb-DetailsViewSection > article {
-    padding: 10px;
+    /* Add horizontal padding but not vertical padding. It's up to
+       the child content margins to add vertical space. */
+    padding: 0 10px;
+
     margin: 0;
 
     /* For content in the details section, overflow should turn into
