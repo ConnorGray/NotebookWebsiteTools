@@ -956,6 +956,12 @@ ConvertToHTML[expr0: _] := Replace[expr0, {
 			{elem, style} |-> Replace[style, {
 				(* TID:240602/1: Inline "Code" or "Program" StyleBox's *)
 				"Code" | "Program" :> XMLElement["code", {}, {elem}],
+				(* TID:260227/1: Inline "CodeText" StyleBox with FontSlant. *)
+				"CodeText" :> XMLElement[
+					"span",
+					{"class" -> "nb-CodeText"},
+					{elem}
+				],
 				(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
 				other: _ :> Raise[NotebookWebsiteError, "Unhandled StyleBox style: ``", InputForm[other]]
 			}],

@@ -129,6 +129,28 @@ VerificationTest[
 	}]
 ]
 
+(* TID:260227/1: Inline "CodeText" StyleBox with FontSlant. *)
+VerificationTest[
+	ConvertToHTML @ Cell[
+		TextData[{
+			"Notes on ASCII Bit Patterns ",
+			StyleBox["(click to expand)", "CodeText", FontSlant -> "Italic"]
+		}],
+		"Text"
+	],
+	XMLElement["p", {}, {
+		"Notes on ASCII Bit Patterns ",
+		XMLElement["i", {}, {
+			XMLElement[
+				"span",
+				{"class" -> "nb-CodeText"},
+				{"(click to expand)"}
+			]
+		}]
+	}]
+]
+
+
 VerificationTest[
 	(* TID:240602/2: Unrecognized style in textual cell StyleBox. *)
 	Handle[_Failure] @ ConvertToHTML @ Cell[

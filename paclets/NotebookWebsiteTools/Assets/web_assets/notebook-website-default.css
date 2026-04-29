@@ -207,7 +207,8 @@ h1.nb-Title + p.nb-Subtitle {
 /* Body text */
 /*-----------*/
 
-article.Notebook div.nb-CodeText {
+article.Notebook div.nb-CodeText,
+article.Notebook span.nb-CodeText {
     color: rgb(55%, 55%, 55%);
     font-size: 12pt;
 }
