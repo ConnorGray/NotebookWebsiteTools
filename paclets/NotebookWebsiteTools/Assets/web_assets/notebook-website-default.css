@@ -592,7 +592,7 @@ details.nb-DetailsViewSection {
     border: 1px solid gray;
 }
 
-details.nb-DetailsViewSection > article {
+details.nb-DetailsViewSection::details-content {
     /* Add horizontal padding but not vertical padding. It's up to
        the child content margins to add vertical space. */
     padding: 0 10px;

@@ -1769,9 +1769,7 @@ createDetailsViewSectionHTML[detailsContentsCells:{___Cell}] := WrapRaised[
 
 	XMLElement["details", {"class" -> "nb-DetailsViewSection"}, {
 		XMLElement["summary", {}, {Splice @ summaryHTML}],
-		XMLElement["article", {}, {
-			Splice @ detailsBodyHTML
-		}]
+		Splice @ detailsBodyHTML
 	}]
 ]
 
